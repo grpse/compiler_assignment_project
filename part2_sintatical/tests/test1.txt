@@ -9,3 +9,16 @@ f static float;
 b static bool;
 c static char;
 s static string;
+
+
+i[123] int;
+f[123] float;
+b[123] bool;
+c[123] char;
+s[123] string;
+
+i[123] static int;
+f[123] static float;
+b[123] static bool;
+c[123] static char;
+s[123] static string;

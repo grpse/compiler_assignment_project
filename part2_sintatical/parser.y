@@ -65,7 +65,9 @@ programa: declarations | %empty;
 
 declarations: declarations global_var_declaration | global_var_declaration;
 
-global_var_declaration: TK_IDENTIFICADOR is_static var_type ';';
+global_var_declaration: TK_IDENTIFICADOR is_vector is_static var_type ';';
+
+is_vector: '[' TK_LIT_INT ']' | %empty;
 
 is_static: TK_PR_STATIC | %empty;
 
