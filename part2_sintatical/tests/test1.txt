@@ -1,0 +1,11 @@
+i int;
+f float;
+b bool;
+c char;
+s string;
+
+i static int;
+f static float;
+b static bool;
+c static char;
+s static string;
