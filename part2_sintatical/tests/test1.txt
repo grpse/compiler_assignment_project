@@ -110,5 +110,13 @@ int fn(int i, const float f) {
         }
 
 
+        while(asd + 123 - asd) do {
+            asd(asdasd);
+            asd();
+            asd(123, 123.23, "asdasd");
+            asd('a');
+            d[12] = 123 ^ 123;
+        }
+
     };
 }

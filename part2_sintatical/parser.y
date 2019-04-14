@@ -86,7 +86,7 @@ parameter_declaration: is_const declaration_type TK_IDENTIFICADOR;
 
 command_block: '{' list_of_commands '}';
 
-list_of_commands: list_of_commands valid_command is_semicolon | list_of_commands if_then_else_command | list_of_commands for_command | %empty;
+list_of_commands: list_of_commands valid_command is_semicolon | list_of_commands if_then_else_command | list_of_commands for_command | list_of_commands while_command | %empty;
 
 valid_command: local_var_declaration | assignment_command | command_block | input_command | output_command | function_call_command | shift_command | break_flow_command;
 
@@ -158,6 +158,8 @@ for_list_parameter: local_var_declaration | assignment_command | shift_command;
 
 // WHILE LOOP
 
+while_command: TK_PR_WHILE '(' expression ')' TK_PR_DO command_block;
+
 /* END FLOW CONTROL COMMAND */
 
 parameters_list: parameter ',' parameters_list | parameter;
@@ -176,7 +178,7 @@ declaration_type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRI
 
 literal_values: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_TRUE | TK_LIT_FALSE | TK_LIT_CHAR | TK_LIT_STRING;
 
-expression: get_reference_address | reference_access_value | TK_IDENTIFICADOR is_vector | TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_FALSE | TK_LIT_TRUE | function_call_command;
+expression: get_table_value | get_reference_address | reference_access_value | TK_IDENTIFICADOR is_vector | TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_FALSE | TK_LIT_TRUE | function_call_command;
 expression: '(' expression ')';
 expression: expression '+' expression;
 expression: expression '-' expression;
@@ -202,6 +204,7 @@ expression: expression '?' expression ':' expression;
 
 reference_access_value: '*' TK_IDENTIFICADOR;
 get_reference_address: '&' TK_IDENTIFICADOR;
+get_table_value: '#' TK_IDENTIFICADOR;
 
 %%
 
