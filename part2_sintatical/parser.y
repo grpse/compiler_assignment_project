@@ -64,7 +64,7 @@ void yyerror (char const *s);
 
 programa: declarations | %empty;
 
-declarations: declarations global_var_declaration | global_var_declaration | declarations function_declaration;
+declarations: declarations global_var_declaration | declarations function_declaration | global_var_declaration | function_declaration;
 
 global_var_declaration: TK_IDENTIFICADOR is_vector is_static declaration_type ';';
 
@@ -76,7 +76,21 @@ parameters_list: parameter ',' parameters_list | parameter;
 
 parameter: is_const declaration_type TK_IDENTIFICADOR;
 
-command_block: %empty;
+command_block: '{' list_of_commands '}';
+
+list_of_commands: list_of_commands local_var_declaration | %empty;
+
+/* BEGIN LOCAL VAR */
+local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init ';';
+
+local_var_attribute: TK_PR_STATIC is_const | %empty;
+
+is_local_var_init: local_var_init | %empty;
+
+local_var_init: TK_OC_LE local_var_init_valid_values;
+
+local_var_init_valid_values: literal_values | TK_IDENTIFICADOR;
+/* END LOCAL VAR */
 
 is_const: TK_PR_CONST | %empty;
 
@@ -85,6 +99,8 @@ is_vector: '[' TK_LIT_INT ']' | %empty;
 is_static: TK_PR_STATIC | %empty;
 
 declaration_type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRING;
+
+literal_values: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_TRUE | TK_LIT_FALSE | TK_LIT_CHAR | TK_LIT_STRING;
 
 %%
 

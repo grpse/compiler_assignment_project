@@ -24,6 +24,20 @@ c[123] static char;
 s[123] static string;
 
 
-int fn()
-int fn(int i)
-int fn(int i, float f)
+int fn() {
+
+}
+int fn(int i) {
+
+}
+int fn(int i, const float f) {
+    static const int tt;
+    static int tt;
+    int tt;
+
+    int tt <= 23;
+    char tt <= asd;
+    string tt <= "aosjdoiasjdo";
+    static const int tt <= 23;
+    int tt <= asd;
+}
