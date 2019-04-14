@@ -6,7 +6,7 @@ generate_lex:
 	flex scanner.l
 
 compile_lex_with_main:
-	gcc main.c lex.yy.c -o etapa1
+	gcc main.c lex.yy.c -o etapa1 -lfl
 
 tar: all	
 	tar cvzf etapa1.tgz scanner.l main.c tokens.h etapa1 Makefile

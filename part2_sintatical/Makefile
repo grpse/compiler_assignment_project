@@ -9,7 +9,7 @@ generate_lexical:
 	flex -o scanner.lex.c scanner.l
 
 compile:
-	gcc -o etapa2 scanner.lex.c parser.tab.c main.c -lm 
+	gcc -o etapa2 scanner.lex.c parser.tab.c main.c -lm -lfl
 
 tar: all
-	tar cvzf etapa2.tgz scanner.l parser.y etapa2 Makefile
+	tar cvzf etapa2.tgz scanner.l parser.y etapa2 Makefile main.c
