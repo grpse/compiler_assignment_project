@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+extern char* yytext;
 extern int get_line_number();
 
 int yylex(void);
@@ -63,18 +64,30 @@ void yyerror (char const *s);
 
 programa: declarations | %empty;
 
-declarations: declarations global_var_declaration | global_var_declaration;
+declarations: declarations global_var_declaration | global_var_declaration | declarations function_declaration;
 
-global_var_declaration: TK_IDENTIFICADOR is_vector is_static var_type ';';
+global_var_declaration: TK_IDENTIFICADOR is_vector is_static declaration_type ';';
+
+function_declaration: is_static declaration_type TK_IDENTIFICADOR list_of_parameters command_block;
+
+list_of_parameters: '(' parameters_list ')' | '(' ')';
+
+parameters_list: parameter ',' parameters_list | parameter;
+
+parameter: is_const declaration_type TK_IDENTIFICADOR;
+
+command_block: %empty;
+
+is_const: TK_PR_CONST | %empty;
 
 is_vector: '[' TK_LIT_INT ']' | %empty;
 
 is_static: TK_PR_STATIC | %empty;
 
-var_type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRING;
+declaration_type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRING;
 
 %%
 
 void yyerror (char const *s) {
-    printf("ERROR =>> Line %d: %s\n", get_line_number(), s);
+    printf("ERROR =>> Line %d: %s, Last token: %s\n", get_line_number(), s, yytext);
 }
