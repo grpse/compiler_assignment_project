@@ -102,6 +102,13 @@ int fn(int i, const float f) {
             asd('a');
         }
 
+        for (static const int i <= 0, asd >> 123, l = 1, qwe = fas() : asd + 123 < 123 : t = 23.23E+123) {
+            asd(asdasd);
+            asd();
+            asd(123, 123.23, "asdasd");
+            asd('a');
+        }
+
 
     };
 }

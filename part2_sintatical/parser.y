@@ -86,7 +86,7 @@ parameter_declaration: is_const declaration_type TK_IDENTIFICADOR;
 
 command_block: '{' list_of_commands '}';
 
-list_of_commands: list_of_commands valid_command is_semicolon | list_of_commands if_then_else_command | %empty;
+list_of_commands: list_of_commands valid_command is_semicolon | list_of_commands if_then_else_command | list_of_commands for_command | %empty;
 
 valid_command: local_var_declaration | assignment_command | command_block | input_command | output_command | function_call_command | shift_command | break_flow_command;
 
@@ -141,11 +141,22 @@ break_flow_valid_commands: TK_PR_RETURN expression | TK_PR_BREAK | TK_PR_CONTINU
 
 /* BEGIN FLOW CONTROL COMMAND */
 
+// IF STATEMENT
 if_then_else_command: if_then_only_command | if_then_else_too_command;
 
 if_then_only_command: TK_PR_IF '(' expression ')' TK_PR_THEN command_block;
 
 if_then_else_too_command: TK_PR_IF '(' expression ')' TK_PR_THEN command_block TK_PR_ELSE command_block;
+
+// FOR LOOP
+
+for_command: TK_PR_FOR '(' for_list ':' expression ':' for_list ')' command_block;
+
+for_list: for_list_parameter ',' for_list | for_list_parameter;
+
+for_list_parameter: local_var_declaration | assignment_command | shift_command;
+
+// WHILE LOOP
 
 /* END FLOW CONTROL COMMAND */
 
