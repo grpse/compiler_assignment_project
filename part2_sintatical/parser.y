@@ -60,9 +60,10 @@ void yyerror (char const *s);
 %start programa
 
 %left '-' '+'
-%left '*' '/'
-%left '!'
-%right '^' '&' '#'
+%left '*' '/' '%' '|'
+%left '!' '<' '>' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR
+%left '?' ':'
+%right '^' '&' '#' 
 
 %%
 
@@ -73,13 +74,13 @@ declarations: declarations global_var_declaration | declarations function_declar
 global_var_declaration: TK_IDENTIFICADOR is_vector is_static declaration_type ';';
 
 /* BEGIN FUNCTION HEADER */
-function_declaration: is_static declaration_type TK_IDENTIFICADOR list_of_parameters command_block;
+function_declaration: is_static declaration_type TK_IDENTIFICADOR list_of_parameters_declaration command_block;
 
-list_of_parameters: '(' parameters_list ')' | '(' ')';
+list_of_parameters_declaration: '(' parameters_declaration_list ')' | '(' ')';
 
-parameters_list: parameter ',' parameters_list | parameter;
+parameters_declaration_list: parameter_declaration ',' parameters_declaration_list | parameter_declaration;
 
-parameter: is_const declaration_type TK_IDENTIFICADOR;
+parameter_declaration: is_const declaration_type TK_IDENTIFICADOR;
 
 /* END FUNCTION HEADER */
 
@@ -87,7 +88,7 @@ command_block: '{' list_of_commands '}';
 
 list_of_commands: list_of_commands valid_command | %empty;
 
-valid_command: local_var_declaration | assignment_command | command_block;
+valid_command: local_var_declaration | assignment_command | command_block | input_command | output_command;
 
 /* BEGIN LOCAL VAR */
 local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init is_semicolon;
@@ -107,6 +108,17 @@ assignment_command: TK_IDENTIFICADOR is_vector '=' expression is_semicolon;
 
 /* END ASSIGNMENT COMMAND*/
 
+/* BEGIN I/O COMMAND */
+
+input_command: TK_PR_INPUT expression is_semicolon;
+output_command: TK_PR_OUTPUT parameters_output_list is_semicolon;
+
+/* END I/O COMMAND */
+
+parameters_output_list: parameter_output ',' parameters_output_list | parameter_output;
+
+parameter_output: expression;
+
 is_semicolon: ';' | %empty;
 
 is_const: TK_PR_CONST | %empty;
@@ -120,11 +132,29 @@ declaration_type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRI
 literal_values: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_TRUE | TK_LIT_FALSE | TK_LIT_CHAR | TK_LIT_STRING;
 
 expression: get_reference_address | reference_access_value | TK_IDENTIFICADOR is_vector | TK_LIT_INT | TK_LIT_FLOAT;
-
+expression: '(' expression ')';
 expression: expression '+' expression;
 expression: expression '-' expression;
 expression: expression '/' expression;
 expression: expression '*' expression;
+expression: expression '%' expression;
+expression: '+' expression;
+expression: '-' expression;
+expression: '!' expression;
+expression: expression '|' expression;
+expression: expression '&' expression;
+expression: expression '^' expression;
+expression: expression '<' expression;
+expression: expression '>' expression;
+
+expression: expression TK_OC_LE expression;
+expression: expression TK_OC_GE expression;
+expression: expression TK_OC_EQ expression;
+expression: expression TK_OC_NE expression;
+expression: expression TK_OC_AND expression;
+expression: expression TK_OC_OR expression;
+expression: expression '?' expression ':' expression;
+
 reference_access_value: '*' TK_IDENTIFICADOR;
 get_reference_address: '&' TK_IDENTIFICADOR;
 

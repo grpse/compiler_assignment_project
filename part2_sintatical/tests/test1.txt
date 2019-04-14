@@ -34,7 +34,11 @@ int fn(int i, const float f) {
     static const int tt;
     static int tt;
     int tt;
-
+    tasd[123] = 2.3;
+    tt = 23.0E+231;
+    tt = 23.0E-231;
+    tt = 23.0e+231;
+    tt = 23.0e-231;
     int tt <= 23;
     char tt <= asd;
     string tt <= "aosjdoiasjdo";
@@ -60,6 +64,11 @@ int fn(int i, const float f) {
             int tt <= asd;
             asd[123] = *qwe + 23;
             asd = 123 + &asd;
+
+            input (123 + 45.123);
+            output (asd + 123 * asd * *asd), 123.23E+123, 12;
+
+            asd[(1 + 1) * 123 / 5.23] = +1 - 1 / 2 * 23 % 123 + !asd && asd || qwe < 123 < 123123 > 1293 <= 123 >= 123 == 123 != 123 ? 5345: *asd;
         }
 
     }
