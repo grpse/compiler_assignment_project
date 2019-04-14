@@ -73,7 +73,7 @@ int fn(int i, const float f) {
             tre();
             tre(123, (1231 + 123.123E+123));
 
-        }
+        };
 
         asd << asd;
         asd << (123 + asd / 123);
@@ -86,5 +86,22 @@ int fn(int i, const float f) {
         break;
         continue;
 
-    }
+
+        if (true) then {
+            asd = 123;
+        }
+        
+        if (false + 19283912 * (aiushd + 123)) then { 
+            asd();
+            asd(123, 123.23, "asdasd");
+            asd('a');
+        } else {
+            asd(asdasd);
+            asd();
+            asd(123, 123.23, "asdasd");
+            asd('a');
+        }
+
+
+    };
 }

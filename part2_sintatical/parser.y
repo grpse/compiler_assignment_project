@@ -86,12 +86,12 @@ parameter_declaration: is_const declaration_type TK_IDENTIFICADOR;
 
 command_block: '{' list_of_commands '}';
 
-list_of_commands: list_of_commands valid_command | %empty;
+list_of_commands: list_of_commands valid_command is_semicolon | list_of_commands if_then_else_command | %empty;
 
 valid_command: local_var_declaration | assignment_command | command_block | input_command | output_command | function_call_command | shift_command | break_flow_command;
 
 /* BEGIN LOCAL VAR */
-local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init is_semicolon;
+local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init;
 
 local_var_attribute: TK_PR_STATIC is_const | %empty;
 
@@ -104,20 +104,20 @@ local_var_init_valid_values: literal_values | TK_IDENTIFICADOR;
 
 /* BEGIN ASSIGNMENT COMMAND */
 
-assignment_command: TK_IDENTIFICADOR is_vector '=' expression is_semicolon;
+assignment_command: TK_IDENTIFICADOR is_vector '=' expression;
 
 /* END ASSIGNMENT COMMAND*/
 
 /* BEGIN I/O COMMAND */
 
-input_command: TK_PR_INPUT expression is_semicolon;
-output_command: TK_PR_OUTPUT parameters_list is_semicolon;
+input_command: TK_PR_INPUT expression;
+output_command: TK_PR_OUTPUT parameters_list;
 
 /* END I/O COMMAND */
 
 /* BEGIN FUNCTION CALL COMMAND */
 
-function_call_command: TK_IDENTIFICADOR function_call_parameters_command is_semicolon;
+function_call_command: TK_IDENTIFICADOR function_call_parameters_command;
 
 function_call_parameters_command: '(' parameters_list ')' | '(' ')';
 
@@ -125,23 +125,35 @@ function_call_parameters_command: '(' parameters_list ')' | '(' ')';
 
 /* BEGIN SHIFT LEFT AND RIGHT COMMAND */
 
-shift_command: TK_IDENTIFICADOR is_vector shift_operator expression is_semicolon;
+shift_command: TK_IDENTIFICADOR is_vector shift_operator expression;
 
 shift_operator: TK_OC_SL | TK_OC_SR;
 
 /* END SHIFT LEFT AND RIGHT COMMAND */
 
-/* BEGIN RETURN, BREAK, CONTINUE */
+/* BEGIN RETURN, BREAK, CONTINUE COMMAND */
 
-break_flow_command: break_flow_valid_commands is_semicolon;
+break_flow_command: break_flow_valid_commands;
 
 break_flow_valid_commands: TK_PR_RETURN expression | TK_PR_BREAK | TK_PR_CONTINUE;
 
-/* END RETURN, BREAK, CONTINUE */
+/* END RETURN, BREAK, CONTINUE COMMAND */
 
-parameters_list: expression ',' parameters_list | expression;
+/* BEGIN FLOW CONTROL COMMAND */
 
-is_semicolon: ';' | %empty;
+if_then_else_command: if_then_only_command | if_then_else_too_command;
+
+if_then_only_command: TK_PR_IF '(' expression ')' TK_PR_THEN command_block;
+
+if_then_else_too_command: TK_PR_IF '(' expression ')' TK_PR_THEN command_block TK_PR_ELSE command_block;
+
+/* END FLOW CONTROL COMMAND */
+
+parameters_list: parameter ',' parameters_list | parameter;
+
+parameter: expression | TK_LIT_CHAR | TK_LIT_STRING;
+
+is_semicolon: ';';
 
 is_const: TK_PR_CONST | %empty;
 
@@ -153,7 +165,7 @@ declaration_type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRI
 
 literal_values: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_TRUE | TK_LIT_FALSE | TK_LIT_CHAR | TK_LIT_STRING;
 
-expression: get_reference_address | reference_access_value | TK_IDENTIFICADOR is_vector | TK_LIT_INT | TK_LIT_FLOAT;
+expression: get_reference_address | reference_access_value | TK_IDENTIFICADOR is_vector | TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_FALSE | TK_LIT_TRUE | function_call_command;
 expression: '(' expression ')';
 expression: expression '+' expression;
 expression: expression '-' expression;
