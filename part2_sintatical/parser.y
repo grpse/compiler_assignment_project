@@ -88,7 +88,7 @@ command_block: '{' list_of_commands '}';
 
 list_of_commands: list_of_commands valid_command | %empty;
 
-valid_command: local_var_declaration | assignment_command | command_block | input_command | output_command;
+valid_command: local_var_declaration | assignment_command | command_block | input_command | output_command | function_call;
 
 /* BEGIN LOCAL VAR */
 local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init is_semicolon;
@@ -111,13 +111,19 @@ assignment_command: TK_IDENTIFICADOR is_vector '=' expression is_semicolon;
 /* BEGIN I/O COMMAND */
 
 input_command: TK_PR_INPUT expression is_semicolon;
-output_command: TK_PR_OUTPUT parameters_output_list is_semicolon;
+output_command: TK_PR_OUTPUT parameters_list is_semicolon;
 
 /* END I/O COMMAND */
 
-parameters_output_list: parameter_output ',' parameters_output_list | parameter_output;
+/* BEGIN FUNCTION CALL */
 
-parameter_output: expression;
+function_call: TK_IDENTIFICADOR function_call_parameters is_semicolon;
+
+function_call_parameters: '(' parameters_list ')' | '(' ')';
+
+/* END FUNCTION CALL */
+
+parameters_list: expression ',' parameters_list | expression;
 
 is_semicolon: ';' | %empty;
 
