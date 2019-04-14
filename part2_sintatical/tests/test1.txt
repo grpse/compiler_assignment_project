@@ -75,5 +75,16 @@ int fn(int i, const float f) {
 
         }
 
+        asd << asd;
+        asd << (123 + asd / 123);
+        asd >> 123;
+        qwe >> qwe;
+        asd[(123 + asd)] >> 123;
+        asd[(123 + asd)] << 123;
+
+        return (1231 + asd / 123 % _asd + 123);
+        break;
+        continue;
+
     }
 }
