@@ -835,7 +835,7 @@ YY_DECL
 		}
 
 	{
-#line 74 "scanner.l"
+#line 89 "scanner.l"
 
 
 #line 842 "scanner.lex.c"
@@ -898,232 +898,232 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 76 "scanner.l"
+#line 91 "scanner.l"
 { line_count++; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 77 "scanner.l"
+#line 92 "scanner.l"
 { ; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 79 "scanner.l"
+#line 94 "scanner.l"
 { return TK_PR_INT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 80 "scanner.l"
+#line 95 "scanner.l"
 { return TK_PR_FLOAT; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 81 "scanner.l"
+#line 96 "scanner.l"
 { return TK_PR_BOOL; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 82 "scanner.l"
+#line 97 "scanner.l"
 { return TK_PR_CHAR; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 83 "scanner.l"
+#line 98 "scanner.l"
 { return TK_PR_STRING; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 85 "scanner.l"
+#line 100 "scanner.l"
 { return TK_PR_IF; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 86 "scanner.l"
+#line 101 "scanner.l"
 { return TK_PR_THEN; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 87 "scanner.l"
+#line 102 "scanner.l"
 { return TK_PR_ELSE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 88 "scanner.l"
+#line 103 "scanner.l"
 { return TK_PR_WHILE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 89 "scanner.l"
+#line 104 "scanner.l"
 { return TK_PR_DO; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 90 "scanner.l"
+#line 105 "scanner.l"
 { return TK_PR_INPUT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 91 "scanner.l"
+#line 106 "scanner.l"
 { return TK_PR_OUTPUT; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 92 "scanner.l"
+#line 107 "scanner.l"
 { return TK_PR_RETURN; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 93 "scanner.l"
+#line 108 "scanner.l"
 { return TK_PR_CONST; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 94 "scanner.l"
+#line 109 "scanner.l"
 { return TK_PR_STATIC; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 95 "scanner.l"
+#line 110 "scanner.l"
 { return TK_PR_FOREACH; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 96 "scanner.l"
+#line 111 "scanner.l"
 { return TK_PR_FOR; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 97 "scanner.l"
+#line 112 "scanner.l"
 { return TK_PR_SWITCH; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 98 "scanner.l"
+#line 113 "scanner.l"
 { return TK_PR_CASE; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 99 "scanner.l"
+#line 114 "scanner.l"
 { return TK_PR_BREAK; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 100 "scanner.l"
+#line 115 "scanner.l"
 { return TK_PR_CONTINUE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 101 "scanner.l"
+#line 116 "scanner.l"
 { return TK_PR_CLASS; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 102 "scanner.l"
+#line 117 "scanner.l"
 { return TK_PR_PRIVATE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 103 "scanner.l"
+#line 118 "scanner.l"
 { return TK_PR_PUBLIC; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 104 "scanner.l"
+#line 119 "scanner.l"
 { return TK_PR_PROTECTED; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 105 "scanner.l"
+#line 120 "scanner.l"
 { return TK_OC_LE; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 106 "scanner.l"
+#line 121 "scanner.l"
 { return TK_OC_GE; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 107 "scanner.l"
+#line 122 "scanner.l"
 { return TK_OC_EQ; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 108 "scanner.l"
+#line 123 "scanner.l"
 { return TK_OC_NE; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 109 "scanner.l"
+#line 124 "scanner.l"
 { return TK_OC_AND; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 110 "scanner.l"
+#line 125 "scanner.l"
 { return TK_OC_OR; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 111 "scanner.l"
+#line 126 "scanner.l"
 { return TK_OC_SL; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 112 "scanner.l"
+#line 127 "scanner.l"
 { return TK_OC_SR; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 113 "scanner.l"
+#line 128 "scanner.l"
 { return TK_OC_FORWARD_PIPE; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 114 "scanner.l"
+#line 129 "scanner.l"
 { return TK_OC_BASH_PIPE; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 116 "scanner.l"
+#line 131 "scanner.l"
 { return TK_LIT_TRUE; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 117 "scanner.l"
+#line 132 "scanner.l"
 { return TK_LIT_FALSE; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 119 "scanner.l"
+#line 134 "scanner.l"
 { return TK_IDENTIFICADOR; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 122 "scanner.l"
+#line 137 "scanner.l"
 { return TK_LIT_INT; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 123 "scanner.l"
+#line 138 "scanner.l"
 { return TK_LIT_FLOAT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 124 "scanner.l"
+#line 139 "scanner.l"
 { return TK_LIT_CHAR; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 125 "scanner.l"
+#line 140 "scanner.l"
 { return TK_LIT_STRING; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 126 "scanner.l"
+#line 141 "scanner.l"
 { return yytext[0]; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 128 "scanner.l"
+#line 143 "scanner.l"
 ECHO;
 	YY_BREAK
 #line 1130 "scanner.lex.c"
@@ -2127,6 +2127,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 128 "scanner.l"
+#line 143 "scanner.l"
 
 

@@ -1,0 +1,1229 @@
+Terminals unused in grammar
+
+   TK_PR_IF
+   TK_PR_THEN
+   TK_PR_ELSE
+   TK_PR_WHILE
+   TK_PR_DO
+   TK_PR_INPUT
+   TK_PR_OUTPUT
+   TK_PR_RETURN
+   TK_PR_FOREACH
+   TK_PR_FOR
+   TK_PR_SWITCH
+   TK_PR_CASE
+   TK_PR_BREAK
+   TK_PR_CONTINUE
+   TK_PR_CLASS
+   TK_PR_PRIVATE
+   TK_PR_PUBLIC
+   TK_PR_PROTECTED
+   TK_OC_GE
+   TK_OC_EQ
+   TK_OC_NE
+   TK_OC_AND
+   TK_OC_OR
+   TK_OC_SL
+   TK_OC_SR
+   TK_OC_FORWARD_PIPE
+   TK_OC_BASH_PIPE
+   TOKEN_ERRO
+   NEW_LINE
+   '!'
+   '^'
+   '#'
+
+
+Grammar
+
+    0 $accept: programa $end
+
+    1 programa: declarations
+    2         | %empty
+
+    3 declarations: declarations global_var_declaration
+    4             | declarations function_declaration
+    5             | global_var_declaration
+    6             | function_declaration
+
+    7 global_var_declaration: TK_IDENTIFICADOR is_vector is_static declaration_type ';'
+
+    8 function_declaration: is_static declaration_type TK_IDENTIFICADOR list_of_parameters command_block
+
+    9 list_of_parameters: '(' parameters_list ')'
+   10                   | '(' ')'
+
+   11 parameters_list: parameter ',' parameters_list
+   12                | parameter
+
+   13 parameter: is_const declaration_type TK_IDENTIFICADOR
+
+   14 command_block: '{' list_of_commands '}'
+
+   15 list_of_commands: list_of_commands valid_command
+   16                 | %empty
+
+   17 valid_command: local_var_declaration
+   18              | assignment_command
+   19              | command_block
+
+   20 local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init is_semicolon
+
+   21 local_var_attribute: TK_PR_STATIC is_const
+   22                    | %empty
+
+   23 is_local_var_init: local_var_init
+   24                  | %empty
+
+   25 local_var_init: TK_OC_LE local_var_init_valid_values
+
+   26 local_var_init_valid_values: literal_values
+   27                            | TK_IDENTIFICADOR
+
+   28 assignment_command: TK_IDENTIFICADOR is_vector '=' expression is_semicolon
+
+   29 is_semicolon: ';'
+   30             | %empty
+
+   31 is_const: TK_PR_CONST
+   32         | %empty
+
+   33 is_vector: '[' expression ']'
+   34          | %empty
+
+   35 is_static: TK_PR_STATIC
+   36          | %empty
+
+   37 declaration_type: TK_PR_INT
+   38                 | TK_PR_FLOAT
+   39                 | TK_PR_BOOL
+   40                 | TK_PR_CHAR
+   41                 | TK_PR_STRING
+
+   42 literal_values: TK_LIT_INT
+   43               | TK_LIT_FLOAT
+   44               | TK_LIT_TRUE
+   45               | TK_LIT_FALSE
+   46               | TK_LIT_CHAR
+   47               | TK_LIT_STRING
+
+   48 expression: get_reference_address
+   49           | reference_access_value
+   50           | TK_IDENTIFICADOR is_vector
+   51           | TK_LIT_INT
+   52           | TK_LIT_FLOAT
+   53           | expression '+' expression
+   54           | expression '-' expression
+   55           | expression '/' expression
+   56           | expression '*' expression
+
+   57 reference_access_value: '*' TK_IDENTIFICADOR
+
+   58 get_reference_address: '&' TK_IDENTIFICADOR
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'!' (33)
+'#' (35)
+'&' (38) 58
+'(' (40) 9 10
+')' (41) 9 10
+'*' (42) 56 57
+'+' (43) 53
+',' (44) 11
+'-' (45) 54
+'/' (47) 55
+';' (59) 7 29
+'=' (61) 28
+'[' (91) 33
+']' (93) 33
+'^' (94)
+'{' (123) 14
+'}' (125) 14
+error (256)
+TK_PR_INT (258) 37
+TK_PR_FLOAT (259) 38
+TK_PR_BOOL (260) 39
+TK_PR_CHAR (261) 40
+TK_PR_STRING (262) 41
+TK_PR_IF (263)
+TK_PR_THEN (264)
+TK_PR_ELSE (265)
+TK_PR_WHILE (266)
+TK_PR_DO (267)
+TK_PR_INPUT (268)
+TK_PR_OUTPUT (269)
+TK_PR_RETURN (270)
+TK_PR_CONST (271) 31
+TK_PR_STATIC (272) 21 35
+TK_PR_FOREACH (273)
+TK_PR_FOR (274)
+TK_PR_SWITCH (275)
+TK_PR_CASE (276)
+TK_PR_BREAK (277)
+TK_PR_CONTINUE (278)
+TK_PR_CLASS (279)
+TK_PR_PRIVATE (280)
+TK_PR_PUBLIC (281)
+TK_PR_PROTECTED (282)
+TK_OC_LE (283) 25
+TK_OC_GE (284)
+TK_OC_EQ (285)
+TK_OC_NE (286)
+TK_OC_AND (287)
+TK_OC_OR (288)
+TK_OC_SL (289)
+TK_OC_SR (290)
+TK_OC_FORWARD_PIPE (291)
+TK_OC_BASH_PIPE (292)
+TK_LIT_INT (293) 42 51
+TK_LIT_FLOAT (294) 43 52
+TK_LIT_FALSE (295) 45
+TK_LIT_TRUE (296) 44
+TK_LIT_CHAR (297) 46
+TK_LIT_STRING (298) 47
+TK_IDENTIFICADOR (299) 7 8 13 20 27 28 50 57 58
+TOKEN_ERRO (300)
+NEW_LINE (301)
+
+
+Nonterminals, with rules where they appear
+
+$accept (64)
+    on left: 0
+programa (65)
+    on left: 1 2, on right: 0
+declarations (66)
+    on left: 3 4 5 6, on right: 1 3 4
+global_var_declaration (67)
+    on left: 7, on right: 3 5
+function_declaration (68)
+    on left: 8, on right: 4 6
+list_of_parameters (69)
+    on left: 9 10, on right: 8
+parameters_list (70)
+    on left: 11 12, on right: 9 11
+parameter (71)
+    on left: 13, on right: 11 12
+command_block (72)
+    on left: 14, on right: 8 19
+list_of_commands (73)
+    on left: 15 16, on right: 14 15
+valid_command (74)
+    on left: 17 18 19, on right: 15
+local_var_declaration (75)
+    on left: 20, on right: 17
+local_var_attribute (76)
+    on left: 21 22, on right: 20
+is_local_var_init (77)
+    on left: 23 24, on right: 20
+local_var_init (78)
+    on left: 25, on right: 23
+local_var_init_valid_values (79)
+    on left: 26 27, on right: 25
+assignment_command (80)
+    on left: 28, on right: 18
+is_semicolon (81)
+    on left: 29 30, on right: 20 28
+is_const (82)
+    on left: 31 32, on right: 13 21
+is_vector (83)
+    on left: 33 34, on right: 7 28 50
+is_static (84)
+    on left: 35 36, on right: 7 8
+declaration_type (85)
+    on left: 37 38 39 40 41, on right: 7 8 13 20
+literal_values (86)
+    on left: 42 43 44 45 46 47, on right: 26
+expression (87)
+    on left: 48 49 50 51 52 53 54 55 56, on right: 28 33 53 54 55 56
+reference_access_value (88)
+    on left: 57, on right: 49
+get_reference_address (89)
+    on left: 58, on right: 48
+
+
+State 0
+
+    0 $accept: . programa $end
+    1 programa: . declarations
+    2         | . %empty  [$end]
+    3 declarations: . declarations global_var_declaration
+    4             | . declarations function_declaration
+    5             | . global_var_declaration
+    6             | . function_declaration
+    7 global_var_declaration: . TK_IDENTIFICADOR is_vector is_static declaration_type ';'
+    8 function_declaration: . is_static declaration_type TK_IDENTIFICADOR list_of_parameters command_block
+   35 is_static: . TK_PR_STATIC
+   36          | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING]
+
+    TK_PR_STATIC      shift, and go to state 1
+    TK_IDENTIFICADOR  shift, and go to state 2
+
+    $end      reduce using rule 2 (programa)
+    $default  reduce using rule 36 (is_static)
+
+    programa                go to state 3
+    declarations            go to state 4
+    global_var_declaration  go to state 5
+    function_declaration    go to state 6
+    is_static               go to state 7
+
+
+State 1
+
+   35 is_static: TK_PR_STATIC .
+
+    $default  reduce using rule 35 (is_static)
+
+
+State 2
+
+    7 global_var_declaration: TK_IDENTIFICADOR . is_vector is_static declaration_type ';'
+   33 is_vector: . '[' expression ']'
+   34          | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING, TK_PR_STATIC]
+
+    '['  shift, and go to state 8
+
+    $default  reduce using rule 34 (is_vector)
+
+    is_vector  go to state 9
+
+
+State 3
+
+    0 $accept: programa . $end
+
+    $end  shift, and go to state 10
+
+
+State 4
+
+    1 programa: declarations .  [$end]
+    3 declarations: declarations . global_var_declaration
+    4             | declarations . function_declaration
+    7 global_var_declaration: . TK_IDENTIFICADOR is_vector is_static declaration_type ';'
+    8 function_declaration: . is_static declaration_type TK_IDENTIFICADOR list_of_parameters command_block
+   35 is_static: . TK_PR_STATIC
+   36          | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING]
+
+    TK_PR_STATIC      shift, and go to state 1
+    TK_IDENTIFICADOR  shift, and go to state 2
+
+    $end      reduce using rule 1 (programa)
+    $default  reduce using rule 36 (is_static)
+
+    global_var_declaration  go to state 11
+    function_declaration    go to state 12
+    is_static               go to state 7
+
+
+State 5
+
+    5 declarations: global_var_declaration .
+
+    $default  reduce using rule 5 (declarations)
+
+
+State 6
+
+    6 declarations: function_declaration .
+
+    $default  reduce using rule 6 (declarations)
+
+
+State 7
+
+    8 function_declaration: is_static . declaration_type TK_IDENTIFICADOR list_of_parameters command_block
+   37 declaration_type: . TK_PR_INT
+   38                 | . TK_PR_FLOAT
+   39                 | . TK_PR_BOOL
+   40                 | . TK_PR_CHAR
+   41                 | . TK_PR_STRING
+
+    TK_PR_INT     shift, and go to state 13
+    TK_PR_FLOAT   shift, and go to state 14
+    TK_PR_BOOL    shift, and go to state 15
+    TK_PR_CHAR    shift, and go to state 16
+    TK_PR_STRING  shift, and go to state 17
+
+    declaration_type  go to state 18
+
+
+State 8
+
+   33 is_vector: '[' . expression ']'
+   48 expression: . get_reference_address
+   49           | . reference_access_value
+   50           | . TK_IDENTIFICADOR is_vector
+   51           | . TK_LIT_INT
+   52           | . TK_LIT_FLOAT
+   53           | . expression '+' expression
+   54           | . expression '-' expression
+   55           | . expression '/' expression
+   56           | . expression '*' expression
+   57 reference_access_value: . '*' TK_IDENTIFICADOR
+   58 get_reference_address: . '&' TK_IDENTIFICADOR
+
+    TK_LIT_INT        shift, and go to state 19
+    TK_LIT_FLOAT      shift, and go to state 20
+    TK_IDENTIFICADOR  shift, and go to state 21
+    '*'               shift, and go to state 22
+    '&'               shift, and go to state 23
+
+    expression              go to state 24
+    reference_access_value  go to state 25
+    get_reference_address   go to state 26
+
+
+State 9
+
+    7 global_var_declaration: TK_IDENTIFICADOR is_vector . is_static declaration_type ';'
+   35 is_static: . TK_PR_STATIC
+   36          | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING]
+
+    TK_PR_STATIC  shift, and go to state 1
+
+    $default  reduce using rule 36 (is_static)
+
+    is_static  go to state 27
+
+
+State 10
+
+    0 $accept: programa $end .
+
+    $default  accept
+
+
+State 11
+
+    3 declarations: declarations global_var_declaration .
+
+    $default  reduce using rule 3 (declarations)
+
+
+State 12
+
+    4 declarations: declarations function_declaration .
+
+    $default  reduce using rule 4 (declarations)
+
+
+State 13
+
+   37 declaration_type: TK_PR_INT .
+
+    $default  reduce using rule 37 (declaration_type)
+
+
+State 14
+
+   38 declaration_type: TK_PR_FLOAT .
+
+    $default  reduce using rule 38 (declaration_type)
+
+
+State 15
+
+   39 declaration_type: TK_PR_BOOL .
+
+    $default  reduce using rule 39 (declaration_type)
+
+
+State 16
+
+   40 declaration_type: TK_PR_CHAR .
+
+    $default  reduce using rule 40 (declaration_type)
+
+
+State 17
+
+   41 declaration_type: TK_PR_STRING .
+
+    $default  reduce using rule 41 (declaration_type)
+
+
+State 18
+
+    8 function_declaration: is_static declaration_type . TK_IDENTIFICADOR list_of_parameters command_block
+
+    TK_IDENTIFICADOR  shift, and go to state 28
+
+
+State 19
+
+   51 expression: TK_LIT_INT .
+
+    $default  reduce using rule 51 (expression)
+
+
+State 20
+
+   52 expression: TK_LIT_FLOAT .
+
+    $default  reduce using rule 52 (expression)
+
+
+State 21
+
+   33 is_vector: . '[' expression ']'
+   34          | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING, TK_PR_STATIC, TK_IDENTIFICADOR, '-', '+', '*', '/', ';', '{', '}', ']']
+   50 expression: TK_IDENTIFICADOR . is_vector
+
+    '['  shift, and go to state 8
+
+    $default  reduce using rule 34 (is_vector)
+
+    is_vector  go to state 29
+
+
+State 22
+
+   57 reference_access_value: '*' . TK_IDENTIFICADOR
+
+    TK_IDENTIFICADOR  shift, and go to state 30
+
+
+State 23
+
+   58 get_reference_address: '&' . TK_IDENTIFICADOR
+
+    TK_IDENTIFICADOR  shift, and go to state 31
+
+
+State 24
+
+   33 is_vector: '[' expression . ']'
+   53 expression: expression . '+' expression
+   54           | expression . '-' expression
+   55           | expression . '/' expression
+   56           | expression . '*' expression
+
+    '-'  shift, and go to state 32
+    '+'  shift, and go to state 33
+    '*'  shift, and go to state 34
+    '/'  shift, and go to state 35
+    ']'  shift, and go to state 36
+
+
+State 25
+
+   49 expression: reference_access_value .
+
+    $default  reduce using rule 49 (expression)
+
+
+State 26
+
+   48 expression: get_reference_address .
+
+    $default  reduce using rule 48 (expression)
+
+
+State 27
+
+    7 global_var_declaration: TK_IDENTIFICADOR is_vector is_static . declaration_type ';'
+   37 declaration_type: . TK_PR_INT
+   38                 | . TK_PR_FLOAT
+   39                 | . TK_PR_BOOL
+   40                 | . TK_PR_CHAR
+   41                 | . TK_PR_STRING
+
+    TK_PR_INT     shift, and go to state 13
+    TK_PR_FLOAT   shift, and go to state 14
+    TK_PR_BOOL    shift, and go to state 15
+    TK_PR_CHAR    shift, and go to state 16
+    TK_PR_STRING  shift, and go to state 17
+
+    declaration_type  go to state 37
+
+
+State 28
+
+    8 function_declaration: is_static declaration_type TK_IDENTIFICADOR . list_of_parameters command_block
+    9 list_of_parameters: . '(' parameters_list ')'
+   10                   | . '(' ')'
+
+    '('  shift, and go to state 38
+
+    list_of_parameters  go to state 39
+
+
+State 29
+
+   50 expression: TK_IDENTIFICADOR is_vector .
+
+    $default  reduce using rule 50 (expression)
+
+
+State 30
+
+   57 reference_access_value: '*' TK_IDENTIFICADOR .
+
+    $default  reduce using rule 57 (reference_access_value)
+
+
+State 31
+
+   58 get_reference_address: '&' TK_IDENTIFICADOR .
+
+    $default  reduce using rule 58 (get_reference_address)
+
+
+State 32
+
+   48 expression: . get_reference_address
+   49           | . reference_access_value
+   50           | . TK_IDENTIFICADOR is_vector
+   51           | . TK_LIT_INT
+   52           | . TK_LIT_FLOAT
+   53           | . expression '+' expression
+   54           | . expression '-' expression
+   54           | expression '-' . expression
+   55           | . expression '/' expression
+   56           | . expression '*' expression
+   57 reference_access_value: . '*' TK_IDENTIFICADOR
+   58 get_reference_address: . '&' TK_IDENTIFICADOR
+
+    TK_LIT_INT        shift, and go to state 19
+    TK_LIT_FLOAT      shift, and go to state 20
+    TK_IDENTIFICADOR  shift, and go to state 21
+    '*'               shift, and go to state 22
+    '&'               shift, and go to state 23
+
+    expression              go to state 40
+    reference_access_value  go to state 25
+    get_reference_address   go to state 26
+
+
+State 33
+
+   48 expression: . get_reference_address
+   49           | . reference_access_value
+   50           | . TK_IDENTIFICADOR is_vector
+   51           | . TK_LIT_INT
+   52           | . TK_LIT_FLOAT
+   53           | . expression '+' expression
+   53           | expression '+' . expression
+   54           | . expression '-' expression
+   55           | . expression '/' expression
+   56           | . expression '*' expression
+   57 reference_access_value: . '*' TK_IDENTIFICADOR
+   58 get_reference_address: . '&' TK_IDENTIFICADOR
+
+    TK_LIT_INT        shift, and go to state 19
+    TK_LIT_FLOAT      shift, and go to state 20
+    TK_IDENTIFICADOR  shift, and go to state 21
+    '*'               shift, and go to state 22
+    '&'               shift, and go to state 23
+
+    expression              go to state 41
+    reference_access_value  go to state 25
+    get_reference_address   go to state 26
+
+
+State 34
+
+   48 expression: . get_reference_address
+   49           | . reference_access_value
+   50           | . TK_IDENTIFICADOR is_vector
+   51           | . TK_LIT_INT
+   52           | . TK_LIT_FLOAT
+   53           | . expression '+' expression
+   54           | . expression '-' expression
+   55           | . expression '/' expression
+   56           | . expression '*' expression
+   56           | expression '*' . expression
+   57 reference_access_value: . '*' TK_IDENTIFICADOR
+   58 get_reference_address: . '&' TK_IDENTIFICADOR
+
+    TK_LIT_INT        shift, and go to state 19
+    TK_LIT_FLOAT      shift, and go to state 20
+    TK_IDENTIFICADOR  shift, and go to state 21
+    '*'               shift, and go to state 22
+    '&'               shift, and go to state 23
+
+    expression              go to state 42
+    reference_access_value  go to state 25
+    get_reference_address   go to state 26
+
+
+State 35
+
+   48 expression: . get_reference_address
+   49           | . reference_access_value
+   50           | . TK_IDENTIFICADOR is_vector
+   51           | . TK_LIT_INT
+   52           | . TK_LIT_FLOAT
+   53           | . expression '+' expression
+   54           | . expression '-' expression
+   55           | . expression '/' expression
+   55           | expression '/' . expression
+   56           | . expression '*' expression
+   57 reference_access_value: . '*' TK_IDENTIFICADOR
+   58 get_reference_address: . '&' TK_IDENTIFICADOR
+
+    TK_LIT_INT        shift, and go to state 19
+    TK_LIT_FLOAT      shift, and go to state 20
+    TK_IDENTIFICADOR  shift, and go to state 21
+    '*'               shift, and go to state 22
+    '&'               shift, and go to state 23
+
+    expression              go to state 43
+    reference_access_value  go to state 25
+    get_reference_address   go to state 26
+
+
+State 36
+
+   33 is_vector: '[' expression ']' .
+
+    $default  reduce using rule 33 (is_vector)
+
+
+State 37
+
+    7 global_var_declaration: TK_IDENTIFICADOR is_vector is_static declaration_type . ';'
+
+    ';'  shift, and go to state 44
+
+
+State 38
+
+    9 list_of_parameters: '(' . parameters_list ')'
+   10                   | '(' . ')'
+   11 parameters_list: . parameter ',' parameters_list
+   12                | . parameter
+   13 parameter: . is_const declaration_type TK_IDENTIFICADOR
+   31 is_const: . TK_PR_CONST
+   32         | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING]
+
+    TK_PR_CONST  shift, and go to state 45
+    ')'          shift, and go to state 46
+
+    $default  reduce using rule 32 (is_const)
+
+    parameters_list  go to state 47
+    parameter        go to state 48
+    is_const         go to state 49
+
+
+State 39
+
+    8 function_declaration: is_static declaration_type TK_IDENTIFICADOR list_of_parameters . command_block
+   14 command_block: . '{' list_of_commands '}'
+
+    '{'  shift, and go to state 50
+
+    command_block  go to state 51
+
+
+State 40
+
+   53 expression: expression . '+' expression
+   54           | expression . '-' expression
+   54           | expression '-' expression .  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING, TK_PR_STATIC, TK_IDENTIFICADOR, '-', '+', ';', '{', '}', ']']
+   55           | expression . '/' expression
+   56           | expression . '*' expression
+
+    '*'  shift, and go to state 34
+    '/'  shift, and go to state 35
+
+    $default  reduce using rule 54 (expression)
+
+    Conflict between rule 54 and token '-' resolved as reduce (%left '-').
+    Conflict between rule 54 and token '+' resolved as reduce (%left '+').
+    Conflict between rule 54 and token '*' resolved as shift ('-' < '*').
+    Conflict between rule 54 and token '/' resolved as shift ('-' < '/').
+
+
+State 41
+
+   53 expression: expression . '+' expression
+   53           | expression '+' expression .  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING, TK_PR_STATIC, TK_IDENTIFICADOR, '-', '+', ';', '{', '}', ']']
+   54           | expression . '-' expression
+   55           | expression . '/' expression
+   56           | expression . '*' expression
+
+    '*'  shift, and go to state 34
+    '/'  shift, and go to state 35
+
+    $default  reduce using rule 53 (expression)
+
+    Conflict between rule 53 and token '-' resolved as reduce (%left '-').
+    Conflict between rule 53 and token '+' resolved as reduce (%left '+').
+    Conflict between rule 53 and token '*' resolved as shift ('+' < '*').
+    Conflict between rule 53 and token '/' resolved as shift ('+' < '/').
+
+
+State 42
+
+   53 expression: expression . '+' expression
+   54           | expression . '-' expression
+   55           | expression . '/' expression
+   56           | expression . '*' expression
+   56           | expression '*' expression .  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING, TK_PR_STATIC, TK_IDENTIFICADOR, '-', '+', '*', '/', ';', '{', '}', ']']
+
+    $default  reduce using rule 56 (expression)
+
+    Conflict between rule 56 and token '-' resolved as reduce ('-' < '*').
+    Conflict between rule 56 and token '+' resolved as reduce ('+' < '*').
+    Conflict between rule 56 and token '*' resolved as reduce (%left '*').
+    Conflict between rule 56 and token '/' resolved as reduce (%left '/').
+
+
+State 43
+
+   53 expression: expression . '+' expression
+   54           | expression . '-' expression
+   55           | expression . '/' expression
+   55           | expression '/' expression .  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING, TK_PR_STATIC, TK_IDENTIFICADOR, '-', '+', '*', '/', ';', '{', '}', ']']
+   56           | expression . '*' expression
+
+    $default  reduce using rule 55 (expression)
+
+    Conflict between rule 55 and token '-' resolved as reduce ('-' < '/').
+    Conflict between rule 55 and token '+' resolved as reduce ('+' < '/').
+    Conflict between rule 55 and token '*' resolved as reduce (%left '*').
+    Conflict between rule 55 and token '/' resolved as reduce (%left '/').
+
+
+State 44
+
+    7 global_var_declaration: TK_IDENTIFICADOR is_vector is_static declaration_type ';' .
+
+    $default  reduce using rule 7 (global_var_declaration)
+
+
+State 45
+
+   31 is_const: TK_PR_CONST .
+
+    $default  reduce using rule 31 (is_const)
+
+
+State 46
+
+   10 list_of_parameters: '(' ')' .
+
+    $default  reduce using rule 10 (list_of_parameters)
+
+
+State 47
+
+    9 list_of_parameters: '(' parameters_list . ')'
+
+    ')'  shift, and go to state 52
+
+
+State 48
+
+   11 parameters_list: parameter . ',' parameters_list
+   12                | parameter .  [')']
+
+    ','  shift, and go to state 53
+
+    $default  reduce using rule 12 (parameters_list)
+
+
+State 49
+
+   13 parameter: is_const . declaration_type TK_IDENTIFICADOR
+   37 declaration_type: . TK_PR_INT
+   38                 | . TK_PR_FLOAT
+   39                 | . TK_PR_BOOL
+   40                 | . TK_PR_CHAR
+   41                 | . TK_PR_STRING
+
+    TK_PR_INT     shift, and go to state 13
+    TK_PR_FLOAT   shift, and go to state 14
+    TK_PR_BOOL    shift, and go to state 15
+    TK_PR_CHAR    shift, and go to state 16
+    TK_PR_STRING  shift, and go to state 17
+
+    declaration_type  go to state 54
+
+
+State 50
+
+   14 command_block: '{' . list_of_commands '}'
+   15 list_of_commands: . list_of_commands valid_command
+   16                 | . %empty
+
+    $default  reduce using rule 16 (list_of_commands)
+
+    list_of_commands  go to state 55
+
+
+State 51
+
+    8 function_declaration: is_static declaration_type TK_IDENTIFICADOR list_of_parameters command_block .
+
+    $default  reduce using rule 8 (function_declaration)
+
+
+State 52
+
+    9 list_of_parameters: '(' parameters_list ')' .
+
+    $default  reduce using rule 9 (list_of_parameters)
+
+
+State 53
+
+   11 parameters_list: . parameter ',' parameters_list
+   11                | parameter ',' . parameters_list
+   12                | . parameter
+   13 parameter: . is_const declaration_type TK_IDENTIFICADOR
+   31 is_const: . TK_PR_CONST
+   32         | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING]
+
+    TK_PR_CONST  shift, and go to state 45
+
+    $default  reduce using rule 32 (is_const)
+
+    parameters_list  go to state 56
+    parameter        go to state 48
+    is_const         go to state 49
+
+
+State 54
+
+   13 parameter: is_const declaration_type . TK_IDENTIFICADOR
+
+    TK_IDENTIFICADOR  shift, and go to state 57
+
+
+State 55
+
+   14 command_block: . '{' list_of_commands '}'
+   14              | '{' list_of_commands . '}'
+   15 list_of_commands: list_of_commands . valid_command
+   17 valid_command: . local_var_declaration
+   18              | . assignment_command
+   19              | . command_block
+   20 local_var_declaration: . local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init is_semicolon
+   21 local_var_attribute: . TK_PR_STATIC is_const
+   22                    | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING]
+   28 assignment_command: . TK_IDENTIFICADOR is_vector '=' expression is_semicolon
+
+    TK_PR_STATIC      shift, and go to state 58
+    TK_IDENTIFICADOR  shift, and go to state 59
+    '{'               shift, and go to state 50
+    '}'               shift, and go to state 60
+
+    $default  reduce using rule 22 (local_var_attribute)
+
+    command_block          go to state 61
+    valid_command          go to state 62
+    local_var_declaration  go to state 63
+    local_var_attribute    go to state 64
+    assignment_command     go to state 65
+
+
+State 56
+
+   11 parameters_list: parameter ',' parameters_list .
+
+    $default  reduce using rule 11 (parameters_list)
+
+
+State 57
+
+   13 parameter: is_const declaration_type TK_IDENTIFICADOR .
+
+    $default  reduce using rule 13 (parameter)
+
+
+State 58
+
+   21 local_var_attribute: TK_PR_STATIC . is_const
+   31 is_const: . TK_PR_CONST
+   32         | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING]
+
+    TK_PR_CONST  shift, and go to state 45
+
+    $default  reduce using rule 32 (is_const)
+
+    is_const  go to state 66
+
+
+State 59
+
+   28 assignment_command: TK_IDENTIFICADOR . is_vector '=' expression is_semicolon
+   33 is_vector: . '[' expression ']'
+   34          | . %empty  ['=']
+
+    '['  shift, and go to state 8
+
+    $default  reduce using rule 34 (is_vector)
+
+    is_vector  go to state 67
+
+
+State 60
+
+   14 command_block: '{' list_of_commands '}' .
+
+    $default  reduce using rule 14 (command_block)
+
+
+State 61
+
+   19 valid_command: command_block .
+
+    $default  reduce using rule 19 (valid_command)
+
+
+State 62
+
+   15 list_of_commands: list_of_commands valid_command .
+
+    $default  reduce using rule 15 (list_of_commands)
+
+
+State 63
+
+   17 valid_command: local_var_declaration .
+
+    $default  reduce using rule 17 (valid_command)
+
+
+State 64
+
+   20 local_var_declaration: local_var_attribute . declaration_type TK_IDENTIFICADOR is_local_var_init is_semicolon
+   37 declaration_type: . TK_PR_INT
+   38                 | . TK_PR_FLOAT
+   39                 | . TK_PR_BOOL
+   40                 | . TK_PR_CHAR
+   41                 | . TK_PR_STRING
+
+    TK_PR_INT     shift, and go to state 13
+    TK_PR_FLOAT   shift, and go to state 14
+    TK_PR_BOOL    shift, and go to state 15
+    TK_PR_CHAR    shift, and go to state 16
+    TK_PR_STRING  shift, and go to state 17
+
+    declaration_type  go to state 68
+
+
+State 65
+
+   18 valid_command: assignment_command .
+
+    $default  reduce using rule 18 (valid_command)
+
+
+State 66
+
+   21 local_var_attribute: TK_PR_STATIC is_const .
+
+    $default  reduce using rule 21 (local_var_attribute)
+
+
+State 67
+
+   28 assignment_command: TK_IDENTIFICADOR is_vector . '=' expression is_semicolon
+
+    '='  shift, and go to state 69
+
+
+State 68
+
+   20 local_var_declaration: local_var_attribute declaration_type . TK_IDENTIFICADOR is_local_var_init is_semicolon
+
+    TK_IDENTIFICADOR  shift, and go to state 70
+
+
+State 69
+
+   28 assignment_command: TK_IDENTIFICADOR is_vector '=' . expression is_semicolon
+   48 expression: . get_reference_address
+   49           | . reference_access_value
+   50           | . TK_IDENTIFICADOR is_vector
+   51           | . TK_LIT_INT
+   52           | . TK_LIT_FLOAT
+   53           | . expression '+' expression
+   54           | . expression '-' expression
+   55           | . expression '/' expression
+   56           | . expression '*' expression
+   57 reference_access_value: . '*' TK_IDENTIFICADOR
+   58 get_reference_address: . '&' TK_IDENTIFICADOR
+
+    TK_LIT_INT        shift, and go to state 19
+    TK_LIT_FLOAT      shift, and go to state 20
+    TK_IDENTIFICADOR  shift, and go to state 21
+    '*'               shift, and go to state 22
+    '&'               shift, and go to state 23
+
+    expression              go to state 71
+    reference_access_value  go to state 25
+    get_reference_address   go to state 26
+
+
+State 70
+
+   20 local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR . is_local_var_init is_semicolon
+   23 is_local_var_init: . local_var_init
+   24                  | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING, TK_PR_STATIC, TK_IDENTIFICADOR, ';', '{', '}']
+   25 local_var_init: . TK_OC_LE local_var_init_valid_values
+
+    TK_OC_LE  shift, and go to state 72
+
+    $default  reduce using rule 24 (is_local_var_init)
+
+    is_local_var_init  go to state 73
+    local_var_init     go to state 74
+
+
+State 71
+
+   28 assignment_command: TK_IDENTIFICADOR is_vector '=' expression . is_semicolon
+   29 is_semicolon: . ';'
+   30             | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING, TK_PR_STATIC, TK_IDENTIFICADOR, '{', '}']
+   53 expression: expression . '+' expression
+   54           | expression . '-' expression
+   55           | expression . '/' expression
+   56           | expression . '*' expression
+
+    '-'  shift, and go to state 32
+    '+'  shift, and go to state 33
+    '*'  shift, and go to state 34
+    '/'  shift, and go to state 35
+    ';'  shift, and go to state 75
+
+    $default  reduce using rule 30 (is_semicolon)
+
+    is_semicolon  go to state 76
+
+
+State 72
+
+   25 local_var_init: TK_OC_LE . local_var_init_valid_values
+   26 local_var_init_valid_values: . literal_values
+   27                            | . TK_IDENTIFICADOR
+   42 literal_values: . TK_LIT_INT
+   43               | . TK_LIT_FLOAT
+   44               | . TK_LIT_TRUE
+   45               | . TK_LIT_FALSE
+   46               | . TK_LIT_CHAR
+   47               | . TK_LIT_STRING
+
+    TK_LIT_INT        shift, and go to state 77
+    TK_LIT_FLOAT      shift, and go to state 78
+    TK_LIT_FALSE      shift, and go to state 79
+    TK_LIT_TRUE       shift, and go to state 80
+    TK_LIT_CHAR       shift, and go to state 81
+    TK_LIT_STRING     shift, and go to state 82
+    TK_IDENTIFICADOR  shift, and go to state 83
+
+    local_var_init_valid_values  go to state 84
+    literal_values               go to state 85
+
+
+State 73
+
+   20 local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init . is_semicolon
+   29 is_semicolon: . ';'
+   30             | . %empty  [TK_PR_INT, TK_PR_FLOAT, TK_PR_BOOL, TK_PR_CHAR, TK_PR_STRING, TK_PR_STATIC, TK_IDENTIFICADOR, '{', '}']
+
+    ';'  shift, and go to state 75
+
+    $default  reduce using rule 30 (is_semicolon)
+
+    is_semicolon  go to state 86
+
+
+State 74
+
+   23 is_local_var_init: local_var_init .
+
+    $default  reduce using rule 23 (is_local_var_init)
+
+
+State 75
+
+   29 is_semicolon: ';' .
+
+    $default  reduce using rule 29 (is_semicolon)
+
+
+State 76
+
+   28 assignment_command: TK_IDENTIFICADOR is_vector '=' expression is_semicolon .
+
+    $default  reduce using rule 28 (assignment_command)
+
+
+State 77
+
+   42 literal_values: TK_LIT_INT .
+
+    $default  reduce using rule 42 (literal_values)
+
+
+State 78
+
+   43 literal_values: TK_LIT_FLOAT .
+
+    $default  reduce using rule 43 (literal_values)
+
+
+State 79
+
+   45 literal_values: TK_LIT_FALSE .
+
+    $default  reduce using rule 45 (literal_values)
+
+
+State 80
+
+   44 literal_values: TK_LIT_TRUE .
+
+    $default  reduce using rule 44 (literal_values)
+
+
+State 81
+
+   46 literal_values: TK_LIT_CHAR .
+
+    $default  reduce using rule 46 (literal_values)
+
+
+State 82
+
+   47 literal_values: TK_LIT_STRING .
+
+    $default  reduce using rule 47 (literal_values)
+
+
+State 83
+
+   27 local_var_init_valid_values: TK_IDENTIFICADOR .
+
+    $default  reduce using rule 27 (local_var_init_valid_values)
+
+
+State 84
+
+   25 local_var_init: TK_OC_LE local_var_init_valid_values .
+
+    $default  reduce using rule 25 (local_var_init)
+
+
+State 85
+
+   26 local_var_init_valid_values: literal_values .
+
+    $default  reduce using rule 26 (local_var_init_valid_values)
+
+
+State 86
+
+   20 local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init is_semicolon .
+
+    $default  reduce using rule 20 (local_var_declaration)

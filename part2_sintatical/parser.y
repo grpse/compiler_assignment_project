@@ -59,6 +59,10 @@ void yyerror (char const *s);
 
 %start programa
 
+%left '-' '+'
+%left '*' '/'
+%left '!'
+%right '^' '&' '#'
 
 %%
 
@@ -68,6 +72,7 @@ declarations: declarations global_var_declaration | declarations function_declar
 
 global_var_declaration: TK_IDENTIFICADOR is_vector is_static declaration_type ';';
 
+/* BEGIN FUNCTION HEADER */
 function_declaration: is_static declaration_type TK_IDENTIFICADOR list_of_parameters command_block;
 
 list_of_parameters: '(' parameters_list ')' | '(' ')';
@@ -76,12 +81,16 @@ parameters_list: parameter ',' parameters_list | parameter;
 
 parameter: is_const declaration_type TK_IDENTIFICADOR;
 
+/* END FUNCTION HEADER */
+
 command_block: '{' list_of_commands '}';
 
-list_of_commands: list_of_commands local_var_declaration | %empty;
+list_of_commands: list_of_commands valid_command | %empty;
+
+valid_command: local_var_declaration | assignment_command | command_block;
 
 /* BEGIN LOCAL VAR */
-local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init ';';
+local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init is_semicolon;
 
 local_var_attribute: TK_PR_STATIC is_const | %empty;
 
@@ -92,15 +101,32 @@ local_var_init: TK_OC_LE local_var_init_valid_values;
 local_var_init_valid_values: literal_values | TK_IDENTIFICADOR;
 /* END LOCAL VAR */
 
+/* BEGIN ASSIGNMENT COMMAND */
+
+assignment_command: TK_IDENTIFICADOR is_vector '=' expression is_semicolon;
+
+/* END ASSIGNMENT COMMAND*/
+
+is_semicolon: ';' | %empty;
+
 is_const: TK_PR_CONST | %empty;
 
-is_vector: '[' TK_LIT_INT ']' | %empty;
+is_vector: '[' expression ']' | %empty;
 
 is_static: TK_PR_STATIC | %empty;
 
 declaration_type: TK_PR_INT | TK_PR_FLOAT | TK_PR_BOOL | TK_PR_CHAR | TK_PR_STRING;
 
 literal_values: TK_LIT_INT | TK_LIT_FLOAT | TK_LIT_TRUE | TK_LIT_FALSE | TK_LIT_CHAR | TK_LIT_STRING;
+
+expression: get_reference_address | reference_access_value | TK_IDENTIFICADOR is_vector | TK_LIT_INT | TK_LIT_FLOAT;
+
+expression: expression '+' expression;
+expression: expression '-' expression;
+expression: expression '/' expression;
+expression: expression '*' expression;
+reference_access_value: '*' TK_IDENTIFICADOR;
+get_reference_address: '&' TK_IDENTIFICADOR;
 
 %%
 

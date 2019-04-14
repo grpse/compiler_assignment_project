@@ -40,4 +40,27 @@ int fn(int i, const float f) {
     string tt <= "aosjdoiasjdo";
     static const int tt <= 23;
     int tt <= asd;
+
+    asd = 123 + 12;
+    asd[123] = 123 + 23;
+    {
+        asd = 123 + 12;
+        asd[123] = 123 + 23;
+        static const int tt <= 23;
+        static const int tt;
+        static int tt;
+        int tt;
+
+        {
+
+            int tt <= 23;
+            char tt <= asd;
+            string tt <= "aosjdoiasjdo";
+            static const int tt <= 23;
+            int tt <= asd;
+            asd[123] = *qwe + 23;
+            asd = 123 + &asd;
+        }
+
+    }
 }
