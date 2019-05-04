@@ -1,0 +1,16 @@
+int main() {
+  int x;
+  int y;
+  int z;
+  
+  //x = 12;
+  bool b <= true;
+  
+  if (true && 4 < x) then {
+    x = 4;
+  } else {
+    y = 12;
+  };
+  
+  x = y;
+}

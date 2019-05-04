@@ -77,8 +77,8 @@ SPACE " "
 TEXT_CHAR ({ESCAPED_DELIMITER}|{MARKER}|{ID_WORD}|{NUMBER}|{SOME_DIACRITICS}|{SPACE})
 TEXT {TEXT_CHAR}*
 
-LIT_INT {NUMBER}+
-LIT_FLOAT {NUMBER}+("."{NUMBER}+)?{EXPOENT}?
+LIT_INT [-\+]?{NUMBER}+
+LIT_FLOAT [-\+]?{NUMBER}+("."{NUMBER}+)?{EXPOENT}?
 LIT_TRUE true
 LIT_FALSE false
 
@@ -86,9 +86,16 @@ LIT_FALSE false
 LIT_CHAR "'"{TEXT_CHAR}"'"
 LIT_STRING "\""{TEXT}"\""
 
+COMMENT_MULTILINE "/""*"(.|{NEW_LINE})*"*""/"
+COMMENT_LINE "/""/".*{NEW_LINE}
+
 %%
 
+{COMMENT_MULTILINE} { ; }
+{COMMENT_LINE} { ; }
+
 {NEW_LINE} { line_count++; }
+
 {SPACE} { ; }
 
 {PR_INT} { return TK_PR_INT; }

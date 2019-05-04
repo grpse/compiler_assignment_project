@@ -1,0 +1,11 @@
+int main() {
+  //c=(c-(1*1)) / (12 / 34 * ((x - 4 / 5) * 12));
+  const int a <= 4;
+  
+  a = 12;
+  b = banada;
+  x = getValue();
+  
+  int y;
+  float jose <= 43;
+}

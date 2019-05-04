@@ -86,14 +86,16 @@ parameter_declaration: is_const declaration_type TK_IDENTIFICADOR;
 
 command_block: '{' list_of_commands '}';
 
-list_of_commands: list_of_commands valid_command is_semicolon | list_of_commands if_then_else_command | list_of_commands for_command | list_of_commands while_command | %empty;
+list_of_commands: list_of_commands valid_command is_semicolon |  %empty;
 
-valid_command: local_var_declaration | assignment_command | command_block | input_command | output_command | function_call_command | shift_command | break_flow_command;
+valid_command: local_var_declaration | assignment_command | command_block | input_command | output_command | function_call_command | shift_command | break_flow_command | if_then_else_command | for_command |  while_command;
 
 /* BEGIN LOCAL VAR */
 local_var_declaration: local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init;
 
-local_var_attribute: TK_PR_STATIC is_const | %empty;
+//local_var_attribute: TK_PR_STATIC is_const | %empty;
+
+local_var_attribute: is_static TK_PR_CONST| TK_PR_STATIC | %empty;
 
 is_local_var_init: local_var_init | %empty;
 

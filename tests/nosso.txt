@@ -1,0 +1,13 @@
+int z[3];
+
+int f(int x, int z) {
+
+}
+
+int main() {
+    int a;
+    int b;
+    
+    //a = b;
+    f(a, 3 + 5);
+}

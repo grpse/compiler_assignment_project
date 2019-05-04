@@ -1,0 +1,5 @@
+//ERROR: função deve ter um tipo
+func1(int param1)
+{
+    
+}
