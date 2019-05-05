@@ -191,147 +191,147 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)
 }
 {PR_STATIC} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_STATIC;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_STATIC;
 }
 {PR_FOREACH} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_FOREACH;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_FOREACH;
 }
 {PR_FOR} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_FOR;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_FOR;
 }
 {PR_SWITCH} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_SWITCH;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_SWITCH;
 }
 {PR_CASE} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_CASE;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_CASE;
 }
 {PR_BREAK} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_BREAK;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_BREAK;
 }
 {PR_CONTINUE} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_CONTINUE;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_CONTINUE;
 }
 {PR_CLASS} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_CLASS;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_CLASS;
 }
 {PR_PRIVATE} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_PRIVATE;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_PRIVATE;
 }
 {PR_PUBLIC} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_PUBLIC;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_PUBLIC;
 }
 {PR_PROTECTED} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_PR_PROTECTED;
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_PR_PROTECTED;
 }
 {OC_LE} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_LE;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_LE;
 }
 {OC_GE} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_GE;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_GE;
 }
 {OC_EQ} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_EQ;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_EQ;
 }
 {OC_NE} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_NE;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_NE;
 }
 {OC_AND} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_AND;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_AND;
 }
 {OC_OR} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_OR;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_OR;
 }
 {OC_SL} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_SL;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_SL;
 }
 {OC_SR} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_SR;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_SR;
 }
 {OC_FORWARD_PIPE} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_FORWARD_PIPE;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_FORWARD_PIPE;
 }
 {OC_BASH_PIPE} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_OC_BASH_PIPE;
+	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_OC_BASH_PIPE;
 }
 
 {LIT_TRUE} {
 	yylval.valor_lexico.valor_do_token.b = 1;
-	yylval.valor_lexico.tipo_do_token =  TK_LIT_TRUE;
+	yylval.valor_lexico.tipo_do_token =  LITERAIS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_LIT_TRUE;
 }
 {LIT_FALSE} {
 	yylval.valor_lexico.valor_do_token.b = 0;
-	yylval.valor_lexico.tipo_do_token =  TK_LIT_FALSE;
+	yylval.valor_lexico.tipo_do_token =  LITERAIS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_LIT_FALSE;
 }
 
 {IDENTIFIER} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  TK_IDENTIFICADOR;
+	yylval.valor_lexico.tipo_do_token =  IDENTIFICADORES;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  TK_IDENTIFICADOR;
 }
@@ -339,31 +339,31 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)
 
 {LIT_INT} { 
     yylval.valor_lexico.valor_do_token.i = atoi(yytext);
-    yylval.valor_lexico.tipo_do_token = TK_LIT_INT;
+    yylval.valor_lexico.tipo_do_token = LITERAIS;
     yylval.valor_lexico.numero_da_linha = line_count;
     return TK_LIT_INT; 
 }
 {LIT_FLOAT} { 
     yylval.valor_lexico.valor_do_token.f = atof(yytext);
-    yylval.valor_lexico.tipo_do_token = TK_LIT_FLOAT;
+    yylval.valor_lexico.tipo_do_token = LITERAIS;
     yylval.valor_lexico.numero_da_linha = line_count;
     return TK_LIT_FLOAT; 
 }
 {LIT_CHAR} { 
     yylval.valor_lexico.valor_do_token.c = yytext[0];
-    yylval.valor_lexico.tipo_do_token = TK_LIT_CHAR;
+    yylval.valor_lexico.tipo_do_token = LITERAIS;
     yylval.valor_lexico.numero_da_linha = line_count;
     return TK_LIT_CHAR; 
 }
 {LIT_STRING} { 
     yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-    yylval.valor_lexico.tipo_do_token = TK_LIT_STRING;
+    yylval.valor_lexico.tipo_do_token = LITERAIS;
     yylval.valor_lexico.numero_da_linha = line_count;
     return TK_LIT_STRING; 
 }
 {MARKER} {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  yytext[0];
+	yylval.valor_lexico.tipo_do_token = CARACTERES_ESPECIAIS;
 	yylval.valor_lexico.numero_da_linha = line_count;
 	return  yytext[0];
 }
