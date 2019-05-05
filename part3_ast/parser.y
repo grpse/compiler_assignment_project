@@ -11,24 +11,22 @@
 extern char* yytext;
 extern int get_line_number();
 
+
+extern struct No* criaNo();
+extern void adicionaFilho(struct No* ancestral, struct No* filho);
+extern struct No* removeNo();
+extern struct No* alteraNo();
+extern void imprimeEmProfundidade(struct No* no);
+
 int yylex(void);
 
 void yyerror (char const *s);
-
-
-void descompila(void* arvore) {
-
-} 
-
-void libera(void* arvore) {
-
-}
 
 %}
 
 
 %union {
-    struct valor_lexico {
+    struct valor_lexico_t {
         int numero_da_linha;
         int tipo_do_token;
         union valor_do_token {
@@ -39,7 +37,7 @@ void libera(void* arvore) {
             char* s;
         } valor_do_token;
     } valor_lexico;
-};
+}
 
 %token TK_PR_INT
 %token TK_PR_FLOAT
@@ -84,8 +82,6 @@ void libera(void* arvore) {
 %token TK_LIT_STRING
 %token TK_IDENTIFICADOR
 %token TOKEN_ERRO
-
-%token NEW_LINE
 
 %start programa
 
@@ -243,3 +239,5 @@ get_table_value: '#' TK_IDENTIFICADOR;
 void yyerror (char const *s) {
     printf("ERROR =>> Line %d: %s, Last token: %s\n", get_line_number(), s, yytext);
 }
+
+

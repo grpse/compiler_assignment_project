@@ -87,8 +87,7 @@ extern int yydebug;
     TK_LIT_CHAR = 297,
     TK_LIT_STRING = 298,
     TK_IDENTIFICADOR = 299,
-    TOKEN_ERRO = 300,
-    NEW_LINE = 301
+    TOKEN_ERRO = 300
   };
 #endif
 
@@ -97,9 +96,9 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 30 "parser.y" /* yacc.c:1909  */
+#line 28 "parser.y" /* yacc.c:1909  */
 
-    struct valor_lexico {
+    struct valor_lexico_t {
         int numero_da_linha;
         int tipo_do_token;
         union valor_do_token {
@@ -111,7 +110,7 @@ union YYSTYPE
         } valor_do_token;
     } valor_lexico;
 
-#line 115 "parser.tab.h" /* yacc.c:1909  */
+#line 114 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
