@@ -618,22 +618,19 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "scanner.l"
 #line 3 "scanner.l"
-    #include <stdio.h>
-    #include "parser.tab.h"
-    
-    #define PALAVRA_RESERVADA 1
-    #define CARACTERES_ESPECIAIS 2
-    #define OPERADORES_COMPOSTOS 3
-    #define IDENTIFICADORES 4
-    #define LITERAIS 5
+#include <stdio.h>
+#include "valor_lexico.h"
+#define YYSTYPE struct No
+#include "parser.tab.h"
+#include "tipos_de_token.h"
 
-    int line_count = 1;
+int line_count = 1;
 
-    int get_line_number() {
-        return line_count;
-    }
+int get_line_number() {
+	return line_count;
+}
 
-#line 637 "scanner.lex.c"
+#line 634 "scanner.lex.c"
 
 #define INITIAL 0
 
@@ -851,10 +848,10 @@ YY_DECL
 		}
 
 	{
-#line 99 "scanner.l"
+#line 96 "scanner.l"
 
 
-#line 858 "scanner.lex.c"
+#line 855 "scanner.lex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -914,53 +911,56 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 101 "scanner.l"
+#line 98 "scanner.l"
 { ; }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 102 "scanner.l"
+#line 99 "scanner.l"
 { ; }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 104 "scanner.l"
+#line 101 "scanner.l"
 { line_count++; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 105 "scanner.l"
+#line 102 "scanner.l"
 { ; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 107 "scanner.l"
+#line 104 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_INT;
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 113 "scanner.l"
+#line 111 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_FLOAT;
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 119 "scanner.l"
+#line 118 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_BOOL;
 }
 	YY_BREAK
@@ -971,252 +971,277 @@ YY_RULE_SETUP
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_CHAR;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 131 "scanner.l"
+#line 132 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_STRING;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 138 "scanner.l"
+#line 140 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_IF;
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 144 "scanner.l"
+#line 147 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_THEN;
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 150 "scanner.l"
+#line 154 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_ELSE;
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 156 "scanner.l"
+#line 161 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_WHILE;
 }
 	YY_BREAK
 case 14:
-YY_RULE_SETUP
-#line 162 "scanner.l"
-{
-	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
-	yylval.valor_lexico.numero_da_linha = line_count;
-	return  TK_PR_DO;
-}
-	YY_BREAK
-case 15:
 YY_RULE_SETUP
 #line 168 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
+	return  TK_PR_DO;
+}
+	YY_BREAK
+case 15:
+YY_RULE_SETUP
+#line 175 "scanner.l"
+{
+	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
+	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_INPUT;
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 174 "scanner.l"
+#line 182 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_OUTPUT;
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 180 "scanner.l"
+#line 189 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_RETURN;
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 186 "scanner.l"
+#line 196 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_CONST;
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 192 "scanner.l"
+#line 203 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_STATIC;
 }
 	YY_BREAK
 case 20:
-YY_RULE_SETUP
-#line 198 "scanner.l"
-{
-	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
-	yylval.valor_lexico.numero_da_linha = line_count;
-	return  TK_PR_FOREACH;
-}
-	YY_BREAK
-case 21:
-YY_RULE_SETUP
-#line 204 "scanner.l"
-{
-	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
-	yylval.valor_lexico.numero_da_linha = line_count;
-	return  TK_PR_FOR;
-}
-	YY_BREAK
-case 22:
 YY_RULE_SETUP
 #line 210 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
+	return  TK_PR_FOREACH;
+}
+	YY_BREAK
+case 21:
+YY_RULE_SETUP
+#line 217 "scanner.l"
+{
+	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
+	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
+	return  TK_PR_FOR;
+}
+	YY_BREAK
+case 22:
+YY_RULE_SETUP
+#line 224 "scanner.l"
+{
+	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
+	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_SWITCH;
 }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 216 "scanner.l"
+#line 231 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_CASE;
 }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 222 "scanner.l"
+#line 238 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_BREAK;
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 228 "scanner.l"
+#line 245 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_CONTINUE;
 }
 	YY_BREAK
 case 26:
-YY_RULE_SETUP
-#line 234 "scanner.l"
-{
-	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
-	yylval.valor_lexico.numero_da_linha = line_count;
-	return  TK_PR_CLASS;
-}
-	YY_BREAK
-case 27:
-YY_RULE_SETUP
-#line 240 "scanner.l"
-{
-	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
-	yylval.valor_lexico.numero_da_linha = line_count;
-	return  TK_PR_PRIVATE;
-}
-	YY_BREAK
-case 28:
-YY_RULE_SETUP
-#line 246 "scanner.l"
-{
-	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
-	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
-	yylval.valor_lexico.numero_da_linha = line_count;
-	return  TK_PR_PUBLIC;
-}
-	YY_BREAK
-case 29:
 YY_RULE_SETUP
 #line 252 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
+	return  TK_PR_CLASS;
+}
+	YY_BREAK
+case 27:
+YY_RULE_SETUP
+#line 259 "scanner.l"
+{
+	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
+	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
+	return  TK_PR_PRIVATE;
+}
+	YY_BREAK
+case 28:
+YY_RULE_SETUP
+#line 266 "scanner.l"
+{
+	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
+	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
+	return  TK_PR_PUBLIC;
+}
+	YY_BREAK
+case 29:
+YY_RULE_SETUP
+#line 273 "scanner.l"
+{
+	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
+	yylval.valor_lexico.tipo_do_token =  PALAVRA_RESERVADA;
+	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_PR_PROTECTED;
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 258 "scanner.l"
+#line 280 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_OC_LE;
 }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 264 "scanner.l"
+#line 287 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_OC_GE;
 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 270 "scanner.l"
+#line 294 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_OC_EQ;
 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 276 "scanner.l"
+#line 301 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
@@ -1226,150 +1251,164 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 282 "scanner.l"
+#line 307 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_OC_AND;
 }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 288 "scanner.l"
+#line 314 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_OC_OR;
 }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 294 "scanner.l"
+#line 321 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_OC_SL;
 }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 300 "scanner.l"
+#line 328 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_OC_SR;
 }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 306 "scanner.l"
+#line 335 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_OC_FORWARD_PIPE;
 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 312 "scanner.l"
+#line 342 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  OPERADORES_COMPOSTOS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_OC_BASH_PIPE;
 }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 319 "scanner.l"
+#line 350 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.b = 1;
 	yylval.valor_lexico.tipo_do_token =  LITERAIS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = LITERAL_BOOL;
 	return  TK_LIT_TRUE;
 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 325 "scanner.l"
+#line 357 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.b = 0;
 	yylval.valor_lexico.tipo_do_token =  LITERAIS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = LITERAL_BOOL;
 	return  TK_LIT_FALSE;
 }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 332 "scanner.l"
+#line 365 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token =  IDENTIFICADORES;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  TK_IDENTIFICADOR;
 }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 340 "scanner.l"
+#line 374 "scanner.l"
 { 
     yylval.valor_lexico.valor_do_token.i = atoi(yytext);
     yylval.valor_lexico.tipo_do_token = LITERAIS;
     yylval.valor_lexico.numero_da_linha = line_count;
-    return TK_LIT_INT; 
+    yylval.valor_lexico.tipo_do_literal = LITERAL_INT;
+	return TK_LIT_INT; 
 }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 346 "scanner.l"
+#line 381 "scanner.l"
 { 
     yylval.valor_lexico.valor_do_token.f = atof(yytext);
     yylval.valor_lexico.tipo_do_token = LITERAIS;
     yylval.valor_lexico.numero_da_linha = line_count;
-    return TK_LIT_FLOAT; 
+    yylval.valor_lexico.tipo_do_literal = LITERAL_FLOAT;
+	return TK_LIT_FLOAT; 
 }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 352 "scanner.l"
+#line 388 "scanner.l"
 { 
     yylval.valor_lexico.valor_do_token.c = yytext[0];
     yylval.valor_lexico.tipo_do_token = LITERAIS;
     yylval.valor_lexico.numero_da_linha = line_count;
-    return TK_LIT_CHAR; 
+    yylval.valor_lexico.tipo_do_literal = LITERAL_CHAR;
+	return TK_LIT_CHAR; 
 }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 358 "scanner.l"
+#line 395 "scanner.l"
 { 
     yylval.valor_lexico.valor_do_token.s = strdup(yytext);
     yylval.valor_lexico.tipo_do_token = LITERAIS;
     yylval.valor_lexico.numero_da_linha = line_count;
-    return TK_LIT_STRING; 
+    yylval.valor_lexico.tipo_do_literal = LITERAL_STRING;
+	return TK_LIT_STRING; 
 }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 364 "scanner.l"
+#line 402 "scanner.l"
 {
 	yylval.valor_lexico.valor_do_token.s = strdup(yytext);
 	yylval.valor_lexico.tipo_do_token = CARACTERES_ESPECIAIS;
 	yylval.valor_lexico.numero_da_linha = line_count;
+	yylval.valor_lexico.tipo_do_literal = NAO_LITERAL;
 	return  yytext[0];
 }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 371 "scanner.l"
+#line 410 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1373 "scanner.lex.c"
+#line 1412 "scanner.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2370,7 +2409,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 371 "scanner.l"
+#line 410 "scanner.l"
 
 
 

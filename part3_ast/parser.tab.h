@@ -93,27 +93,7 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
-union YYSTYPE
-{
-#line 28 "parser.y" /* yacc.c:1909  */
-
-    struct valor_lexico_t {
-        int numero_da_linha;
-        int tipo_do_token;
-        union valor_do_token {
-            float f;
-            int i;
-            int b;
-            char c;
-            char* s;
-        } valor_do_token;
-    } valor_lexico;
-
-#line 114 "parser.tab.h" /* yacc.c:1909  */
-};
-
-typedef union YYSTYPE YYSTYPE;
+typedef int YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

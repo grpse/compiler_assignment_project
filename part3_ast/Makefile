@@ -12,4 +12,4 @@ compile:
 	gcc -o etapa3 scanner.lex.c parser.tab.c estrutura_de_dados.c main.c -lm -lfl
 
 tar: all
-	tar cvzf etapa3.tgz scanner.l parser.y etapa3 Makefile main.c
+	tar cvzf etapa3.tgz scanner.l parser.y etapa3 Makefile main.c tipos_de_token.h valor_lexico.h estrutura_de_dados.c
