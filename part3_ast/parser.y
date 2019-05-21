@@ -1,25 +1,24 @@
+%code top {
+    #include "TypesInclude.hh"
+}
+
 %{
 
-#include <stdio.h>
-#include "valor_lexico.h"
-#define YYSTYPE struct No
-#include "tipos_de_token.h"
 
 extern void* arvore;
 extern char* yytext;
 extern int get_line_number();
-
-extern struct No criaNo(struct No no);
-extern struct No criaNoComFilhos(struct No ancestral, int numero_de_filhos, ...);
-extern struct No criaNoSolitarioComFilhos(int numero_de_filhos, ...);
-extern struct No* copiaNo(struct No no);
-extern struct No criaNoLiteral(struct No no);
 
 int yylex(void);
 
 void yyerror (char const *s);
 
 %}
+
+%union {
+    LexicalValue lexicalValue;
+    Node* node;
+}
 
 %token TK_PR_INT
 %token TK_PR_FLOAT
@@ -71,106 +70,180 @@ void yyerror (char const *s);
 %left '*' '/' '%' '|'
 %left '!' '<' '>' TK_OC_LE TK_OC_GE TK_OC_EQ TK_OC_NE TK_OC_AND TK_OC_OR
 %left '?' ':'
-%right '^' '&' '#' 
+%right '^' '&' '#'
+
+
+%type <node> programa
+%type <node> declarations
+%type <node> identifier
+%type <node> expression
+%type <node> assignment_command
+%type <node> valid_command
+%type <node> list_of_commands
+%type <node> command_block
+%type <node> declaration_type
+%type <node> is_static
+%type <node> function_declaration
+%type <node> list_of_parameters_declaration
+%type <node> is_const
+%type <node> parameters_declaration_list
+%type <node> parameter_declaration
+%type <node> global_var_declaration
+%type <node> input_command
+%type <node> output_command
+%type <node> function_call_command
+%type <node> function_call_parameters_command
+%type <node> parameters_list
+%type <node> parameter
+%type <node> shift_command
+%type <node> literal_values
+%type <node> local_var_declaration
+%type <node> local_var_init_valid_values
+%type <node> local_var_attribute
+%type <node> is_local_var_init
+%type <node> local_var_init
+%type <node> break_flow_command
+%type <node> break_flow_valid_commands
+%type <lexicalValue> '+'
+%type <lexicalValue> ']'
+%type <lexicalValue> '['
+%type <lexicalValue> '='
+%type <lexicalValue> ';'
+%type <lexicalValue> '{'
+%type <lexicalValue> '}'
+%type <lexicalValue> '-'
+%type <lexicalValue> '/'
+%type <lexicalValue> '*'
+%type <lexicalValue> '%'
+%type <lexicalValue> '|'
+%type <lexicalValue> '&'
+%type <lexicalValue> '^'
+%type <lexicalValue> '<'
+%type <lexicalValue> '>'
+%type <lexicalValue> ','
+%type <lexicalValue> TK_OC_LE
+%type <lexicalValue> TK_OC_GE
+%type <lexicalValue> TK_OC_EQ
+%type <lexicalValue> TK_OC_NE
+%type <lexicalValue> TK_OC_AND
+%type <lexicalValue> TK_OC_OR
+%type <lexicalValue> TK_OC_SL
+%type <lexicalValue> TK_OC_SR
+%type <lexicalValue> TK_LIT_INT
+%type <lexicalValue> TK_LIT_FLOAT
+%type <lexicalValue> TK_LIT_TRUE
+%type <lexicalValue> TK_LIT_FALSE
+%type <lexicalValue> TK_LIT_CHAR
+%type <lexicalValue> TK_LIT_STRING
+%type <lexicalValue> TK_IDENTIFICADOR
+%type <lexicalValue> TK_PR_INT
+%type <lexicalValue> TK_PR_FLOAT
+%type <lexicalValue> TK_PR_BOOL
+%type <lexicalValue> TK_PR_CHAR
+%type <lexicalValue> TK_PR_STRING
+%type <lexicalValue> TK_PR_STATIC
+%type <lexicalValue> TK_PR_CONST
+%type <lexicalValue> TK_PR_INPUT
+%type <lexicalValue> TK_PR_OUTPUT
+%type <lexicalValue> TK_PR_CONTINUE
+%type <lexicalValue> TK_PR_BREAK
+%type <lexicalValue> TK_PR_RETURN
 
 %%
 
 programa
-    : declarations { arvore = copiaNo($1); } 
+    : declarations { arvore = $1; }
     | %empty
 ;
 
 declarations
-    : declarations global_var_declaration { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
-    | declarations function_declaration { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
-    | global_var_declaration { $$ = criaNoSolitarioComFilhos(1, $1); }
-    | function_declaration { $$ = criaNoSolitarioComFilhos(1, $1); }
+    : declarations global_var_declaration { $$ = new ListOfDeclarations($1, $2); }
+    | declarations function_declaration { $$ = new ListOfDeclarations($1, $2); }
+    | global_var_declaration { $$ = $1; }
+    | function_declaration { $$ = $1; }
 ;
 
 global_var_declaration
-    : TK_IDENTIFICADOR is_vector is_static declaration_type ';' { $$ = criaNoSolitarioComFilhos(4, $1, $2, $3, $4); }
+    : identifier is_static declaration_type ';' { $$ = new GlobalVariableDeclaration($1, $2, $3); }
 ;
 
 /* BEGIN FUNCTION HEADER */
 function_declaration
-    : is_static declaration_type TK_IDENTIFICADOR list_of_parameters_declaration command_block { $$ = criaNoSolitarioComFilhos(5, $1, $2, $3, $4, $5); }
+    : is_static declaration_type TK_IDENTIFICADOR list_of_parameters_declaration command_block
+    { $$ = new FunctionDeclarationNode($3, $1, $2, $4, $5); }
 ;
 
 list_of_parameters_declaration
-    : '(' parameters_declaration_list ')' { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | '(' ')' { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
+    : '(' parameters_declaration_list ')' { $$ = $2; }
+    | '(' ')' { $$ = NULL; }
 ;
 
 parameters_declaration_list
-    : parameter_declaration ',' parameters_declaration_list { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | parameter_declaration { $$ = criaNoSolitarioComFilhos(1, $1); }
+    : parameter_declaration ',' parameters_declaration_list { $$ = new ParametersDeclarationList($1, $3); }
+    | parameter_declaration { $$ = $1; }
 ;
 
 parameter_declaration
-    : is_const declaration_type TK_IDENTIFICADOR { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
+    : is_const declaration_type TK_IDENTIFICADOR { $$ = new ParameterDeclaration($3, $1, $2); }
 ;
 
 /* END FUNCTION HEADER */
 
 command_block
-    : '{' list_of_commands '}' { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
+    : '{' list_of_commands '}' { $$ = new CommandBlockNode($2); }
+    | '{' '}' { $$ = new CommandBlockNode(NULL); }
 ;
 
 list_of_commands
-    : list_of_commands valid_command ';'  { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | %empty
+    : list_of_commands valid_command ';' { $$ = new ListOfCommandsNode($1, $2); }
+    | valid_command ';' { $$ = $1; }
 ;
 
-// command_sentence
-//     :  { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
-// ;
-
 valid_command
-    : local_var_declaration { $$ = $1; }
-    | assignment_command { $$ = criaNo($1); }
-    | command_block { $$ = criaNo($1); }
-    | input_command { $$ = criaNo($1); }
-    | output_command { $$ = criaNo($1); }
-    | function_call_command { $$ = criaNo($1); }
-    | shift_command { $$ = criaNo($1); }
-    | break_flow_command { $$ = criaNo($1); }
-    | if_then_else_command { $$ = criaNo($1); }
-    | for_command { $$ = criaNo($1); }
-    | while_command { $$ = criaNo($1); }
+    : local_var_declaration { $$ = new ValidCommandNode($1); }
+    | assignment_command { $$ = new ValidCommandNode($1); }
+    | command_block { $$ = new ValidCommandNode($1); }
+    | input_command { $$ = new ValidCommandNode($1); }
+    | output_command { $$ = new ValidCommandNode($1); }
+    | function_call_command { $$ = new ValidCommandNode($1); }
+    | shift_command { $$ = new ValidCommandNode($1); }
+    | break_flow_command { $$ = new ValidCommandNode($1); }
+    | if_then_else_command
+    | for_command
+    | while_command
 ;
 
 /* BEGIN LOCAL VAR */
 local_var_declaration
-    : local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init { $$ = criaNoSolitarioComFilhos(4, $1, $2, $3, $4); }
+    : local_var_attribute declaration_type TK_IDENTIFICADOR is_local_var_init
+    { $$ = new LocalVariableDeclarationNode($3, $1, $2, $4); }
 ;
 
-//local_var_attribute: TK_PR_STATIC is_const | %empty;
-
 local_var_attribute
-    : is_static TK_PR_CONST { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
-    | TK_PR_STATIC { $$ = criaNoSolitarioComFilhos(1, $1); }
-    | %empty
+    : is_static TK_PR_CONST { $$ = new LocalVariableDeclarationAttributeNode($2, $1); }
+    | TK_PR_STATIC { $$ = new LeafNode($1); }
+    | %empty { $$ = NULL; }
 ;
 
 is_local_var_init
-    : local_var_init { $$ = criaNoSolitarioComFilhos(1, $1); }
-    | %empty
+    : local_var_init { $$ = $1; }
+    | %empty { $$ = NULL; }
 ;
 
 local_var_init
-    : TK_OC_LE local_var_init_valid_values { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
+    : TK_OC_LE local_var_init_valid_values { $$ = new GenericNode($1, { $2 }); }
 ;
 
 local_var_init_valid_values
-    : literal_values { $$ = criaNoSolitarioComFilhos(1, $1); }
-    | TK_IDENTIFICADOR { $$ = criaNoSolitarioComFilhos(1, $1); }
+    : literal_values { $$ = $1; }
+    | TK_IDENTIFICADOR { $$ = new LeafNode($1); }
 ;
 /* END LOCAL VAR */
 
 /* BEGIN ASSIGNMENT COMMAND */
 
 assignment_command
-    : TK_IDENTIFICADOR is_vector '=' expression { $$ = criaNoSolitarioComFilhos(4, $1, $2, $3, $4); }
+    : identifier '=' expression { $$ = new AssignmentCommandNode($2, $1, $3); }
 ;
 
 /* END ASSIGNMENT COMMAND*/
@@ -178,11 +251,11 @@ assignment_command
 /* BEGIN I/O COMMAND */
 
 input_command
-    : TK_PR_INPUT expression { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
+    : TK_PR_INPUT expression { $$ = new GenericNode($1, { $2 }); }
 ;
 
 output_command
-    : TK_PR_OUTPUT parameters_list { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
+    : TK_PR_OUTPUT parameters_list { $$ = new GenericNode($1, { $2 }); }
 ;
 
 /* END I/O COMMAND */
@@ -190,12 +263,12 @@ output_command
 /* BEGIN FUNCTION CALL COMMAND */
 
 function_call_command
-    : TK_IDENTIFICADOR function_call_parameters_command { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
+    : TK_IDENTIFICADOR function_call_parameters_command { $$ = new FunctionCallCommandNode($1, $2); }
 ;
 
 function_call_parameters_command
-    : '(' parameters_list ')' { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | '(' ')' { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
+    : '(' parameters_list ')' { $$ = $2; }
+    | '(' ')' { $$ = NULL; }
 ;
 
 /* END FUNCTION CALL COMMAND */
@@ -203,12 +276,8 @@ function_call_parameters_command
 /* BEGIN SHIFT LEFT AND RIGHT COMMAND */
 
 shift_command
-    : TK_IDENTIFICADOR is_vector shift_operator expression { $$ = criaNoSolitarioComFilhos(4, $1, $2, $3, $4); }
-;
-
-shift_operator
-    : TK_OC_SL { $$ = criaNoSolitarioComFilhos(1, $1); }
-    | TK_OC_SR { $$ = criaNoSolitarioComFilhos(1, $1); }
+    : identifier TK_OC_SL expression { $$ = new ShiftCommand($2, $1, $3); }
+    | identifier TK_OC_SR expression { $$ = new ShiftCommand($2, $1, $3); }
 ;
 
 /* END SHIFT LEFT AND RIGHT COMMAND */
@@ -216,13 +285,13 @@ shift_operator
 /* BEGIN RETURN, BREAK, CONTINUE COMMAND */
 
 break_flow_command
-    : break_flow_valid_commands { $$ = criaNoSolitarioComFilhos(1, $1); }
+    : break_flow_valid_commands { $$ = $1; }
 ;
 
 break_flow_valid_commands
-    : TK_PR_RETURN expression { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
-    | TK_PR_BREAK { $$ = criaNoSolitarioComFilhos(1, $1); }
-    | TK_PR_CONTINUE { $$ = criaNoSolitarioComFilhos(1, $1); }
+    : TK_PR_RETURN expression { $$ = new GenericNode($1, { $2 }); }
+    | TK_PR_BREAK { $$ = new LeafNode($1); }
+    | TK_PR_CONTINUE { $$ = new LeafNode($1); }
 ;
 
 /* END RETURN, BREAK, CONTINUE COMMAND */
@@ -231,135 +300,135 @@ break_flow_valid_commands
 
 // IF STATEMENT
 if_then_else_command
-    : if_then_only_command { $$ = criaNoSolitarioComFilhos(1, $1); }
-    | if_then_else_too_command { $$ = criaNoSolitarioComFilhos(1, $1); }
+    : if_then_only_command
+    | if_then_else_too_command
 ;
 
 if_then_only_command
-    : TK_PR_IF '(' expression ')' TK_PR_THEN command_block {  $$ = criaNoComFilhos($1, 2, criaNoSolitarioComFilhos(3, $2, $3, $4), criaNoComFilhos($5, 1, $6)); }
+    : TK_PR_IF '(' expression ')' TK_PR_THEN command_block
 ;
 
 if_then_else_too_command
-    : TK_PR_IF '(' expression ')' TK_PR_THEN command_block TK_PR_ELSE command_block {  $$ = criaNoComFilhos($1, 3, criaNoSolitarioComFilhos(3, $2, $3, $4), criaNoComFilhos($5, 1, $6), criaNoComFilhos($7, 1, $8)); }
+    : TK_PR_IF '(' expression ')' TK_PR_THEN command_block TK_PR_ELSE command_block
 ;
 
 // FOR LOOP
 
 for_command
-    : TK_PR_FOR '(' for_list ':' expression ':' for_list ')' command_block {  $$ = criaNoComFilhos($1, 8, $2, $3, $4, $5, $6, $7, $8, $9); }
+    : TK_PR_FOR '(' for_list ':' expression ':' for_list ')' command_block
 ;
 
 for_list
-    : for_list_parameter ',' for_list {  $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | for_list_parameter {  $$ = criaNoSolitarioComFilhos(1, $1); }
+    : for_list_parameter ',' for_list
+    | for_list_parameter
 ;
 
 for_list_parameter
-    : local_var_declaration {  $$ = criaNoSolitarioComFilhos(1, $1); }
-    | assignment_command {  $$ = criaNoSolitarioComFilhos(1, $1); }
-    | shift_command {  $$ = criaNoSolitarioComFilhos(1, $1); }
+    : local_var_declaration
+    | assignment_command
+    | shift_command
 ;
 
 // WHILE LOOP
 
 while_command
-    : TK_PR_WHILE '(' expression ')' TK_PR_DO command_block {  $$ = criaNoComFilhos($1, 5, $1, $2, $3, $4, $5); }
+    : TK_PR_WHILE '(' expression ')' TK_PR_DO command_block
 ;
 
 /* END FLOW CONTROL COMMAND */
 
 parameters_list
-    : parameter ',' parameters_list {  $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | parameter {  $$ = criaNoSolitarioComFilhos(1, $1); }
+    : parameter ',' parameters_list { $$ = new ParametersListNode($1, $3); }
+    | parameter { $$ = $1; }
 ;
 
 parameter
-    : expression {  $$ = criaNoComFilhos($1, 0); }
-    | TK_LIT_CHAR {  $$ = criaNoLiteral($1); }
-    | TK_LIT_STRING {  $$ = criaNoLiteral($1); }
+    : expression { $$ = $1; }
+    | TK_LIT_CHAR { $$ = new LiteralNode($1); }
+    | TK_LIT_STRING { $$ = new LiteralNode($1); }
 ;
 
 is_const
-    : TK_PR_CONST {  $$ = criaNoComFilhos($1, 0); }
-    | %empty
+    : TK_PR_CONST { $$ = new LeafNode($1); }
+    | %empty { $$ = NULL; }
 ;
 
-is_vector
-    : '[' expression ']' { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | %empty
+identifier
+    : TK_IDENTIFICADOR '[' expression ']' { $$ = new IdentifierNode($1, $3); }
+    | TK_IDENTIFICADOR { $$ = new LeafNode($1); }
 ;
 
 is_static
-    : TK_PR_STATIC { $$ = criaNoSolitarioComFilhos(1, $1); }
-    | %empty
+    : TK_PR_STATIC { $$ = new LeafNode($1); }
+    | %empty { $$ = NULL; }
 ;
 
 declaration_type
-    : TK_PR_INT { $$ = criaNoComFilhos($1, 0); }
-    | TK_PR_FLOAT { $$ = criaNoComFilhos($1, 0); } 
-    | TK_PR_BOOL { $$ = criaNoComFilhos($1, 0); } 
-    | TK_PR_CHAR { $$ = criaNoComFilhos($1, 0); } 
-    | TK_PR_STRING { $$ = criaNoComFilhos($1, 0); } 
+    : TK_PR_INT { $$ = new LeafNode($1); }
+    | TK_PR_FLOAT { $$ = new LeafNode($1); }
+    | TK_PR_BOOL { $$ = new LeafNode($1); }
+    | TK_PR_CHAR { $$ = new LeafNode($1); }
+    | TK_PR_STRING { $$ = new LeafNode($1); }
 ;
 
 literal_values
-    : TK_LIT_INT { $$ = criaNoLiteral($1); }
-    | TK_LIT_FLOAT { $$ = criaNoLiteral($1); }
-    | TK_LIT_TRUE { $$ = criaNoLiteral($1); }
-    | TK_LIT_FALSE { $$ = criaNoLiteral($1); }
-    | TK_LIT_CHAR { $$ = criaNoLiteral($1); }
-    | TK_LIT_STRING { $$ = criaNoLiteral($1); }
+    : TK_LIT_INT { $$ = new LiteralNode($1); }
+    | TK_LIT_FLOAT { $$ = new LiteralNode($1); }
+    | TK_LIT_TRUE { $$ = new LiteralNode($1); }
+    | TK_LIT_FALSE { $$ = new LiteralNode($1); }
+    | TK_LIT_CHAR { $$ = new LiteralNode($1); }
+    | TK_LIT_STRING { $$ = new LiteralNode($1); }
 ;
 
 expression
-    : get_table_value { $$ = criaNoComFilhos($1, 0); } 
-    | get_reference_address { $$ = criaNoComFilhos($1, 0); } 
-    | reference_access_value { $$ = criaNoComFilhos($1, 0); } 
-    | TK_IDENTIFICADOR is_vector { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
-    | TK_LIT_INT { $$ = criaNoLiteral($1); }
-    | TK_LIT_FLOAT { $$ = criaNoLiteral($1); }
-    | TK_LIT_FALSE { $$ = criaNoLiteral($1); }
-    | TK_LIT_TRUE { $$ = criaNoLiteral($1); }
-    | function_call_command { $$ = criaNoComFilhos($1, 0); } 
+    : get_table_value
+    | get_reference_address
+    | reference_access_value
+    | identifier { $$ = $1; }
+    | TK_LIT_INT { $$ = new LiteralNode($1); }
+    | TK_LIT_FLOAT { $$ = new LiteralNode($1); }
+    | TK_LIT_FALSE { $$ = new LiteralNode($1); }
+    | TK_LIT_TRUE { $$ = new LiteralNode($1); }
+    | function_call_command { $$ = $1; }
 ;
 
 expression
-    : '(' expression ')' { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); } 
+    : '(' expression ')' { $$ = $2; }
 ;
 
 expression
-    : expression '+' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression '-' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); } 
-    | expression '/' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression '*' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression '%' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | '+' expression { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
-    | '-' expression { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
-    | '!' expression { $$ = criaNoSolitarioComFilhos(2, $1, $2); }
-    | expression '|' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); } 
-    | expression '&' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression '^' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression '<' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression '>' expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression TK_OC_LE expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression TK_OC_GE expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression TK_OC_EQ expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression TK_OC_NE expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression TK_OC_AND expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression TK_OC_OR expression { $$ = criaNoSolitarioComFilhos(3, $1, $2, $3); }
-    | expression '?' expression ':' expression { $$ = criaNoSolitarioComFilhos(5, $1, $2, $3, $4, $5); }
+    : expression '+' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression '-' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression '/' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression '*' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression '%' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | '+' expression
+    | '-' expression
+    | '!' expression
+    | expression '|' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression '&' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression '^' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression '<' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression '>' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression TK_OC_LE expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression TK_OC_GE expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression TK_OC_EQ expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression TK_OC_NE expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression TK_OC_AND expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression TK_OC_OR expression { $$ = new BinaryExpressionNode($2, $1, $3); }
+    | expression '?' expression ':' expression
 ;
 
 reference_access_value
-    : '*' TK_IDENTIFICADOR { $$ = criaNoComFilhos($1, 0); } 
+    : '*' TK_IDENTIFICADOR
 ;
 
 get_reference_address
-    : '&' TK_IDENTIFICADOR { $$ = criaNoComFilhos($1, 0); } 
+    : '&' TK_IDENTIFICADOR
 ;
 
 get_table_value
-    : '#' TK_IDENTIFICADOR { $$ = criaNoComFilhos($1, 0); } 
+    : '#' TK_IDENTIFICADOR
 ;
 
 %%

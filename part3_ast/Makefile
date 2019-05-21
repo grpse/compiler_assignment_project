@@ -9,7 +9,8 @@ generate_lexical:
 	flex -o scanner.lex.c scanner.l
 
 compile:
-	gcc -o etapa3 scanner.lex.c parser.tab.c estrutura_de_dados.c main.c -lm -lfl
+	gcc -c TypesInclude.hh -o TypesInclude.hh.gch
+	g++ -std=c++11 -o etapa3 parser.tab.c utils.cpp scanner.lex.c main.c -lm -lfl
 
 tar: all
-	tar cvzf etapa3.tgz scanner.l parser.y etapa3 Makefile main.c tipos_de_token.h valor_lexico.h estrutura_de_dados.c
+	tar cvzf etapa3.tgz scanner.l parser.y etapa3 Makefile main.c Node.hh Node.cc utils.cpp LexicalValue.h
