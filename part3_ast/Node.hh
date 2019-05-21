@@ -60,16 +60,9 @@ public:
 
 private:
     void freeRecursively() {
-
-        if (value.literalType == LITERAL_STRING && value.tokenValue.s != NULL) {
-            free(value.tokenValue.s);
-        }
-
         for (Node* child : children) {
             delete child;
         }
-
-
     }
 };
 
@@ -120,6 +113,7 @@ public:
 
     virtual void print() {
         printValue();
+        printf(" ");
         for (Node* child : children) {
             if (child)
                 child->print();
@@ -300,6 +294,47 @@ public:
         printf("(");
         children[1]->print();
         printf(")");
+    }
+};
+
+class IfThenCommandNode: public BaseNode {
+
+public:
+    IfThenCommandNode(const LexicalValue& value, Node* expression, Node* blockIf) : BaseNode(value) {
+        children.push_back(expression);
+        children.push_back(blockIf);
+    }
+
+    virtual void print() {
+        printValue();
+        printf("(");
+        children[0]->print();
+        printf(")");
+        printf(" then ");
+        children[1]->print();
+    }
+
+};
+
+class IfThenElseCommandNode: public BaseNode {
+
+public:
+    IfThenElseCommandNode(const LexicalValue& value, Node* expression, Node* blockIf, Node* blockElse) : BaseNode(value) {
+
+        children.push_back(expression);
+        children.push_back(blockIf);
+        children.push_back(blockElse);
+    }
+
+    virtual void print() {
+        printValue();
+        printf("(");
+        children[0]->print();
+        printf(")");
+        printf(" then ");
+        children[1]->print();
+        printf(" else ");
+        children[2]->print();
     }
 };
 

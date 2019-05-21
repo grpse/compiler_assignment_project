@@ -104,6 +104,9 @@ void yyerror (char const *s);
 %type <node> local_var_init
 %type <node> break_flow_command
 %type <node> break_flow_valid_commands
+%type <node> if_then_else_command
+%type <node> if_then_only_command
+%type <node> if_then_else_too_command
 %type <lexicalValue> '+'
 %type <lexicalValue> ']'
 %type <lexicalValue> '['
@@ -148,6 +151,9 @@ void yyerror (char const *s);
 %type <lexicalValue> TK_PR_CONTINUE
 %type <lexicalValue> TK_PR_BREAK
 %type <lexicalValue> TK_PR_RETURN
+%type <lexicalValue> TK_PR_IF
+%type <lexicalValue> TK_PR_THEN
+%type <lexicalValue> TK_PR_ELSE
 
 %%
 
@@ -208,7 +214,7 @@ valid_command
     | function_call_command { $$ = new ValidCommandNode($1); }
     | shift_command { $$ = new ValidCommandNode($1); }
     | break_flow_command { $$ = new ValidCommandNode($1); }
-    | if_then_else_command
+    | if_then_else_command { $$ = new ValidCommandNode($1); }
     | for_command
     | while_command
 ;
@@ -300,16 +306,18 @@ break_flow_valid_commands
 
 // IF STATEMENT
 if_then_else_command
-    : if_then_only_command
-    | if_then_else_too_command
+    : if_then_only_command { $$ = $1; }
+    | if_then_else_too_command { $$ = $1; }
 ;
 
 if_then_only_command
     : TK_PR_IF '(' expression ')' TK_PR_THEN command_block
+    { $$ = new IfThenCommandNode($1, $3, $6); }
 ;
 
 if_then_else_too_command
     : TK_PR_IF '(' expression ')' TK_PR_THEN command_block TK_PR_ELSE command_block
+    { $$ = new IfThenElseCommandNode($1, $3, $6, $8); }
 ;
 
 // FOR LOOP

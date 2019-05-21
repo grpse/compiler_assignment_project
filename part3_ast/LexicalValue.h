@@ -15,17 +15,22 @@
 #define IDENTIFIERS 4
 #define LITERALS 5
 
+#include <string>
+
+
+
 struct LexicalValue {
-    int lineNumber;
-    int tokenType;
-    int literalType;
     union {
         float f;
         int i;
         int b;
         char c;
         char* s;
-    } tokenValue;
+    } 
+        tokenValue;
+    int lineNumber;
+    int tokenType;
+    int literalType;
 };
 
 #endif /* LEXICAL_VALUE_H */

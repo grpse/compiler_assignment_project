@@ -36,6 +36,12 @@ static int g(const int a) {
     break;
     continue;
 
+    if (a + 3 < 0) then {
+        output test;
+    } else {
+        output test2;
+    };
+
     return asd+3*12/23;
 }
 
