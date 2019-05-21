@@ -111,6 +111,12 @@ void yyerror (char const *s);
 %type <node> for_list
 %type <node> for_list_parameter
 %type <node> while_command
+%type <node> get_table_value
+%type <node> get_reference_address
+%type <node> reference_access_value
+%type <lexicalValue> '#'
+%type <lexicalValue> '?'
+%type <lexicalValue> '!'
 %type <lexicalValue> '+'
 %type <lexicalValue> ']'
 %type <lexicalValue> '['
@@ -263,11 +269,11 @@ assignment_command
 /* BEGIN I/O COMMAND */
 
 input_command
-    : TK_PR_INPUT expression { $$ = new GenericNode($1, { $2 }); }
+    : TK_PR_INPUT expression { $$ = new InputCommandNode($1, $2); }
 ;
 
 output_command
-    : TK_PR_OUTPUT parameters_list { $$ = new GenericNode($1, { $2 }); }
+    : TK_PR_OUTPUT parameters_list { $$ = new OutputCommandNode($1, $2); }
 ;
 
 /* END I/O COMMAND */
@@ -396,9 +402,9 @@ literal_values
 ;
 
 expression
-    : get_table_value
-    | get_reference_address
-    | reference_access_value
+    : get_table_value { $$ = $1; }
+    | get_reference_address { $$ = $1; }
+    | reference_access_value { $$ = $1; }
     | identifier { $$ = $1; }
     | TK_LIT_INT { $$ = new LiteralNode($1); }
     | TK_LIT_FLOAT { $$ = new LiteralNode($1); }
@@ -417,9 +423,9 @@ expression
     | expression '/' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
     | expression '*' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
     | expression '%' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
-    | '+' expression
-    | '-' expression
-    | '!' expression
+    | '+' expression { $$ = new UnaryExpressionNode($1, $2); }
+    | '-' expression { $$ = new UnaryExpressionNode($1, $2); }
+    | '!' expression { $$ = new UnaryExpressionNode($1, $2); }
     | expression '|' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
     | expression '&' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
     | expression '^' expression { $$ = new BinaryExpressionNode($2, $1, $3); }
@@ -431,19 +437,19 @@ expression
     | expression TK_OC_NE expression { $$ = new BinaryExpressionNode($2, $1, $3); }
     | expression TK_OC_AND expression { $$ = new BinaryExpressionNode($2, $1, $3); }
     | expression TK_OC_OR expression { $$ = new BinaryExpressionNode($2, $1, $3); }
-    | expression '?' expression ':' expression
+    | expression '?' expression ':' expression { $$ = new TernaryExpressionNode($2, $1, $3, $5); }
 ;
 
 reference_access_value
-    : '*' TK_IDENTIFICADOR
+    : '*' TK_IDENTIFICADOR { $$ = new UnaryExpressionNode($1, new LeafNode($2)); }
 ;
 
 get_reference_address
-    : '&' TK_IDENTIFICADOR
+    : '&' TK_IDENTIFICADOR { $$ = new UnaryExpressionNode($1, new LeafNode($2)); }
 ;
 
 get_table_value
-    : '#' TK_IDENTIFICADOR
+    : '#' TK_IDENTIFICADOR { $$ = new UnaryExpressionNode($1, new LeafNode($2)); }
 ;
 
 %%

@@ -21,7 +21,7 @@ static int g(const int a) {
     s >> d;
 
     input (123 * 12 * a);
-    output (asd + 12), (123);
+    output (asd + 12), 123, asd;
 
     int a;
     int a <= 123;
@@ -46,9 +46,28 @@ static int g(const int a) {
         output asd;
     };
 
-    // while((asdasd+ 123/5)) do {
-    //     output asd,asd,asd;
-    // };
+    while((asdasd+ 123/5)) do {
+        output asd,asd,asd;
+    };
+
+    /*
+    this is amulti as
+    da
+    sd
+    as
+    d
+    asd
+
+    asd
+    */
+    a = +(asd+123/123);
+    a = -123;
+
+    a = true ? (asd+123/123) : 123;
+
+    a = #a;
+    a = &a;
+    a = *a;
 
     return (asd+3*12/23);
 }

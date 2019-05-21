@@ -162,6 +162,7 @@ public:
     }
 
     virtual void print() {
+        printf("\n");
         children[0]->print();
         printf(";");
     }
@@ -264,6 +265,32 @@ public:
 
     }
 
+};
+
+class InputCommandNode: public BaseNode {
+public:
+    InputCommandNode(const LexicalValue& value, Node* expression) : BaseNode(value) {
+        children.push_back(expression);
+    }
+
+    virtual void print() {
+        printValue();
+        printf(" ");
+        children[0]->print();
+    }
+};
+
+class OutputCommandNode: public BaseNode {
+public:
+    OutputCommandNode(const LexicalValue& value, Node* parametersList) : BaseNode(value) {
+        children.push_back(parametersList);
+    }
+
+    virtual void print() {
+        printValue();
+        printf(" ");
+        children[0]->print();
+    }
 };
 
 class AssignmentCommandNode: public BaseNode {
@@ -537,13 +564,13 @@ public:
     }
 
     virtual void print() {
-        printf("(");
+        // printf("(");
         children[0]->print();
-        printf(")");
+        // printf(")");
         printf(",");
-        printf("(");
+        // printf("(");
         children[1]->print();
-        printf(")");
+        // printf(")");
     }
 };
 
@@ -565,6 +592,21 @@ public:
     }
 };
 
+class UnaryExpressionNode: public BaseNode {
+
+public:
+    UnaryExpressionNode(const LexicalValue& value, Node* expression) : BaseNode(value) {
+        children.push_back(expression);
+    }
+
+    virtual void print() {
+        printf("(");
+        printValue();
+        children[0]->print();
+        printf(")");
+    }
+};
+
 class BinaryExpressionNode: public BaseNode {
 
 public:
@@ -579,6 +621,29 @@ public:
         printValue();
         children[1]->print();
         printf(")");
+    }
+};
+
+
+class TernaryExpressionNode: public BaseNode {
+
+public:
+    TernaryExpressionNode(const LexicalValue& value, Node* validationExpression, Node* trueExpression, Node* falseExpression) : BaseNode(value) {
+        children.push_back(validationExpression);
+        children.push_back(trueExpression);
+        children.push_back(falseExpression);
+    }
+
+    virtual void print() {
+        printf("("); children[0]->print(); printf(")"); printf(" ");
+        
+        printValue(); printf(" ");
+        
+        printf("("); children[1]->print(); printf(")");
+
+        printf(" : ");
+
+        printf("("); children[2]->print(); printf(")");
     }
 };
 
