@@ -47,7 +47,7 @@ public:
                 printf(value.tokenValue.b ? "true" : "false");
                 break;
             case LITERAL_CHAR:
-                printf("%c", value.tokenValue.c);
+                printf("\'%c\'", value.tokenValue.c);
                 break;
             case LITERAL_STRING:
                 printf("%s", value.tokenValue.s);

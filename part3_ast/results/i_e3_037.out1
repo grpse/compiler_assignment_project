@@ -1,0 +1,3 @@
+int k(int x){}
+int f(){
+k(10);}

@@ -167,6 +167,7 @@ void yyerror (char const *s);
 %type <lexicalValue> TK_PR_FOR
 %type <lexicalValue> TK_PR_WHILE
 %type <lexicalValue> TK_PR_DO
+
 %%
 
 programa
@@ -262,6 +263,8 @@ local_var_init_valid_values
 
 assignment_command
     : identifier '=' expression { $$ = new AssignmentCommandNode($2, $1, $3); }
+    | identifier '=' TK_LIT_CHAR { $$ = new AssignmentCommandNode($2, $1, new LiteralNode($3)); }
+    | identifier '=' TK_LIT_STRING { $$ = new AssignmentCommandNode($2, $1, new LiteralNode($3)); }
 ;
 
 /* END ASSIGNMENT COMMAND*/

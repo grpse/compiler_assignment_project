@@ -10,6 +10,8 @@ int get_line_number() {
 	return line_count;
 }
 
+extern char* copyString(char* toCopy);
+
 %}
 
 NEW_LINE \n
@@ -100,35 +102,35 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 {SPACE} { ; }
 
 {PR_INT} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_INT;
 }
 {PR_FLOAT} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_FLOAT;
 }
 {PR_BOOL} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_BOOL;
 }
 {PR_CHAR} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_CHAR;
 }
 {PR_STRING} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -136,209 +138,209 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 }
 
 {PR_IF} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_IF;
 }
 {PR_THEN} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_THEN;
 }
 {PR_ELSE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_ELSE;
 }
 {PR_WHILE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_WHILE;
 }
 {PR_DO} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_DO;
 }
 {PR_INPUT} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_INPUT;
 }
 {PR_OUTPUT} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_OUTPUT;
 }
 {PR_RETURN} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_RETURN;
 }
 {PR_CONST} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_CONST;
 }
 {PR_STATIC} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_STATIC;
 }
 {PR_FOREACH} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_FOREACH;
 }
 {PR_FOR} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_FOR;
 }
 {PR_SWITCH} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_SWITCH;
 }
 {PR_CASE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_CASE;
 }
 {PR_BREAK} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_BREAK;
 }
 {PR_CONTINUE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_CONTINUE;
 }
 {PR_CLASS} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_CLASS;
 }
 {PR_PRIVATE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_PRIVATE;
 }
 {PR_PUBLIC} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_PUBLIC;
 }
 {PR_PROTECTED} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_PR_PROTECTED;
 }
 {OC_LE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_OC_LE;
 }
 {OC_GE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_OC_GE;
 }
 {OC_EQ} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_OC_EQ;
 }
 {OC_NE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	return  TK_OC_NE;
 }
 {OC_AND} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_OC_AND;
 }
 {OC_OR} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_OC_OR;
 }
 {OC_SL} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_OC_SL;
 }
 {OC_SR} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_OC_SR;
 }
 {OC_FORWARD_PIPE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
 	return  TK_OC_FORWARD_PIPE;
 }
 {OC_BASH_PIPE} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -361,7 +363,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 }
 
 {IDENTIFIER} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  IDENTIFIERS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -384,21 +386,21 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 	return TK_LIT_FLOAT; 
 }
 {LIT_CHAR} { 
-    yylval.lexicalValue.tokenValue.c = yytext[0];
+    yylval.lexicalValue.tokenValue.c = yytext[1];
     yylval.lexicalValue.tokenType = LITERALS;
     yylval.lexicalValue.lineNumber = line_count;
     yylval.lexicalValue.literalType = LITERAL_CHAR;
 	return TK_LIT_CHAR; 
 }
 {LIT_STRING} { 
-    yylval.lexicalValue.tokenValue.s = strdup(yytext);
+    yylval.lexicalValue.tokenValue.s = copyString(yytext);
     yylval.lexicalValue.tokenType = LITERALS;
     yylval.lexicalValue.lineNumber = line_count;
     yylval.lexicalValue.literalType = LITERAL_STRING;
 	return TK_LIT_STRING; 
 }
 {MARKER} {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType = SPECIAL_CHARACTERS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;

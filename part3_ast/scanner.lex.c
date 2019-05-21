@@ -628,7 +628,9 @@ int get_line_number() {
 	return line_count;
 }
 
-#line 632 "scanner.lex.c"
+extern char* copyString(char* toCopy);
+
+#line 634 "scanner.lex.c"
 
 #define INITIAL 0
 
@@ -846,10 +848,10 @@ YY_DECL
 		}
 
 	{
-#line 94 "scanner.l"
+#line 96 "scanner.l"
 
 
-#line 853 "scanner.lex.c"
+#line 855 "scanner.lex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -909,31 +911,31 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 96 "scanner.l"
+#line 98 "scanner.l"
 { ; }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 97 "scanner.l"
+#line 99 "scanner.l"
 { ; }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 99 "scanner.l"
+#line 101 "scanner.l"
 { line_count++; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 100 "scanner.l"
+#line 102 "scanner.l"
 { ; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 102 "scanner.l"
+#line 104 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -942,9 +944,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 109 "scanner.l"
+#line 111 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -953,9 +955,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 116 "scanner.l"
+#line 118 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -964,9 +966,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 123 "scanner.l"
+#line 125 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -975,9 +977,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 130 "scanner.l"
+#line 132 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -986,9 +988,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 138 "scanner.l"
+#line 140 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -997,9 +999,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 145 "scanner.l"
+#line 147 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1008,9 +1010,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 152 "scanner.l"
+#line 154 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1019,9 +1021,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 159 "scanner.l"
+#line 161 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1030,9 +1032,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 166 "scanner.l"
+#line 168 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1041,9 +1043,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 173 "scanner.l"
+#line 175 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1052,9 +1054,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 180 "scanner.l"
+#line 182 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1063,9 +1065,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 187 "scanner.l"
+#line 189 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1074,9 +1076,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 194 "scanner.l"
+#line 196 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1085,9 +1087,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 201 "scanner.l"
+#line 203 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1096,9 +1098,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 208 "scanner.l"
+#line 210 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1107,9 +1109,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 215 "scanner.l"
+#line 217 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1118,9 +1120,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 222 "scanner.l"
+#line 224 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1129,9 +1131,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 229 "scanner.l"
+#line 231 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1140,9 +1142,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 236 "scanner.l"
+#line 238 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1151,9 +1153,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 243 "scanner.l"
+#line 245 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1162,9 +1164,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 250 "scanner.l"
+#line 252 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1173,9 +1175,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 257 "scanner.l"
+#line 259 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1184,9 +1186,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 264 "scanner.l"
+#line 266 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1195,9 +1197,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 271 "scanner.l"
+#line 273 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1206,9 +1208,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 278 "scanner.l"
+#line 280 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1217,9 +1219,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 285 "scanner.l"
+#line 287 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1228,9 +1230,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 292 "scanner.l"
+#line 294 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1239,9 +1241,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 299 "scanner.l"
+#line 301 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	return  TK_OC_NE;
@@ -1249,9 +1251,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 305 "scanner.l"
+#line 307 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1260,9 +1262,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 312 "scanner.l"
+#line 314 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1271,9 +1273,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 319 "scanner.l"
+#line 321 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1282,9 +1284,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 326 "scanner.l"
+#line 328 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1293,9 +1295,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 333 "scanner.l"
+#line 335 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1304,9 +1306,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 340 "scanner.l"
+#line 342 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  COMPOSED_OPERATORS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1315,7 +1317,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 348 "scanner.l"
+#line 350 "scanner.l"
 {
 	yylval.lexicalValue.tokenValue.b = 1;
 	yylval.lexicalValue.tokenType =  LITERALS;
@@ -1326,7 +1328,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 355 "scanner.l"
+#line 357 "scanner.l"
 {
 	yylval.lexicalValue.tokenValue.b = 0;
 	yylval.lexicalValue.tokenType =  LITERALS;
@@ -1337,9 +1339,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 363 "scanner.l"
+#line 365 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType =  IDENTIFIERS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1348,7 +1350,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 372 "scanner.l"
+#line 374 "scanner.l"
 { 
     yylval.lexicalValue.tokenValue.i = atoi(yytext);
     yylval.lexicalValue.tokenType = LITERALS;
@@ -1359,7 +1361,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 379 "scanner.l"
+#line 381 "scanner.l"
 { 
     yylval.lexicalValue.tokenValue.f = atof(yytext);
     yylval.lexicalValue.tokenType = LITERALS;
@@ -1370,9 +1372,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 386 "scanner.l"
+#line 388 "scanner.l"
 { 
-    yylval.lexicalValue.tokenValue.c = yytext[0];
+    yylval.lexicalValue.tokenValue.c = yytext[1];
     yylval.lexicalValue.tokenType = LITERALS;
     yylval.lexicalValue.lineNumber = line_count;
     yylval.lexicalValue.literalType = LITERAL_CHAR;
@@ -1381,9 +1383,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 393 "scanner.l"
+#line 395 "scanner.l"
 { 
-    yylval.lexicalValue.tokenValue.s = strdup(yytext);
+    yylval.lexicalValue.tokenValue.s = copyString(yytext);
     yylval.lexicalValue.tokenType = LITERALS;
     yylval.lexicalValue.lineNumber = line_count;
     yylval.lexicalValue.literalType = LITERAL_STRING;
@@ -1392,9 +1394,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 400 "scanner.l"
+#line 402 "scanner.l"
 {
-	yylval.lexicalValue.tokenValue.s = strdup(yytext);
+	yylval.lexicalValue.tokenValue.s = copyString(yytext);
 	yylval.lexicalValue.tokenType = SPECIAL_CHARACTERS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
@@ -1403,10 +1405,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 408 "scanner.l"
+#line 410 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1410 "scanner.lex.c"
+#line 1412 "scanner.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2407,7 +2409,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 408 "scanner.l"
+#line 410 "scanner.l"
 
 
 

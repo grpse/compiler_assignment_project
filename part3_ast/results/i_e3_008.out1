@@ -1,0 +1,2 @@
+int f(){
+while(true) do {};}
