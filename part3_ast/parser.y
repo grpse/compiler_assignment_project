@@ -107,6 +107,10 @@ void yyerror (char const *s);
 %type <node> if_then_else_command
 %type <node> if_then_only_command
 %type <node> if_then_else_too_command
+%type <node> for_command
+%type <node> for_list
+%type <node> for_list_parameter
+%type <node> while_command
 %type <lexicalValue> '+'
 %type <lexicalValue> ']'
 %type <lexicalValue> '['
@@ -154,12 +158,14 @@ void yyerror (char const *s);
 %type <lexicalValue> TK_PR_IF
 %type <lexicalValue> TK_PR_THEN
 %type <lexicalValue> TK_PR_ELSE
-
+%type <lexicalValue> TK_PR_FOR
+%type <lexicalValue> TK_PR_WHILE
+%type <lexicalValue> TK_PR_DO
 %%
 
 programa
-    : declarations { arvore = $1; }
-    | %empty
+    : declarations { arvore = $1; $$ = $1; }
+    | %empty { arvore = NULL; $$ = NULL; }
 ;
 
 declarations
@@ -215,8 +221,8 @@ valid_command
     | shift_command { $$ = new ValidCommandNode($1); }
     | break_flow_command { $$ = new ValidCommandNode($1); }
     | if_then_else_command { $$ = new ValidCommandNode($1); }
-    | for_command
-    | while_command
+    | for_command { $$ = new ValidCommandNode($1); }
+    | while_command { $$ = new ValidCommandNode($1); }
 ;
 
 /* BEGIN LOCAL VAR */
@@ -324,23 +330,24 @@ if_then_else_too_command
 
 for_command
     : TK_PR_FOR '(' for_list ':' expression ':' for_list ')' command_block
+    { $$ = new ForCommandNode($1, $3, $5, $7, $9); }
 ;
 
 for_list
-    : for_list_parameter ',' for_list
-    | for_list_parameter
+    : for_list_parameter ',' for_list { $$ = new ParametersDeclarationList($1, $3); }
+    | for_list_parameter { $$ = $1; }
 ;
 
 for_list_parameter
-    : local_var_declaration
-    | assignment_command
-    | shift_command
+    : local_var_declaration { $$ = $1; }
+    | assignment_command { $$ = $1; }
+    | shift_command { $$ = $1; }
 ;
 
 // WHILE LOOP
 
 while_command
-    : TK_PR_WHILE '(' expression ')' TK_PR_DO command_block
+    : TK_PR_WHILE '(' expression ')' TK_PR_DO command_block { $$ = new WhileCommandNode($1, $3, $6); }
 ;
 
 /* END FLOW CONTROL COMMAND */

@@ -89,7 +89,7 @@ LIT_CHAR "'"{TEXT_CHAR}"'"
 LIT_STRING "\""{TEXT}"\""
 
 COMMENT_MULTILINE "/""*"(.|{NEW_LINE})*"*""/"
-COMMENT_LINE "/""/".*({NEW_LINE}|%eof)
+COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 
 %%
 

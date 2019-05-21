@@ -42,6 +42,15 @@ static int g(const int a) {
         output test2;
     };
 
-    return asd+3*12/23;
+    for (int i <= 0: i < 123: i = i + 1) {
+        output asd;
+    };
+
+    // while((asdasd+ 123/5)) do {
+    //     output asd,asd,asd;
+    // };
+
+    return (asd+3*12/23);
 }
 
+//

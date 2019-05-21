@@ -338,6 +338,47 @@ public:
     }
 };
 
+class ForCommandNode: public BaseNode {
+
+public:
+    ForCommandNode(const LexicalValue& value, Node* forList, Node* expression, Node* forListAfter, Node* commandBlock) : BaseNode(value) {
+        children.push_back(forList);
+        children.push_back(expression);
+        children.push_back(forListAfter);
+        children.push_back(commandBlock);
+    }
+
+    virtual void print() {
+        printValue();
+        printf("(");
+        children[0]->print();
+        printf(":");
+        children[1]->print();
+        printf(":");
+        children[2]->print();
+        printf(")");
+        children[3]->print();
+    }
+};
+
+class WhileCommandNode: public BaseNode {
+
+public:
+    WhileCommandNode(const LexicalValue& value, Node* expression, Node* commandBlock) : BaseNode(value) {
+        children.push_back(expression);
+        children.push_back(commandBlock);
+    }
+
+    virtual void print() {
+        printValue();
+        printf("(");
+        children[0]->print();
+        printf(")");
+        printf(" do ");
+        children[1]->print();
+    }
+};
+
 class ListOfDeclarations: public BaseNode {
 
 public:
