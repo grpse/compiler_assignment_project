@@ -52,6 +52,7 @@ extern int get_line_number();
 struct FunctionParameter {
     int type;
     std::string name;
+    LexicalValue lexical = {};
 };
 
 struct SymbolEntry {

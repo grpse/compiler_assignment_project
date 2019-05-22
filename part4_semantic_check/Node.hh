@@ -527,7 +527,15 @@ public:
 
         type = getCurrentTable()->getTypeOfDeclaration(declarationType->value);
 
-        getCurrentTable()->insertFunctionDeclaration(identifier, type, getFunctionParametersList(listOfParametersDeclaration));
+        SymbolTable* localCurrentTable = getCurrentTable();
+        auto functionParameters = getFunctionParametersList(listOfParametersDeclaration);
+        localCurrentTable->insertFunctionDeclaration(identifier, type, functionParameters);
+
+        // SymbolTable* newTable = getNewSymbolTable();
+        // for (auto functionParameter : functionParameters) {
+        //     newTable->insertVariableDeclaration(functionParameter.lexical, functionParameter.type);
+        // }
+        
     }
 
     std::vector<FunctionParameter> getFunctionParametersList(Node* listOfParameters) {
@@ -542,6 +550,7 @@ public:
             FunctionParameter parameter;
             parameter.name = listOfParameters->value.tokenValue.s;
             parameter.type = listOfParameters->type;
+            parameter.lexical = listOfParameters->value;
             theList.push_back(parameter);
             getFunctionParametersListRecursively(listOfParameters->restOfTheList, theList);
 
