@@ -1,0 +1,5 @@
+int f(){
+bool iks;
+bool caps;
+iks=false;
+caps=true;}

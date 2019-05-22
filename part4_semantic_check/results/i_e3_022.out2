@@ -1,0 +1,5 @@
+int f(){
+int a;
+int x;
+int b;
+x=(a*b);}

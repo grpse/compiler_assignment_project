@@ -1,0 +1,6 @@
+x string;
+
+int f(int e, float f, char c, bool b, string d) {
+    char h;
+    h = 'c';
+}
