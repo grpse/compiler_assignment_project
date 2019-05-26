@@ -1,6 +1,6 @@
 x string;
 
-int f(int e, float f, char c, bool b, string d) {
+int f(int e, int f) {
     char h;
     h = 'c';
 }

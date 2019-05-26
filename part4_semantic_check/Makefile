@@ -9,7 +9,7 @@ generate_lexical:
 	flex -o scanner.lex.c scanner.l
 
 compile:
-	g++ -g -std=c++11 -o etapa4 parser.tab.c utils.cpp scanner.lex.c main.c -lm -lfl
+	g++ -g -std=c++11 -o etapa4 parser.tab.c utils.cpp scanner.lex.c main.c -lm
 
 tar: all
 	tar cvzf etapa4.tgz scanner.l parser.y etapa4 Makefile main.c Node.hh SymbolTable.hh utils.cpp LexicalValue.h TypesInclude.hh

@@ -22,6 +22,9 @@
 #define NATUREZA_LITERAL_STRING     4
 #define NATUREZA_LITERAL_BOOL       5
 #define NATUREZA_IDENTIFICADOR      6
+#define NATUREZA_VARIABLE           7
+#define NATUREZA_VECTOR             8
+#define NATUREZA_FUNCTION           9
 
 /* Verificação de declarações */
 #define ERR_UNDECLARED  10 //identificador não declarado

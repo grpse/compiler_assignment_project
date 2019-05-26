@@ -531,10 +531,14 @@ public:
         auto functionParameters = getFunctionParametersList(listOfParametersDeclaration);
         localCurrentTable->insertFunctionDeclaration(identifier, type, functionParameters);
 
-        // SymbolTable* newTable = getNewSymbolTable();
-        // for (auto functionParameter : functionParameters) {
-        //     newTable->insertVariableDeclaration(functionParameter.lexical, functionParameter.type);
-        // }
+        SymbolTable* newTable = getNewSymbolTable();
+        
+        for (auto functionParameter : functionParameters) {
+            newTable->insertVariableDeclaration(functionParameter.lexical, functionParameter.type);
+        }
+
+        localCurrentTable->print();
+        newTable->print();
         
     }
 
@@ -546,19 +550,17 @@ public:
 
     void getFunctionParametersListRecursively(Node* listOfParameters, std::vector<FunctionParameter>& theList) {
         bool hasParameterToLookAt = listOfParameters && listOfParameters->restOfTheList;
-        if (hasParameterToLookAt) {
+
+        if (listOfParameters) {
             FunctionParameter parameter;
             parameter.name = listOfParameters->value.tokenValue.s;
             parameter.type = listOfParameters->type;
             parameter.lexical = listOfParameters->value;
             theList.push_back(parameter);
-            getFunctionParametersListRecursively(listOfParameters->restOfTheList, theList);
+        }
 
-        } else if (listOfParameters) {
-            FunctionParameter parameter;
-            parameter.name = listOfParameters->value.tokenValue.s;
-            parameter.type = listOfParameters->type;
-            theList.push_back(parameter);
+        if (hasParameterToLookAt) {
+            getFunctionParametersListRecursively(listOfParameters->restOfTheList, theList);
         }
     }
 

@@ -5,7 +5,7 @@
 #include <stack>
 
 std::vector<char*> listToFreeUp;
-std::stack<SymbolTable*> tablesStack;
+static std::stack<SymbolTable*> tablesStack;
 
 static SymbolTable* currentTable = new SymbolTable(NULL);
 
@@ -14,13 +14,16 @@ SymbolTable* getCurrentTable() {
 }
 
 SymbolTable* getNewSymbolTable() {
+    SymbolTable* newSymbolTable = NULL;
     if (tablesStack.size() > 0) {
-        currentTable = new SymbolTable(tablesStack.top());
+        newSymbolTable = new SymbolTable(currentTable);
     } else {
-        currentTable = new SymbolTable(NULL);
+        newSymbolTable = new SymbolTable(NULL);
     }
+
     tablesStack.push(currentTable);
-    return currentTable;
+    currentTable = newSymbolTable;
+    return newSymbolTable;
 }
 
 SymbolTable* popAndGetPrevious() {
@@ -57,6 +60,8 @@ void descompila(void* arvore) {
         Node* root = (Node*) arvore;
         root->print();
     }
+
+    printf("\n");
 }
 
 void libera(void* arvore) {
