@@ -31,6 +31,7 @@ struct LexicalValue {
     int lineNumber;
     int tokenType;
     int literalType;
+    int literalSize;
 };
 
 #endif /* LEXICAL_VALUE_H */

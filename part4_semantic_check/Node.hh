@@ -12,6 +12,8 @@
 #define TO_STRING(name) #name
 #define DEBUG
 
+extern SymbolTable* pushTempTableAndClear();
+extern SymbolTable* getTempTable();
 extern SymbolTable* getCurrentTable();
 extern SymbolTable* getNewSymbolTable();
 extern SymbolTable* popAndGetPrevious();
@@ -133,9 +135,19 @@ public:
 
 class IdentifierNode: public BaseNode {
 public:
-    IdentifierNode(const LexicalValue& value, Node* vectorNotation) : BaseNode(value) {
-        if (vectorNotation) 
-            children.push_back(vectorNotation);
+    IdentifierNode(const LexicalValue& value) : BaseNode(value) {
+
+    }
+
+    virtual void print() {
+        printValue();
+    }
+};
+
+class IdentifierVectorNode: public BaseNode {
+public:
+    IdentifierVectorNode(const LexicalValue& value, Node* vectorNotation) : BaseNode(value) {
+        children.push_back(vectorNotation);
     }
 
     virtual void print() {
@@ -148,12 +160,12 @@ public:
         }
     }
 };
-
 class CommandBlockNode: public BaseNode {
 
 public:
     CommandBlockNode(Node* listOfCommands) : BaseNode() {
         this->children.push_back(listOfCommands);
+        pushTempTableAndClear();
     }
 
     virtual void print() {
@@ -224,8 +236,9 @@ public:
         this->declarationType = declarationType;
         this->localVarInit = localVarInit;
 
-        type = getCurrentTable()->getTypeOfDeclaration(declarationType->value);
-        getCurrentTable()->insertVariableDeclaration(identifier, type);
+        type = getTempTable()->getTypeOfDeclaration(declarationType->value);
+        getTempTable()->insertVariableDeclaration(identifier, type);
+        getTempTable()->updateTypeSize(identifier, declarationType->value.literalSize);
     }
 
     virtual void print() {
@@ -331,9 +344,41 @@ public:
     AssignmentCommandNode(const LexicalValue& value, Node* identifier, Node* rightValue) : BaseNode(value) {
         children = {identifier, rightValue};
 
-        getCurrentTable()->checkDeclarationRecursivelyInPreviousScopes(identifier->value.tokenValue.s);
-        type = getCurrentTable()->getTypeOfDeclaration(identifier->value);
+        getTempTable()->checkDeclarationRecursivelyInPreviousScopes(identifier->value.tokenValue.s);
+        type = getTempTable()->getTypeOfDeclaration(identifier->value);
         
+        SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier->value.tokenValue.s);
+        
+        if (identifierEntry->type == TYPE_STRING) {
+            int sizeOfString = 1 * strlen(rightValue->value.tokenValue.s);
+            getTempTable()->updateTypeSize(identifier->value, sizeOfString);
+        }
+
+        bool identifierIsVector = identifier->children.size() > 0;
+
+        if (identifierIsVector) {
+            if (identifierEntry->nature != NATUREZA_VECTOR) {
+                exit(ERR_VARIABLE);
+            }
+
+        } else {
+            bool typeCharDoesntMatch = 
+                (rightValue->type == TYPE_CHAR && identifierEntry->type != TYPE_CHAR) ||
+                (rightValue->type != TYPE_CHAR && identifierEntry->type == TYPE_CHAR);
+
+            bool typeStringDoesntMatch =
+                (rightValue->type == TYPE_STRING && identifierEntry->type != TYPE_STRING) ||
+                (rightValue->type != TYPE_STRING && identifierEntry->type == TYPE_STRING);
+
+
+            if (typeCharDoesntMatch) {
+                exit(ERR_CHAR_TO_X);
+            } else if (typeStringDoesntMatch) { 
+                exit(ERR_STRING_TO_X);
+            }
+
+
+        }
     }
 
     virtual void print() {
@@ -460,29 +505,24 @@ public:
 class GlobalVariableDeclaration: public BaseNode {
 
 public:
-    GlobalVariableDeclaration(LexicalValue& identifier, Node* isVector, Node* isStatic, Node* declarationType) : BaseNode(identifier) {
+    GlobalVariableDeclaration(LexicalValue& identifier, Node* isStatic, Node* declarationType) : BaseNode(identifier) {
         
-        if (isVector) children.push_back(isVector);
         if (isStatic) children.push_back(isStatic);
         children.push_back(declarationType);
 
-        this->isVector = isVector;
         this->isStatic = isStatic;
         this->declarationType = declarationType;
-
         type = getCurrentTable()->getTypeOfDeclaration(declarationType->value);
-
         getCurrentTable()->insertVariableDeclaration(identifier, type);
+
+        if (type != TYPE_STRING) {
+            getCurrentTable()->updateTypeSize(identifier, declarationType->value.literalSize);
+        }
     }
 
     virtual void print() {
         
         printValue();
-        if (isVector) {
-            printf("[");
-            isVector->print();
-            printf("]");
-        }
 
         if (isStatic) {
             printf(" ");
@@ -494,7 +534,51 @@ public:
     }
 
 private:
-    Node* isVector;
+    Node* isStatic;
+    Node* declarationType;
+};
+
+class GlobalVectorVariableDeclaration: public BaseNode {
+
+public:
+    GlobalVectorVariableDeclaration(LexicalValue& identifier, Node* literalInteger, Node* isStatic, Node* declarationType) : BaseNode(identifier) {
+        
+
+        if (isStatic) this->children.push_back(isStatic);
+        this->children.push_back(literalInteger);
+        this->children.push_back(declarationType);
+
+        this->isStatic = isStatic;
+        this->literalInteger = literalInteger;
+        this->declarationType = declarationType;
+
+        type = getCurrentTable()->getTypeOfDeclaration(declarationType->value);
+        getCurrentTable()->insertVectorDeclaration(identifier, type);
+
+        if (type != TYPE_STRING) {
+            int numberOfElements = literalInteger->value.tokenValue.i;
+            int vectorSizeInMemory = declarationType->value.literalSize * numberOfElements;
+            getCurrentTable()->updateTypeSize(identifier, vectorSizeInMemory);
+        }
+    }
+
+    virtual void print() {
+        printValue();
+        printf("[");
+        this->literalInteger->print();
+        printf("]");
+
+        if (isStatic) {
+            printf(" ");
+            isStatic->print();
+        }
+        printf(" ");
+        this->declarationType->print();
+        printf(";");
+    }
+
+private:
+    Node* literalInteger;
     Node* isStatic;
     Node* declarationType;
 };
@@ -524,22 +608,11 @@ public:
         this->declarationType = declarationType;
         this->listOfParametersDeclaration = listOfParametersDeclaration;
         this->commandBlock = commandBlock;
-
-        type = getCurrentTable()->getTypeOfDeclaration(declarationType->value);
-
-        SymbolTable* localCurrentTable = getCurrentTable();
+        
+        type = getTempTable()->getTypeOfDeclaration(declarationType->value);
         auto functionParameters = getFunctionParametersList(listOfParametersDeclaration);
-        localCurrentTable->insertFunctionDeclaration(identifier, type, functionParameters);
-
-        SymbolTable* newTable = getNewSymbolTable();
-        
-        for (auto functionParameter : functionParameters) {
-            newTable->insertVariableDeclaration(functionParameter.lexical, functionParameter.type);
-        }
-
-        localCurrentTable->print();
-        newTable->print();
-        
+        getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
+        // getTempTable()->printTable();
     }
 
     std::vector<FunctionParameter> getFunctionParametersList(Node* listOfParameters) {
@@ -627,7 +700,13 @@ public:
         this->isConst = isConst;
         this->declarationType = declarationType;
         this->restOfTheList = parameterDeclarationList;
-        type = getCurrentTable()->getTypeOfDeclaration(declarationType->value);
+
+        type = getTempTable()->getTypeOfDeclaration(declarationType->value);
+        getTempTable()->insertVariableDeclaration(identifier, type);
+
+        if (type != TYPE_STRING) {
+            getTempTable()->updateTypeSize(identifier, declarationType->value.literalSize);
+        }
     }
 
     virtual void print() {
@@ -652,7 +731,7 @@ private:
 class ParameterDeclaration: public BaseNode {
 
 public:
-    ParameterDeclaration(const LexicalValue& value, Node* isConst, Node* declarationType) : BaseNode(value) {
+    ParameterDeclaration(const LexicalValue& identifier, Node* isConst, Node* declarationType) : BaseNode(identifier) {
 
         if (isConst) 
             children.push_back(isConst);
@@ -661,7 +740,12 @@ public:
 
         this->isConst = isConst;
         this->declarationType = declarationType;
-        type = getCurrentTable()->getTypeOfDeclaration(declarationType->value);
+        type = getTempTable()->getTypeOfDeclaration(declarationType->value);
+        getTempTable()->insertVariableDeclaration(identifier, type);
+
+        if (type != TYPE_STRING) {
+            getTempTable()->updateTypeSize(identifier, declarationType->value.literalSize);
+        }
     }
 
     virtual void print() {

@@ -9,6 +9,25 @@ static std::stack<SymbolTable*> tablesStack;
 
 static SymbolTable* currentTable = new SymbolTable(NULL);
 
+static SymbolTable* tempTable = NULL;
+
+SymbolTable* pushTempTableAndClear() {
+    if (tempTable) {
+        tablesStack.push(currentTable);
+        currentTable = tempTable;
+        tempTable = NULL;
+    }
+    return currentTable;
+}
+
+SymbolTable* getTempTable() {
+    if (tempTable == NULL) {
+        tempTable = new SymbolTable(currentTable);
+    }
+
+    return tempTable;
+}
+
 SymbolTable* getCurrentTable() {
     return currentTable;
 }

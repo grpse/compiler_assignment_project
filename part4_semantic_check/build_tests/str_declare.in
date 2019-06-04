@@ -1,6 +1,12 @@
-x string;
 
-int f(int e, int f) {
+x[8] static int;
+int f(int e, int d) {
     char h;
-    h = 'c';
+
+    {
+        d = x[0];
+        h = 'c';
+        x = 10;
+        h[0] = 10;
+    };
 }

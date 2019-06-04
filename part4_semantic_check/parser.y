@@ -84,7 +84,6 @@ void yyerror (char const *s);
 %type <node> list_of_commands
 %type <node> command_block
 %type <node> declaration_type
-%type <node> is_vector
 %type <node> is_static
 %type <node> function_declaration
 %type <node> list_of_parameters_declaration
@@ -186,8 +185,10 @@ declarations
 ;
 
 global_var_declaration
-    : TK_IDENTIFICADOR is_vector is_static declaration_type ';' 
-    { $$ = new GlobalVariableDeclaration($1, $2, $3, $4); }
+    : TK_IDENTIFICADOR is_static declaration_type ';' 
+    { $$ = new GlobalVariableDeclaration($1, $2, $3); }
+    | TK_IDENTIFICADOR '[' TK_LIT_INT ']' is_static declaration_type ';' 
+    { $$ = new GlobalVectorVariableDeclaration($1, new LiteralNode($3), $5, $6); }
 ;
 
 /* BEGIN FUNCTION HEADER */
@@ -203,9 +204,9 @@ list_of_parameters_declaration
 
 parameters_declaration_list
     : is_const declaration_type TK_IDENTIFICADOR ',' parameters_declaration_list 
-    { $$ = new ParametersDeclarationList($3, $1, $2, $5); }
+    {  $$ = new ParametersDeclarationList($3, $1, $2, $5); }
     | is_const declaration_type TK_IDENTIFICADOR
-    { $$ = new ParameterDeclaration($3, $1, $2); }
+    {  $$ = new ParameterDeclaration($3, $1, $2); }
 ;
 
 /* END FUNCTION HEADER */
@@ -380,17 +381,12 @@ is_const
 ;
 
 identifier
-    : TK_IDENTIFICADOR '[' expression ']' { $$ = new IdentifierNode($1, $3); }
-    | TK_IDENTIFICADOR { $$ = new LeafNode($1); }
+    : TK_IDENTIFICADOR '[' expression ']' { $$ = new IdentifierVectorNode($1, $3); }
+    | TK_IDENTIFICADOR { $$ = new IdentifierNode($1); }
 ;
 
 is_static
     : TK_PR_STATIC { $$ = new LeafNode($1); }
-    | %empty { $$ = NULL; }
-;
-
-is_vector
-    : '[' expression ']' { $$ = $2; }
     | %empty { $$ = NULL; }
 ;
 

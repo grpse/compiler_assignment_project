@@ -52,6 +52,8 @@
 
 extern int get_line_number();
 
+static int TableID = 0;
+
 struct FunctionParameter {
     int type;
     std::string name;
@@ -71,6 +73,7 @@ struct SymbolEntry {
 class SymbolTable {
 
 public:
+    SymbolTable* parent;
 
     SymbolTable(SymbolTable* parent) {
         this->parent = parent;
@@ -80,15 +83,34 @@ public:
         
     }
 
-    void updateTypeSizeOnAssignment(const LexicalValue& identifier /*, MISSING THE EXPRESSION OF ASSINGMENT*/) {
-
+    void updateTypeSize(const LexicalValue& identifier, int sizeUpdate) {
+        SymbolEntry* entry = table[identifier.tokenValue.s];
+        if (entry) {
+            entry->size = sizeUpdate;
+        }
     }
 
     void insertVariableDeclaration(const LexicalValue& identifier, int type) {
         SymbolEntry* entry = new SymbolEntry();
         entry->lexical = identifier;
         entry->location = get_line_number();
-        entry->nature = NATUREZA_IDENTIFICADOR;
+        entry->nature = NATUREZA_VARIABLE;
+        entry->type = type;
+        entry->size = 0;
+
+        if (isAlreadyDeclared(identifier.tokenValue.s)) {
+            // ERR_DECLARED
+            exit(ERR_DECLARED);
+        }
+        
+        table[identifier.tokenValue.s] = entry;
+    }
+
+    void insertVectorDeclaration(const LexicalValue& identifier, int type) {
+        SymbolEntry* entry = new SymbolEntry();
+        entry->lexical = identifier;
+        entry->location = get_line_number();
+        entry->nature = NATUREZA_VECTOR;
         entry->type = type;
         entry->size = 0;
 
@@ -104,7 +126,7 @@ public:
         SymbolEntry* entry = new SymbolEntry();
         entry->lexical = identifier;
         entry->location = get_line_number();
-        entry->nature = NATUREZA_IDENTIFICADOR;
+        entry->nature = NATUREZA_FUNCTION;
         entry->type = type;
         entry->size = 0;
         entry->parameters = parameters;
@@ -117,8 +139,6 @@ public:
         table[identifier.tokenValue.s] = entry;
     }
 
-    // void typeCheck(int identifierType, )
-
     void checkDeclarationRecursivelyInPreviousScopes(std::string identifierName) {
         if (isAlreadyDeclared(identifierName)) {
             return;
@@ -129,11 +149,16 @@ public:
         }
     }
 
+    SymbolEntry* getEntry(std::string identifierName) {
+        return table[identifierName];
+    }
+
     int getTypeOfIdentifierName(std::string symbol) {
         return table[symbol]->type;
     }
 
-    void print() {
+    void printTable() {
+        printf("TableID: %d\n", tableID);
         for (std::pair<std::string, SymbolEntry*> row : table) {
             SymbolEntry* e = row.second;
             std::cout << "|" << row.first << "|" << e->lexical.tokenValue.s << "|" << e->location << "|" << natureString(e->nature) << "|" << typeString(e->type) << "|" << e->size << "|" << parametersString(e) << "|" << std::endl;
@@ -179,6 +204,9 @@ public:
         case NATUREZA_LITERAL_FLOAT: return DEF(NATUREZA_LITERAL_FLOAT);
         case NATUREZA_LITERAL_INT: return DEF(NATUREZA_LITERAL_INT);
         case NATUREZA_LITERAL_STRING: return DEF(NATUREZA_LITERAL_STRING);
+        case NATUREZA_VARIABLE: return DEF(NATUREZA_VARIABLE);
+        case NATUREZA_VECTOR: return DEF(NATUREZA_VECTOR);
+        case NATUREZA_FUNCTION: return DEF(NATUREZA_FUNCTION);
         default: return "NONE";
         }
     }
@@ -216,8 +244,9 @@ public:
     }
 
 private:
-    SymbolTable* parent;
+    
     std::map<std::string, SymbolEntry*> table;
+    int tableID = TableID++;
 
     bool isAlreadyDeclared(std::string identifierName) {
         return table.find(identifierName) != table.end();

@@ -107,6 +107,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
+	yylval.lexicalValue.literalSize = 4;
 	return  TK_PR_INT;
 }
 {PR_FLOAT} {
@@ -114,6 +115,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
+	yylval.lexicalValue.literalSize = 8;
 	return  TK_PR_FLOAT;
 }
 {PR_BOOL} {
@@ -121,6 +123,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
+	yylval.lexicalValue.literalSize = 1;
 	return  TK_PR_BOOL;
 }
 {PR_CHAR} {
@@ -128,6 +131,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 	yylval.lexicalValue.tokenType =  RESERVED_WORD;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = NOT_LITERAL;
+	yylval.lexicalValue.literalSize = 1;
 	return  TK_PR_CHAR;
 }
 {PR_STRING} {
@@ -353,6 +357,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 	yylval.lexicalValue.tokenType =  LITERALS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = LITERAL_BOOL;
+	yylval.lexicalValue.literalSize = 1;
 	return  TK_LIT_TRUE;
 }
 {LIT_FALSE} {
@@ -360,6 +365,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 	yylval.lexicalValue.tokenType =  LITERALS;
 	yylval.lexicalValue.lineNumber = line_count;
 	yylval.lexicalValue.literalType = LITERAL_BOOL;
+	yylval.lexicalValue.literalSize = 1;
 	return  TK_LIT_FALSE;
 }
 
@@ -377,6 +383,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
     yylval.lexicalValue.tokenType = LITERALS;
     yylval.lexicalValue.lineNumber = line_count;
     yylval.lexicalValue.literalType = LITERAL_INT;
+	yylval.lexicalValue.literalSize = 4;
 	return TK_LIT_INT; 
 }
 {LIT_FLOAT} { 
@@ -384,6 +391,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
     yylval.lexicalValue.tokenType = LITERALS;
     yylval.lexicalValue.lineNumber = line_count;
     yylval.lexicalValue.literalType = LITERAL_FLOAT;
+	yylval.lexicalValue.literalSize = 8;
 	return TK_LIT_FLOAT; 
 }
 {LIT_CHAR} { 
@@ -391,6 +399,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
     yylval.lexicalValue.tokenType = LITERALS;
     yylval.lexicalValue.lineNumber = line_count;
     yylval.lexicalValue.literalType = LITERAL_CHAR;
+	yylval.lexicalValue.literalSize = 1;
 	return TK_LIT_CHAR; 
 }
 {LIT_STRING} { 
@@ -398,6 +407,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
     yylval.lexicalValue.tokenType = LITERALS;
     yylval.lexicalValue.lineNumber = line_count;
     yylval.lexicalValue.literalType = LITERAL_STRING;
+	yylval.lexicalValue.literalSize = 1 * strlen(yylval.lexicalValue.tokenValue.s);
 	return TK_LIT_STRING; 
 }
 {MARKER} {
