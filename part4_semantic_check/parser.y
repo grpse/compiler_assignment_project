@@ -196,10 +196,9 @@ function_declaration
     : is_static declaration_type TK_IDENTIFICADOR { $<lexicalValue>$ = $3; } list_of_parameters_declaration 
         { 
             SymbolTable* tableWithFunctionParametersDeclaration = getTempTable();
-            // printf("TABLE WITH FUNCTION PARAMETERS DECLARATION\n");
-            // tableWithFunctionParametersDeclaration->printTable(); // CHECKED
 
-            popAndGetPrevious();
+            // GO BACK TO GLOBAL SCOPE TO ADD FUNCTION DECLARATION TO GLOBAL SCOPE
+            popAndGetPrevious(); 
 
             Node* declarationType = $2;
             LexicalValue identifier = $3;
@@ -208,6 +207,7 @@ function_declaration
             auto functionParameters = Node::getFunctionParametersList(listOfParametersDeclaration);
             getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);            
             
+            // FORCE INSERT PARAMETERS DECLARATION AS PART OF INNER SCOPE OF THE COMMAND BLOCK
             forcePushTableAsCurrent(tableWithFunctionParametersDeclaration);
             $<node>$ = $5; 
         } command_block
