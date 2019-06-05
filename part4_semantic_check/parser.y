@@ -4,9 +4,9 @@
 
 %{
 
-extern SymbolTable* getCurrentTable();
-extern SymbolTable* getNewSymbolTable();
+extern SymbolTable* getTempTable();
 extern SymbolTable* popAndGetPrevious();
+extern void forcePushTableAsCurrent(SymbolTable* someTable);
 extern void* arvore;
 extern char* yytext;
 extern int get_line_number();
@@ -193,17 +193,25 @@ global_var_declaration
 
 /* BEGIN FUNCTION HEADER */
 function_declaration
-    : is_static declaration_type TK_IDENTIFICADOR list_of_parameters_declaration 
+    : is_static declaration_type TK_IDENTIFICADOR { $<lexicalValue>$ = $3; } list_of_parameters_declaration 
         { 
+            SymbolTable* tableWithFunctionParametersDeclaration = getTempTable();
+            // printf("TABLE WITH FUNCTION PARAMETERS DECLARATION\n");
+            // tableWithFunctionParametersDeclaration->printTable(); // CHECKED
+
+            popAndGetPrevious();
+
             Node* declarationType = $2;
             LexicalValue identifier = $3;
-            Node* listOfParametersDeclaration = $4;
+            Node* listOfParametersDeclaration = $5;
             int type = getTempTable()->getTypeOfDeclaration(declarationType->value);
             auto functionParameters = Node::getFunctionParametersList(listOfParametersDeclaration);
-            getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
-            $<node>$ = $4; 
+            getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);            
+            
+            forcePushTableAsCurrent(tableWithFunctionParametersDeclaration);
+            $<node>$ = $5; 
         } command_block
-    {  $$ = new FunctionDeclarationNode($3, $1, $2, $4, $6); }
+    {  $$ = new FunctionDeclarationNode($3, $1, $2, $5, $7); }
 ;
 
 list_of_parameters_declaration
@@ -227,7 +235,7 @@ command_block
 
 list_of_commands
     : list_of_commands valid_command ';' { $$ = new ListOfCommandsNode($1, $2); }
-    | valid_command ';' { $$ = $1; }
+    | valid_command ';' { pushTempTableAndClear(); $$ = $1; }
 ;
 
 valid_command

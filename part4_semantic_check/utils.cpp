@@ -11,10 +11,18 @@ static int TableID = 0;
 
 static SymbolTable* currentTable = new SymbolTable(NULL);
 
+void forcePushTableAsCurrent(SymbolTable* someTable) {
+    currentTable = someTable;
+    // printf("TABLE FORCE PUSH\n");
+    // currentTable->printTable();
+}
+
 SymbolTable* pushTempTableAndClear() {
     tablesStack.push(currentTable);
     tableFreeList.push_back(currentTable);
-    TableID++;
+    TableID++;    
+    // printf("TABLE PUSH\n");
+    // currentTable->printTable();
     currentTable = new SymbolTable(currentTable);
     return currentTable;
 }
@@ -25,6 +33,8 @@ SymbolTable* getTempTable() {
 
 SymbolTable* popAndGetPrevious() {
     TableID--;
+    // printf("TABLE POP\n");
+    // currentTable->printTable();
     currentTable = tablesStack.top();
     return currentTable;
 }
