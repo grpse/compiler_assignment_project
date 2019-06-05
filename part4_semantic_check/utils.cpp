@@ -5,52 +5,23 @@
 #include <stack>
 
 std::vector<char*> listToFreeUp;
+std::vector<SymbolTable*> tableFreeList;
 static std::stack<SymbolTable*> tablesStack;
 
 static SymbolTable* currentTable = new SymbolTable(NULL);
 
-static SymbolTable* tempTable = NULL;
-
 SymbolTable* pushTempTableAndClear() {
-    if (tempTable) {
-        tablesStack.push(currentTable);
-        currentTable = tempTable;
-        tempTable = NULL;
-    }
+    tablesStack.push(currentTable);
+    tableFreeList.push_back(currentTable);    
+    currentTable = new SymbolTable(currentTable);
     return currentTable;
 }
 
 SymbolTable* getTempTable() {
-    if (tempTable == NULL) {
-        tempTable = new SymbolTable(currentTable);
-    }
-
-    return tempTable;
-}
-
-SymbolTable* getCurrentTable() {
     return currentTable;
 }
 
-SymbolTable* getNewSymbolTable() {
-    SymbolTable* newSymbolTable = NULL;
-    if (tablesStack.size() > 0) {
-        newSymbolTable = new SymbolTable(currentTable);
-    } else {
-        newSymbolTable = new SymbolTable(NULL);
-    }
-
-    tablesStack.push(currentTable);
-    currentTable = newSymbolTable;
-    return newSymbolTable;
-}
-
 SymbolTable* popAndGetPrevious() {
-    if (tablesStack.size() > 1) {
-        SymbolTable* currentFromStack = tablesStack.top();
-        tablesStack.pop();
-        delete currentFromStack;
-    }
     currentTable = tablesStack.top();
     return currentTable;
 }
@@ -95,10 +66,9 @@ void libera(void* arvore) {
 
     listToFreeUp.clear();
 
-    while(tablesStack.size() > 0) {
-        SymbolTable* table = tablesStack.top();
-        tablesStack.pop();
-
+    for (SymbolTable* table : tableFreeList) {
         delete table;
     }
+
+    tableFreeList.clear();
 }

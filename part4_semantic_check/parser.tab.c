@@ -1533,7 +1533,7 @@ yyreduce:
 
   case 10:
 #line 197 "parser.y" /* yacc.c:1648  */
-    { (yyval.node) = new FunctionDeclarationNode((yyvsp[-2].lexicalValue), (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node), (yyvsp[0].node)); }
+    {  (yyval.node) = new FunctionDeclarationNode((yyvsp[-2].lexicalValue), (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node), (yyvsp[0].node)); }
 #line 1538 "parser.tab.c" /* yacc.c:1648  */
     break;
 
@@ -1551,25 +1551,25 @@ yyreduce:
 
   case 13:
 #line 207 "parser.y" /* yacc.c:1648  */
-    {  (yyval.node) = new ParametersDeclarationList((yyvsp[-2].lexicalValue), (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[0].node)); }
+    { (yyval.node) = new ParametersDeclarationList((yyvsp[-2].lexicalValue), (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[0].node)); }
 #line 1556 "parser.tab.c" /* yacc.c:1648  */
     break;
 
   case 14:
 #line 209 "parser.y" /* yacc.c:1648  */
-    {  (yyval.node) = new ParameterDeclaration((yyvsp[0].lexicalValue), (yyvsp[-2].node), (yyvsp[-1].node)); }
+    { pushTempTableAndClear(); (yyval.node) = new ParameterDeclaration((yyvsp[0].lexicalValue), (yyvsp[-2].node), (yyvsp[-1].node)); }
 #line 1562 "parser.tab.c" /* yacc.c:1648  */
     break;
 
   case 15:
 #line 215 "parser.y" /* yacc.c:1648  */
-    { (yyval.node) = new CommandBlockNode((yyvsp[-1].node)); }
+    { (yyval.node) = new CommandBlockNode((yyvsp[-1].node)); popAndGetPrevious(); }
 #line 1568 "parser.tab.c" /* yacc.c:1648  */
     break;
 
   case 16:
 #line 216 "parser.y" /* yacc.c:1648  */
-    { (yyval.node) = new CommandBlockNode(NULL); }
+    { (yyval.node) = new CommandBlockNode(NULL); popAndGetPrevious(); }
 #line 1574 "parser.tab.c" /* yacc.c:1648  */
     break;
 

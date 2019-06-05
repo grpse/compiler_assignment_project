@@ -1,12 +1,14 @@
 
 x[8] static int;
 int f(int e, int d) {
-    char h;
+    char h <= 'h';
 
     {
         d = x[0];
         h = 'c';
         x = 10;
-        h[0] = 10;
+        f(d, x);
+
+        char r;
     };
 }

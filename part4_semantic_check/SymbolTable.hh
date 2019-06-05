@@ -150,7 +150,13 @@ public:
     }
 
     SymbolEntry* getEntry(std::string identifierName) {
-        return table[identifierName];
+        if (table.find(identifierName) != table.end()) {
+            return table[identifierName];
+        } else if (parent != NULL) {
+            return parent->getEntry(identifierName);
+        } else {
+            return NULL;
+        }
     }
 
     int getTypeOfIdentifierName(std::string symbol) {

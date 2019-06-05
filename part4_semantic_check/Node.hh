@@ -14,8 +14,6 @@
 
 extern SymbolTable* pushTempTableAndClear();
 extern SymbolTable* getTempTable();
-extern SymbolTable* getCurrentTable();
-extern SymbolTable* getNewSymbolTable();
 extern SymbolTable* popAndGetPrevious();
 extern int get_line_number();
 
@@ -164,8 +162,7 @@ class CommandBlockNode: public BaseNode {
 
 public:
     CommandBlockNode(Node* listOfCommands) : BaseNode() {
-        this->children.push_back(listOfCommands);
-        pushTempTableAndClear();
+        this->children.push_back(listOfCommands);        
     }
 
     virtual void print() {
@@ -512,11 +509,11 @@ public:
 
         this->isStatic = isStatic;
         this->declarationType = declarationType;
-        type = getCurrentTable()->getTypeOfDeclaration(declarationType->value);
-        getCurrentTable()->insertVariableDeclaration(identifier, type);
+        type = getTempTable()->getTypeOfDeclaration(declarationType->value);
+        getTempTable()->insertVariableDeclaration(identifier, type);
 
         if (type != TYPE_STRING) {
-            getCurrentTable()->updateTypeSize(identifier, declarationType->value.literalSize);
+            getTempTable()->updateTypeSize(identifier, declarationType->value.literalSize);
         }
     }
 
@@ -552,13 +549,13 @@ public:
         this->literalInteger = literalInteger;
         this->declarationType = declarationType;
 
-        type = getCurrentTable()->getTypeOfDeclaration(declarationType->value);
-        getCurrentTable()->insertVectorDeclaration(identifier, type);
+        type = getTempTable()->getTypeOfDeclaration(declarationType->value);
+        getTempTable()->insertVectorDeclaration(identifier, type);
 
         if (type != TYPE_STRING) {
             int numberOfElements = literalInteger->value.tokenValue.i;
             int vectorSizeInMemory = declarationType->value.literalSize * numberOfElements;
-            getCurrentTable()->updateTypeSize(identifier, vectorSizeInMemory);
+            getTempTable()->updateTypeSize(identifier, vectorSizeInMemory);
         }
     }
 
@@ -612,7 +609,6 @@ public:
         type = getTempTable()->getTypeOfDeclaration(declarationType->value);
         auto functionParameters = getFunctionParametersList(listOfParametersDeclaration);
         getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
-        // getTempTable()->printTable();
     }
 
     std::vector<FunctionParameter> getFunctionParametersList(Node* listOfParameters) {

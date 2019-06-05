@@ -194,7 +194,7 @@ global_var_declaration
 /* BEGIN FUNCTION HEADER */
 function_declaration
     : is_static declaration_type TK_IDENTIFICADOR list_of_parameters_declaration command_block
-    { $$ = new FunctionDeclarationNode($3, $1, $2, $4, $5); }
+    {  $$ = new FunctionDeclarationNode($3, $1, $2, $4, $5); }
 ;
 
 list_of_parameters_declaration
@@ -204,16 +204,16 @@ list_of_parameters_declaration
 
 parameters_declaration_list
     : is_const declaration_type TK_IDENTIFICADOR ',' parameters_declaration_list 
-    {  $$ = new ParametersDeclarationList($3, $1, $2, $5); }
+    { $$ = new ParametersDeclarationList($3, $1, $2, $5); }
     | is_const declaration_type TK_IDENTIFICADOR
-    {  $$ = new ParameterDeclaration($3, $1, $2); }
+    { pushTempTableAndClear(); $$ = new ParameterDeclaration($3, $1, $2); }
 ;
 
 /* END FUNCTION HEADER */
 
 command_block
-    : '{' list_of_commands '}' { $$ = new CommandBlockNode($2); }
-    | '{' '}' { $$ = new CommandBlockNode(NULL); }
+    : '{' list_of_commands '}' { $$ = new CommandBlockNode($2); popAndGetPrevious(); }
+    | '{' '}' { $$ = new CommandBlockNode(NULL); popAndGetPrevious(); }
 ;
 
 list_of_commands
