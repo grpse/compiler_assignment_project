@@ -44,6 +44,57 @@ public:
         return this;
     }
 
+    void applyTypeInferenceRule(Node* left, Node* right) {
+
+        if (left->type == TYPE_INT && right->type == TYPE_INT) {
+            type = TYPE_INT;
+        } else if (left->type == TYPE_FLOAT && right->type == TYPE_FLOAT) {
+            type = TYPE_FLOAT;
+        } else if (left->type == TYPE_BOOL && right->type == TYPE_BOOL) {
+            type = TYPE_BOOL;
+        } else if (
+                (left->type == TYPE_FLOAT && right->type == TYPE_INT) ||
+                (left->type == TYPE_INT && right->type == TYPE_FLOAT)
+            ) {
+            type = TYPE_FLOAT;
+
+        } else if (
+                (left->type == TYPE_BOOL && right->type == TYPE_INT) ||
+                (left->type == TYPE_INT && right->type == TYPE_BOOL)
+            ) {
+            type = TYPE_INT;
+
+        } else if (
+                (left->type == TYPE_BOOL && right->type == TYPE_FLOAT) ||
+                (left->type == TYPE_FLOAT && right->type == TYPE_BOOL)
+            ) {
+            type = TYPE_FLOAT;
+        }
+    }
+
+
+    static std::vector<FunctionParameter> getFunctionParametersList(Node* listOfParameters) {
+        std::vector<FunctionParameter> functionParameters;
+        getFunctionParametersListRecursively(listOfParameters, functionParameters);
+        return functionParameters;
+    }
+
+    static void getFunctionParametersListRecursively(Node* listOfParameters, std::vector<FunctionParameter>& theList) {
+        bool hasParameterToLookAt = listOfParameters && listOfParameters->restOfTheList;
+
+        if (listOfParameters) {
+            FunctionParameter parameter;
+            parameter.name = listOfParameters->value.tokenValue.s;
+            parameter.type = listOfParameters->type;
+            parameter.lexical = listOfParameters->value;
+            theList.push_back(parameter);
+        }
+
+        if (hasParameterToLookAt) {
+            getFunctionParametersListRecursively(listOfParameters->restOfTheList, theList);
+        }
+    }
+
     void printValue() {
         switch(value.literalType) {
             case LITERAL_INT:
@@ -607,31 +658,9 @@ public:
         this->commandBlock = commandBlock;
         
         type = getTempTable()->getTypeOfDeclaration(declarationType->value);
-        auto functionParameters = getFunctionParametersList(listOfParametersDeclaration);
-        getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
+
     }
 
-    std::vector<FunctionParameter> getFunctionParametersList(Node* listOfParameters) {
-        std::vector<FunctionParameter> functionParameters;
-        getFunctionParametersListRecursively(listOfParameters, functionParameters);
-        return functionParameters;
-    }
-
-    void getFunctionParametersListRecursively(Node* listOfParameters, std::vector<FunctionParameter>& theList) {
-        bool hasParameterToLookAt = listOfParameters && listOfParameters->restOfTheList;
-
-        if (listOfParameters) {
-            FunctionParameter parameter;
-            parameter.name = listOfParameters->value.tokenValue.s;
-            parameter.type = listOfParameters->type;
-            parameter.lexical = listOfParameters->value;
-            theList.push_back(parameter);
-        }
-
-        if (hasParameterToLookAt) {
-            getFunctionParametersListRecursively(listOfParameters->restOfTheList, theList);
-        }
-    }
 
     virtual void print() {
         
@@ -780,9 +809,15 @@ public:
 
 class FunctionCallCommandNode: public BaseNode {
 public:
-    FunctionCallCommandNode(const LexicalValue& value, Node* parametersList) : BaseNode(value) {
+    FunctionCallCommandNode(const LexicalValue& identifier, Node* parametersList) : BaseNode(identifier) {
         if (parametersList) {
             children.push_back(parametersList);
+        }
+
+        SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier.tokenValue.s);
+
+        if (identifierEntry->nature != NATUREZA_FUNCTION) {
+            exit(ERR_FUNCTION);
         }
     }
 
@@ -801,6 +836,7 @@ class UnaryExpressionNode: public BaseNode {
 public:
     UnaryExpressionNode(const LexicalValue& value, Node* expression) : BaseNode(value) {
         children.push_back(expression);
+        type = expression->type;
     }
 
     virtual void print() {
@@ -817,6 +853,14 @@ public:
     BinaryExpressionNode(const LexicalValue& value, Node* left, Node* right) : BaseNode(value) {
         children.push_back(left);
         children.push_back(right);
+
+        if (left->type == TYPE_STRING || right->type == TYPE_STRING) {
+            exit(ERR_STRING_TO_X);
+        } else if (left->type == TYPE_CHAR || right->type == TYPE_CHAR) {
+            exit(ERR_CHAR_TO_X);
+        }
+
+        applyTypeInferenceRule(left, right);
     }
 
     virtual void print() {
@@ -836,6 +880,20 @@ public:
         children.push_back(validationExpression);
         children.push_back(trueExpression);
         children.push_back(falseExpression);
+
+        if (
+            (trueExpression->type == TYPE_STRING && falseExpression->type != TYPE_STRING) ||
+            (trueExpression->type != TYPE_STRING && falseExpression->type == TYPE_STRING)
+        ) {
+            exit(ERR_STRING_TO_X);
+        } else if (
+            (trueExpression->type == TYPE_CHAR && falseExpression->type != TYPE_CHAR) ||
+            (trueExpression->type != TYPE_CHAR && falseExpression->type == TYPE_CHAR)
+        ) {
+            exit(ERR_CHAR_TO_X);
+        }
+        
+        applyTypeInferenceRule(trueExpression, falseExpression);
     }
 
     virtual void print() {

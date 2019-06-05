@@ -7,12 +7,14 @@
 std::vector<char*> listToFreeUp;
 std::vector<SymbolTable*> tableFreeList;
 static std::stack<SymbolTable*> tablesStack;
+static int TableID = 0;
 
 static SymbolTable* currentTable = new SymbolTable(NULL);
 
 SymbolTable* pushTempTableAndClear() {
     tablesStack.push(currentTable);
-    tableFreeList.push_back(currentTable);    
+    tableFreeList.push_back(currentTable);
+    TableID++;
     currentTable = new SymbolTable(currentTable);
     return currentTable;
 }
@@ -22,8 +24,13 @@ SymbolTable* getTempTable() {
 }
 
 SymbolTable* popAndGetPrevious() {
+    TableID--;
     currentTable = tablesStack.top();
     return currentTable;
+}
+
+int getTableID() {
+    return TableID;
 }
 
 char* copyString(char* toCopy) {

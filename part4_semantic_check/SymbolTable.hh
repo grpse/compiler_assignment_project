@@ -51,8 +51,7 @@
 #define ERR_WRONG_PAR_RETURN 52 //parâmetro não é expressão compatível com tipo do retorno
 
 extern int get_line_number();
-
-static int TableID = 0;
+extern int getTableID();
 
 struct FunctionParameter {
     int type;
@@ -252,7 +251,7 @@ public:
 private:
     
     std::map<std::string, SymbolEntry*> table;
-    int tableID = TableID++;
+    int tableID = getTableID();
 
     bool isAlreadyDeclared(std::string identifierName) {
         return table.find(identifierName) != table.end();

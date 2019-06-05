@@ -193,8 +193,17 @@ global_var_declaration
 
 /* BEGIN FUNCTION HEADER */
 function_declaration
-    : is_static declaration_type TK_IDENTIFICADOR list_of_parameters_declaration command_block
-    {  $$ = new FunctionDeclarationNode($3, $1, $2, $4, $5); }
+    : is_static declaration_type TK_IDENTIFICADOR list_of_parameters_declaration 
+        { 
+            Node* declarationType = $2;
+            LexicalValue identifier = $3;
+            Node* listOfParametersDeclaration = $4;
+            int type = getTempTable()->getTypeOfDeclaration(declarationType->value);
+            auto functionParameters = Node::getFunctionParametersList(listOfParametersDeclaration);
+            getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
+            $<node>$ = $4; 
+        } command_block
+    {  $$ = new FunctionDeclarationNode($3, $1, $2, $4, $6); }
 ;
 
 list_of_parameters_declaration
