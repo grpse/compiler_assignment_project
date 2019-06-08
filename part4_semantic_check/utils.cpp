@@ -4,6 +4,30 @@
 #include <vector>
 #include <stack>
 
+#define TO_STD_STRING(name) #name
+
+std::string getErrorCodeString(int errorCode) {
+    switch(errorCode) {
+        case ERR_UNDECLARED: return TO_STD_STRING(ERR_UNDECLARED);
+        case ERR_DECLARED: return TO_STD_STRING(ERR_DECLARED);
+        case ERR_VARIABLE: return TO_STD_STRING(ERR_VARIABLE);
+        case ERR_VECTOR: return TO_STD_STRING(ERR_VECTOR);
+        case ERR_FUNCTION: return TO_STD_STRING(ERR_FUNCTION);
+        case ERR_WRONG_TYPE: return TO_STD_STRING(ERR_WRONG_TYPE);
+        case ERR_STRING_TO_X: return TO_STD_STRING(ERR_STRING_TO_X);
+        case ERR_CHAR_TO_X: return TO_STD_STRING(ERR_CHAR_TO_X);
+        case ERR_MISSING_ARGS: return TO_STD_STRING(ERR_MISSING_ARGS);
+        case ERR_EXCESS_ARGS: return TO_STD_STRING(ERR_EXCESS_ARGS);
+        case ERR_WRONG_PAR_INPUT: return TO_STD_STRING(ERR_WRONG_PAR_INPUT);
+        case ERR_WRONG_PAR_OUTPUT: return TO_STD_STRING(ERR_WRONG_PAR_OUTPUT);
+        case ERR_WRONG_PAR_RETURN: return TO_STD_STRING(ERR_WRONG_PAR_RETURN);
+        default:
+            return "UNKNOWN ERROR";
+    }
+
+    return "UNKNOWN ERROR";
+}
+
 std::vector<char*> listToFreeUp;
 std::vector<SymbolTable*> tableFreeList;
 static std::stack<SymbolTable*> tablesStack;

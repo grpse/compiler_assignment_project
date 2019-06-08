@@ -1542,10 +1542,9 @@ yyreduce:
 #line 197 "parser.y" /* yacc.c:1648  */
     { 
             SymbolTable* tableWithFunctionParametersDeclaration = getTempTable();
-            // printf("TABLE WITH FUNCTION PARAMETERS DECLARATION\n");
-            // tableWithFunctionParametersDeclaration->printTable(); // CHECKED
 
-            popAndGetPrevious();
+            // GO BACK TO GLOBAL SCOPE TO ADD FUNCTION DECLARATION TO GLOBAL SCOPE
+            popAndGetPrevious(); 
 
             Node* declarationType = (yyvsp[-3].node);
             LexicalValue identifier = (yyvsp[-2].lexicalValue);
@@ -1554,6 +1553,7 @@ yyreduce:
             auto functionParameters = Node::getFunctionParametersList(listOfParametersDeclaration);
             getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);            
             
+            // FORCE INSERT PARAMETERS DECLARATION AS PART OF INNER SCOPE OF THE COMMAND BLOCK
             forcePushTableAsCurrent(tableWithFunctionParametersDeclaration);
             (yyval.node) = (yyvsp[0].node); 
         }

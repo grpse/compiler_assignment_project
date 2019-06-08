@@ -16,6 +16,7 @@ extern SymbolTable* pushTempTableAndClear();
 extern SymbolTable* getTempTable();
 extern SymbolTable* popAndGetPrevious();
 extern int get_line_number();
+extern std::string getErrorCodeString(int errorCode);
 
 class Node {
 
@@ -38,6 +39,14 @@ public:
     }
 
     virtual void print() = 0;
+
+    void exitWithError(int errorCode) {
+
+        
+        printf("ERROR: %s\n", getErrorCodeString(errorCode).c_str());
+        printf("Line: %d\n", get_line_number());
+        exit(errorCode);
+    }
 
     const Node* setParent(Node* parent) {
         this->parent = parent;        
@@ -92,6 +101,30 @@ public:
 
         if (hasParameterToLookAt) {
             getFunctionParametersListRecursively(listOfParameters->restOfTheList, theList);
+        }
+    }
+
+    static std::vector<FunctionParameter> getFunctionRealParametersList(Node* listOfParameters) {
+        std::vector<FunctionParameter> functionParameters;
+        getFunctionRealParametersListRecursively(listOfParameters, functionParameters);
+        return functionParameters;
+    }
+
+    static void getFunctionRealParametersListRecursively(Node* listOfParameters, std::vector<FunctionParameter>& theList) {
+        bool hasParameterToLookAt = listOfParameters && listOfParameters->restOfTheList;
+
+        if (listOfParameters) {
+            FunctionParameter parameter;
+            if (listOfParameters->children.size() > 0) {
+               parameter.type = listOfParameters->children[0]->type;
+            } else {
+                parameter.type = listOfParameters->type;
+            }
+            theList.push_back(parameter);
+        }
+
+        if (hasParameterToLookAt) {
+            getFunctionRealParametersListRecursively(listOfParameters->restOfTheList, theList);
         }
     }
 
@@ -184,8 +217,15 @@ public:
 
 class IdentifierNode: public BaseNode {
 public:
-    IdentifierNode(const LexicalValue& value) : BaseNode(value) {
+    IdentifierNode(const LexicalValue& identifier) : BaseNode(identifier) {
+        getTempTable()->checkDeclarationRecursivelyInPreviousScopes(identifier.tokenValue.s);
+        SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier.tokenValue.s);
 
+        type = identifierEntry->type;
+
+        if (identifierEntry->nature == NATUREZA_VECTOR) {
+            exitWithError(ERR_VECTOR);
+        }
     }
 
     virtual void print() {
@@ -195,8 +235,17 @@ public:
 
 class IdentifierVectorNode: public BaseNode {
 public:
-    IdentifierVectorNode(const LexicalValue& value, Node* vectorNotation) : BaseNode(value) {
+    IdentifierVectorNode(const LexicalValue& identifier, Node* vectorNotation) : BaseNode(identifier) {
         children.push_back(vectorNotation);
+
+        getTempTable()->checkDeclarationRecursivelyInPreviousScopes(identifier.tokenValue.s);
+        SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier.tokenValue.s);
+
+        type = identifierEntry->type;
+
+        if (identifierEntry->nature == NATUREZA_VARIABLE) {
+            exitWithError(ERR_VARIABLE);
+        }
     }
 
     virtual void print() {
@@ -404,11 +453,11 @@ public:
 
         bool identifierIsVector = identifier->children.size() > 0;
 
-        if (identifierIsVector) {
-            if (identifierEntry->nature != NATUREZA_VECTOR) {
-                exit(ERR_VARIABLE);
-            }
-
+        if (
+            (identifierEntry->nature != NATUREZA_VECTOR && identifierIsVector) ||
+            (identifierEntry->nature == NATUREZA_VECTOR && !identifierIsVector)
+         ) {
+            exitWithError(ERR_VECTOR);
         } else {
             bool typeCharDoesntMatch = 
                 (rightValue->type == TYPE_CHAR && identifierEntry->type != TYPE_CHAR) ||
@@ -420,12 +469,10 @@ public:
 
 
             if (typeCharDoesntMatch) {
-                exit(ERR_CHAR_TO_X);
+                exitWithError(ERR_CHAR_TO_X);
             } else if (typeStringDoesntMatch) { 
-                exit(ERR_STRING_TO_X);
+                exitWithError(ERR_STRING_TO_X);
             }
-
-
         }
     }
 
@@ -794,6 +841,7 @@ public:
     ParametersListNode(Node* parameter, Node* parametersList) : BaseNode() {
         children.push_back(parameter);
         children.push_back(parametersList);
+        restOfTheList = parametersList;
     }
 
     virtual void print() {
@@ -817,7 +865,25 @@ public:
         SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier.tokenValue.s);
 
         if (identifierEntry->nature != NATUREZA_FUNCTION) {
-            exit(ERR_FUNCTION);
+            exitWithError(ERR_FUNCTION);
+        }
+
+        auto functionParameters = Node::getFunctionRealParametersList(parametersList);
+
+        if (functionParameters.size() < identifierEntry->parameters.size()) {
+            exitWithError(ERR_MISSING_ARGS);
+        } else if (functionParameters.size() < identifierEntry->parameters.size()) {
+            exitWithError(ERR_EXCESS_ARGS);
+        }
+
+        // check types
+        for (int i = 0; i < functionParameters.size(); i++) {
+            auto formalParameter = identifierEntry->parameters[i];
+            auto realParameter = functionParameters[i];
+
+            if (formalParameter.type != realParameter.type) {
+                exitWithError(ERR_WRONG_TYPE_ARGS);
+            }
         }
     }
 
@@ -855,9 +921,9 @@ public:
         children.push_back(right);
 
         if (left->type == TYPE_STRING || right->type == TYPE_STRING) {
-            exit(ERR_STRING_TO_X);
+            exitWithError(ERR_STRING_TO_X);
         } else if (left->type == TYPE_CHAR || right->type == TYPE_CHAR) {
-            exit(ERR_CHAR_TO_X);
+            exitWithError(ERR_CHAR_TO_X);
         }
 
         applyTypeInferenceRule(left, right);
@@ -885,12 +951,12 @@ public:
             (trueExpression->type == TYPE_STRING && falseExpression->type != TYPE_STRING) ||
             (trueExpression->type != TYPE_STRING && falseExpression->type == TYPE_STRING)
         ) {
-            exit(ERR_STRING_TO_X);
+            exitWithError(ERR_STRING_TO_X);
         } else if (
             (trueExpression->type == TYPE_CHAR && falseExpression->type != TYPE_CHAR) ||
             (trueExpression->type != TYPE_CHAR && falseExpression->type == TYPE_CHAR)
         ) {
-            exit(ERR_CHAR_TO_X);
+            exitWithError(ERR_CHAR_TO_X);
         }
         
         applyTypeInferenceRule(trueExpression, falseExpression);
