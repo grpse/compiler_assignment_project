@@ -910,7 +910,7 @@ case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
 #line 100 "scanner.l"
-{ ; }
+{ line_count++; }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */

@@ -97,7 +97,7 @@ COMMENT_LINE "/""/".*({NEW_LINE}|%eof)?
 %%
 
 {COMMENT_MULTILINE} { ; }
-{COMMENT_LINE} { ; }
+{COMMENT_LINE} { line_count++; }
 
 {NEW_LINE} { line_count++; }
 {SPACE} { ; }

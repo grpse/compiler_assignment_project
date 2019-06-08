@@ -15,5 +15,10 @@ int f(int e, int d) {
         //input 0;
         //input (123 + x[0]);
         //input c;
+
+        output x[0];
+        output 0,0,0;
+        //output r;
+        //output 'c';
     };
 }

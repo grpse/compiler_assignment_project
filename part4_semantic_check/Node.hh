@@ -109,7 +109,7 @@ public:
         if (listOfParameters) {
             FunctionParameter parameter;
             if (listOfParameters->children.size() > 0) {
-               parameter.type = listOfParameters->children[0]->type;
+                parameter.type = listOfParameters->children[0]->type;
             } else {
                 parameter.type = listOfParameters->type;
             }
@@ -426,6 +426,15 @@ class OutputCommandNode: public BaseNode {
 public:
     OutputCommandNode(const LexicalValue& value, Node* parametersList) : BaseNode(value) {
         children.push_back(parametersList);
+
+        auto parametersVector = getFunctionRealParametersList(parametersList);
+
+        for (auto parameter : parametersVector) {
+            bool isNotPermittedTypeToOutput = parameter.type == TYPE_CHAR;
+            if (isNotPermittedTypeToOutput) {
+                exitWithError(ERR_WRONG_PAR_OUTPUT);
+            }
+        }
     }
 
     virtual void print() {
