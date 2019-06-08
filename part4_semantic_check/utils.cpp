@@ -6,6 +6,8 @@
 
 #define TO_STD_STRING(name) #name
 
+extern int get_line_number();
+
 std::string getErrorCodeString(int errorCode) {
     switch(errorCode) {
         case ERR_UNDECLARED: return TO_STD_STRING(ERR_UNDECLARED);
@@ -26,6 +28,12 @@ std::string getErrorCodeString(int errorCode) {
     }
 
     return "UNKNOWN ERROR";
+}
+
+void exitWithError(int errorCode) {        
+    printf("ERROR: %s\n", getErrorCodeString(errorCode).c_str());
+    printf("Line: %d\n", get_line_number());
+    exit(errorCode);
 }
 
 std::vector<char*> listToFreeUp;

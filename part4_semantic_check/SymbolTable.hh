@@ -52,6 +52,7 @@
 
 extern int get_line_number();
 extern int getTableID();
+extern void exitWithError(int errorCode);
 
 struct FunctionParameter {
     int type;
@@ -99,7 +100,7 @@ public:
 
         if (isAlreadyDeclared(identifier.tokenValue.s)) {
             // ERR_DECLARED
-            exit(ERR_DECLARED);
+            exitWithError(ERR_DECLARED);
         }
         
         table[identifier.tokenValue.s] = entry;
@@ -115,7 +116,7 @@ public:
 
         if (isAlreadyDeclared(identifier.tokenValue.s)) {
             // ERR_DECLARED
-            exit(ERR_DECLARED);
+            exitWithError(ERR_DECLARED);
         }
         
         table[identifier.tokenValue.s] = entry;
@@ -132,7 +133,7 @@ public:
 
         if (isAlreadyDeclared(identifier.tokenValue.s)) {
             // ERR_DECLARED
-            exit(ERR_DECLARED);
+            exitWithError(ERR_DECLARED);
         }
         
         table[identifier.tokenValue.s] = entry;
@@ -144,7 +145,7 @@ public:
         } else if (parent != NULL) {
             parent->checkDeclarationRecursivelyInPreviousScopes(identifierName);
         } else {
-            exit(ERR_UNDECLARED);
+            exitWithError(ERR_UNDECLARED);
         }
     }
 

@@ -10,5 +10,10 @@ int f(int e, int d) {
         f(d, x[0]);
 
         char r;
+
+        input x[0];
+        //input 0;
+        //input (123 + x[0]);
+        //input c;
     };
 }

@@ -16,7 +16,7 @@ extern SymbolTable* pushTempTableAndClear();
 extern SymbolTable* getTempTable();
 extern SymbolTable* popAndGetPrevious();
 extern int get_line_number();
-extern std::string getErrorCodeString(int errorCode);
+extern void exitWithError(int errorCode);
 
 class Node {
 
@@ -40,13 +40,6 @@ public:
 
     virtual void print() = 0;
 
-    void exitWithError(int errorCode) {
-
-        
-        printf("ERROR: %s\n", getErrorCodeString(errorCode).c_str());
-        printf("Line: %d\n", get_line_number());
-        exit(errorCode);
-    }
 
     const Node* setParent(Node* parent) {
         this->parent = parent;        
@@ -413,6 +406,13 @@ class InputCommandNode: public BaseNode {
 public:
     InputCommandNode(const LexicalValue& value, Node* expression) : BaseNode(value) {
         children.push_back(expression);
+        char* identifierName = expression->value.tokenValue.s;
+        SymbolEntry* entry = identifierName ? getTempTable()->getEntry(identifierName) : NULL;
+
+        bool existsEntryAndItIsVariableOrVector = entry && (entry->nature == NATUREZA_VARIABLE || entry->nature == NATUREZA_VECTOR);
+        if (!existsEntryAndItIsVariableOrVector) {
+            exitWithError(ERR_WRONG_PAR_INPUT);
+        }
     }
 
     virtual void print() {
