@@ -1,5 +1,0 @@
-vetor[10] int;
-int f(){
-    int x;
-        x = vetor[10];
-}

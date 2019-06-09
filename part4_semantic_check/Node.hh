@@ -214,10 +214,14 @@ public:
         getTempTable()->checkDeclarationRecursivelyInPreviousScopes(identifier.tokenValue.s);
         SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier.tokenValue.s);
 
-        type = identifierEntry->type;
+        if (identifierEntry) {
+            type = identifierEntry->type;
 
-        if (identifierEntry->nature == NATUREZA_VECTOR) {
-            exitWithError(ERR_VECTOR);
+            if (identifierEntry->nature == NATUREZA_VECTOR) {
+                exitWithError(ERR_VECTOR);
+            }
+        } else {
+            exitWithError(ERR_UNDECLARED);
         }
     }
 
@@ -428,12 +432,33 @@ public:
         children.push_back(parametersList);
 
         auto parametersVector = getFunctionRealParametersList(parametersList);
-
+        
         for (auto parameter : parametersVector) {
             bool isNotPermittedTypeToOutput = parameter.type == TYPE_CHAR;
             if (isNotPermittedTypeToOutput) {
                 exitWithError(ERR_WRONG_PAR_OUTPUT);
             }
+        }
+
+    }
+
+    virtual void print() {
+        printValue();
+        printf(" ");
+        children[0]->print();
+    }
+};
+
+class ReturnCommandNode: public BaseNode {
+public:
+    ReturnCommandNode(const LexicalValue& value, Node* expression) : BaseNode(value) {
+        children.push_back(expression);
+
+        type = expression->type;
+        bool returnExpressionTypeIsDifferentFromFunctionReturnType = getTempTable()->activationRegistry->function->type != type;
+
+        if (returnExpressionTypeIsDifferentFromFunctionReturnType) {
+            exitWithError(ERR_WRONG_PAR_RETURN);
         }
     }
 
@@ -873,26 +898,30 @@ public:
 
         SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier.tokenValue.s);
 
-        if (identifierEntry->nature != NATUREZA_FUNCTION) {
-            exitWithError(ERR_FUNCTION);
-        }
-
-        auto functionParameters = Node::getFunctionRealParametersList(parametersList);
-
-        if (functionParameters.size() < identifierEntry->parameters.size()) {
-            exitWithError(ERR_MISSING_ARGS);
-        } else if (functionParameters.size() < identifierEntry->parameters.size()) {
-            exitWithError(ERR_EXCESS_ARGS);
-        }
-
-        // check types
-        for (int i = 0; i < functionParameters.size(); i++) {
-            auto formalParameter = identifierEntry->parameters[i];
-            auto realParameter = functionParameters[i];
-
-            if (formalParameter.type != realParameter.type) {
-                exitWithError(ERR_WRONG_TYPE_ARGS);
+        if (identifierEntry) {
+            if (identifierEntry->nature != NATUREZA_FUNCTION) {
+                exitWithError(ERR_FUNCTION);
             }
+
+            auto functionParameters = Node::getFunctionRealParametersList(parametersList);
+
+            if (functionParameters.size() < identifierEntry->parameters.size()) {
+                exitWithError(ERR_MISSING_ARGS);
+            } else if (functionParameters.size() > identifierEntry->parameters.size()) {
+                exitWithError(ERR_EXCESS_ARGS);
+            } else if (functionParameters.size() == identifierEntry->parameters.size()) {
+                // check types
+                for (int i = 0; i < functionParameters.size(); i++) {
+                    auto formalParameter = identifierEntry->parameters[i];
+                    auto realParameter = functionParameters[i];
+
+                    if (formalParameter.type != realParameter.type) {
+                        exitWithError(ERR_WRONG_TYPE_ARGS);
+                    }
+                }
+            }
+        } else {
+            exitWithError(ERR_UNDECLARED);
         }
     }
 

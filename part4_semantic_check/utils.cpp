@@ -6,7 +6,9 @@
 
 #define TO_STD_STRING(name) #name
 
+extern void* arvore;
 extern int get_line_number();
+void libera(void* arvore);
 
 std::string getErrorCodeString(int errorCode) {
     switch(errorCode) {
@@ -31,8 +33,9 @@ std::string getErrorCodeString(int errorCode) {
 }
 
 void exitWithError(int errorCode) {        
-    printf("ERROR: %s\n", getErrorCodeString(errorCode).c_str());
+    printf("ERROR(%d): %s\n", errorCode, getErrorCodeString(errorCode).c_str());
     printf("Line: %d\n", get_line_number());
+    libera(arvore);
     exit(errorCode);
 }
 
@@ -49,13 +52,29 @@ void forcePushTableAsCurrent(SymbolTable* someTable) {
     // currentTable->printTable();
 }
 
+void tryPushToFreeList(SymbolTable* tableToPush) {
+
+    bool isPresent = false;
+    for (int i = 0; i < tableFreeList.size(); i++) {
+        SymbolTable* lookingAt = tableFreeList[i];
+        if (lookingAt == tableToPush) {
+            isPresent = true;
+        }
+    }
+
+    if (!isPresent) {
+        tableFreeList.push_back(currentTable);
+    }
+}
+
 SymbolTable* pushTempTableAndClear() {
     tablesStack.push(currentTable);
-    tableFreeList.push_back(currentTable);
+    tryPushToFreeList(currentTable);
     TableID++;    
     // printf("TABLE PUSH\n");
     // currentTable->printTable();
     currentTable = new SymbolTable(currentTable);
+    tryPushToFreeList(currentTable);
     return currentTable;
 }
 
@@ -66,8 +85,12 @@ SymbolTable* getTempTable() {
 SymbolTable* popAndGetPrevious() {
     TableID--;
     // printf("TABLE POP\n");
+    
+    if (tablesStack.size() > 1) {
+        currentTable = tablesStack.top();    
+        tablesStack.pop();
+    }
     // currentTable->printTable();
-    currentTable = tablesStack.top();
     return currentTable;
 }
 

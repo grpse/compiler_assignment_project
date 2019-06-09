@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 #include <functional>
 #include "LexicalValue.h"
 #include "string.h"
@@ -70,17 +71,28 @@ struct SymbolEntry {
     LexicalValue lexical = {};
 };
 
+struct ActivationRegistry {
+    int shiftAmount = 0;
+    SymbolEntry* function = NULL;
+};
+
 class SymbolTable {
 
 public:
+    std::shared_ptr<ActivationRegistry> activationRegistry;
     SymbolTable* parent;
 
     SymbolTable(SymbolTable* parent) {
         this->parent = parent;
+        if (parent)
+            this->activationRegistry = this->parent->activationRegistry;
     }
 
     ~SymbolTable() {
-        
+
+        for (auto entry : table) {
+            delete entry.second;         
+        }
     }
 
     void updateTypeSize(const LexicalValue& identifier, int sizeUpdate) {

@@ -205,8 +205,14 @@ function_declaration
             Node* listOfParametersDeclaration = $5;
             int type = getTempTable()->getTypeOfDeclaration(declarationType->value);
             auto functionParameters = Node::getFunctionParametersList(listOfParametersDeclaration);
-            getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);            
-            
+            getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
+
+            // Insert function activation registry to inner scopes            
+            std::shared_ptr<ActivationRegistry> ar = std::make_shared<ActivationRegistry>();
+            ar->function = getTempTable()->getEntry(identifier.tokenValue.s);
+            ar->shiftAmount = 0;
+            tableWithFunctionParametersDeclaration->activationRegistry = ar;
+
             // FORCE INSERT PARAMETERS DECLARATION AS PART OF INNER SCOPE OF THE COMMAND BLOCK
             forcePushTableAsCurrent(tableWithFunctionParametersDeclaration);
             $<node>$ = $5; 
@@ -229,13 +235,13 @@ parameters_declaration_list
 /* END FUNCTION HEADER */
 
 command_block
-    : '{' list_of_commands '}' { $$ = new CommandBlockNode($2); popAndGetPrevious(); }
-    | '{' '}' { $$ = new CommandBlockNode(NULL); popAndGetPrevious(); }
+    : '{' { pushTempTableAndClear(); $<node>$ = $<node>1; } list_of_commands '}' { $$ = new CommandBlockNode($3); popAndGetPrevious(); }
+    | '{' { pushTempTableAndClear(); $<node>$ = $<node>1; } '}' { $$ = new CommandBlockNode(NULL); popAndGetPrevious(); }
 ;
 
 list_of_commands
     : list_of_commands valid_command ';' { $$ = new ListOfCommandsNode($1, $2); }
-    | valid_command ';' { pushTempTableAndClear(); $$ = $1; }
+    | valid_command ';' { $$ = $1; }
 ;
 
 valid_command
@@ -330,7 +336,9 @@ break_flow_command
 ;
 
 break_flow_valid_commands
-    : TK_PR_RETURN expression { $$ = new GenericNode($1, { $2 }); }
+    : TK_PR_RETURN expression { $$ = new ReturnCommandNode($1, $2); }
+    | TK_PR_RETURN TK_LIT_STRING { $$ = new ReturnCommandNode($1, new LiteralNode($2)); }
+    | TK_PR_RETURN TK_LIT_CHAR { $$ = new ReturnCommandNode($1, new LiteralNode($2)); }
     | TK_PR_BREAK { $$ = new LeafNode($1); }
     | TK_PR_CONTINUE { $$ = new LeafNode($1); }
 ;
@@ -358,8 +366,8 @@ if_then_else_too_command
 // FOR LOOP
 
 for_command
-    : TK_PR_FOR '(' for_list ':' expression ':' for_list ')' command_block
-    { $$ = new ForCommandNode($1, $3, $5, $7, $9); }
+    : TK_PR_FOR '(' { $<node>$ = $<node>2; pushTempTableAndClear(); } for_list ':' expression ':' for_list ')' command_block
+    { $$ = new ForCommandNode($1, $4, $6, $8, $10); popAndGetPrevious();}
 ;
 
 for_list
