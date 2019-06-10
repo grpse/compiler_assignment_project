@@ -298,6 +298,7 @@ public:
     }
 
     virtual void adjustTempsCodeStep2() {
+        BaseNode::adjustTempsCodeStep2();
         // TODO: get temp block to adjust the memory location
         adjustedTempValueToMemory = temp();
     }
