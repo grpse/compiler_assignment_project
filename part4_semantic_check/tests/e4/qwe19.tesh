@@ -1,3 +1,4 @@
 ! timeout 5
 ! output ignore
-! expect  return 40$ ./main ./tests/e4/input/qwe19
+! expect  return 40
+$ ./main ./tests/e4/input/qwe19

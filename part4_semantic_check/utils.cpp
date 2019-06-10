@@ -32,7 +32,7 @@ std::string getErrorCodeString(int errorCode) {
     return "UNKNOWN ERROR";
 }
 
-void exitWithError(int errorCode) {        
+void exitWithError(int errorCode) {
     printf("ERROR(%d): %s\n", errorCode, getErrorCodeString(errorCode).c_str());
     printf("Line: %d\n", get_line_number());
     libera(arvore);
@@ -86,11 +86,11 @@ SymbolTable* popAndGetPrevious() {
     TableID--;
     // printf("TABLE POP\n");
     
-    if (tablesStack.size() > 1) {
+    if (tablesStack.size() > 0) {
         currentTable = tablesStack.top();    
-        tablesStack.pop();
+        // tablesStack.pop();
     }
-    // currentTable->printTable();
+    
     return currentTable;
 }
 

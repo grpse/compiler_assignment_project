@@ -2,7 +2,8 @@
 //ERR_EXCESS_ARGS
 int g(int a, int b, int c)
 {
-  return 0;
+  return 0
+;
 }
 
 int f()
@@ -12,5 +13,6 @@ int f()
   int z;
   int w;
   g(x, y, z, w);
-  return 0;
+  return 0
+;
 }

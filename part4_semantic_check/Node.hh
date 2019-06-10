@@ -739,7 +739,9 @@ public:
         this->commandBlock = commandBlock;
         
         type = getTempTable()->getTypeOfDeclaration(declarationType->value);
+        auto functionParameters = Node::getFunctionParametersList(listOfParametersDeclaration);
 
+        getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
     }
 
 

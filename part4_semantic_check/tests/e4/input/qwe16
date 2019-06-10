@@ -7,5 +7,6 @@ int f()
   ASL_t xis;
   int a;
   a = xis;
-  return 0;
+  return 0
+;
 }

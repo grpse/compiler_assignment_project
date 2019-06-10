@@ -4,5 +4,6 @@ v[10] int;
 int f()
 {
   v = 2;
-  return 0;
+  return 0
+;
 }

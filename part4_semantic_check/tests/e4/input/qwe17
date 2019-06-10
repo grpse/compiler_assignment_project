@@ -8,5 +8,6 @@ int f()
   int a;
   int b;
   b = a$xis;
-  return 0;
+  return 0
+;
 }

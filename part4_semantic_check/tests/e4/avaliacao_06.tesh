@@ -1,3 +1,4 @@
 ! timeout 5
 ! output ignore
-! expect  return 21$ ./main tests/e4/input/s06.iks
+! expect  return 21
+$ ./main tests/e4/input/s06.iks

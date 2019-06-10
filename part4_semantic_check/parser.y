@@ -198,14 +198,13 @@ function_declaration
             SymbolTable* tableWithFunctionParametersDeclaration = getTempTable();
 
             // GO BACK TO GLOBAL SCOPE TO ADD FUNCTION DECLARATION TO GLOBAL SCOPE
-            popAndGetPrevious(); 
+            
 
             Node* declarationType = $2;
             LexicalValue identifier = $3;
             Node* listOfParametersDeclaration = $5;
             int type = getTempTable()->getTypeOfDeclaration(declarationType->value);
             auto functionParameters = Node::getFunctionParametersList(listOfParametersDeclaration);
-            getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
 
             // Insert function activation registry to inner scopes            
             std::shared_ptr<ActivationRegistry> ar = std::make_shared<ActivationRegistry>();
