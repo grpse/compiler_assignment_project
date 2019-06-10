@@ -243,6 +243,12 @@ public:
         if (identifierEntry->nature == NATUREZA_VARIABLE) {
             exitWithError(ERR_VARIABLE);
         }
+
+        if (vectorNotation->type == TYPE_STRING) {
+            exitWithError(ERR_STRING_TO_X);
+        } else if (vectorNotation->type == TYPE_CHAR) {
+            exitWithError(ERR_CHAR_TO_X);
+        }
     }
 
     virtual void print() {
@@ -455,9 +461,20 @@ public:
         children.push_back(expression);
 
         type = expression->type;
-        bool returnExpressionTypeIsDifferentFromFunctionReturnType = getTempTable()->activationRegistry->function->type != type;
-
-        if (returnExpressionTypeIsDifferentFromFunctionReturnType) {
+        if (type == 0) {
+            SymbolEntry* identifier = getTempTable()->getEntry(expression->value.tokenValue.s);
+            if (identifier) {
+                type = identifier->type;
+            }
+        }
+        SymbolTable* table = getTempTable();
+        bool returnExpressionTypeIsDifferentFromFunctionReturnType = table->activationRegistry->function->type != type;
+        bool hasInferedType = table->activationRegistry->function->type == TYPE_FLOAT ||
+            table->activationRegistry->function->type == TYPE_INT ||
+            table->activationRegistry->function->type == TYPE_BOOL;
+        
+        hasInferedType = hasInferedType && (type == TYPE_INT || type == TYPE_FLOAT || type == TYPE_BOOL);
+        if (returnExpressionTypeIsDifferentFromFunctionReturnType && !hasInferedType) {
             exitWithError(ERR_WRONG_PAR_RETURN);
         }
     }
@@ -480,33 +497,46 @@ public:
         
         SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier->value.tokenValue.s);
         
-        if (identifierEntry->type == TYPE_STRING) {
-            int sizeOfString = 1 * strlen(rightValue->value.tokenValue.s);
-            getTempTable()->updateTypeSize(identifier->value, sizeOfString);
-        }
+        if (identifierEntry) {
 
-        bool identifierIsVector = identifier->children.size() > 0;
+            if (identifierEntry->nature == NATUREZA_FUNCTION) {
+                exitWithError(ERR_FUNCTION);
+            }
 
-        if (
-            (identifierEntry->nature != NATUREZA_VECTOR && identifierIsVector) ||
-            (identifierEntry->nature == NATUREZA_VECTOR && !identifierIsVector)
-         ) {
-            exitWithError(ERR_VECTOR);
-        } else {
             bool typeCharDoesntMatch = 
-                (rightValue->type == TYPE_CHAR && identifierEntry->type != TYPE_CHAR) ||
-                (rightValue->type != TYPE_CHAR && identifierEntry->type == TYPE_CHAR);
+                (rightValue->type == TYPE_CHAR && identifierEntry->type != TYPE_CHAR); // ||
+                // (rightValue->type != TYPE_CHAR && identifierEntry->type == TYPE_CHAR);
 
             bool typeStringDoesntMatch =
-                (rightValue->type == TYPE_STRING && identifierEntry->type != TYPE_STRING) ||
-                (rightValue->type != TYPE_STRING && identifierEntry->type == TYPE_STRING);
+                (rightValue->type == TYPE_STRING && identifierEntry->type != TYPE_STRING); // ||
+                //(rightValue->type != TYPE_STRING && identifierEntry->type == TYPE_STRING);
 
 
             if (typeCharDoesntMatch) {
                 exitWithError(ERR_CHAR_TO_X);
             } else if (typeStringDoesntMatch) { 
                 exitWithError(ERR_STRING_TO_X);
+            } else if (identifierEntry->type != rightValue->type) {
+                exitWithError(ERR_WRONG_TYPE);
             }
+
+            if (identifierEntry->type == TYPE_STRING) {
+                int sizeOfString = 1 * strlen(rightValue->value.tokenValue.s);
+                getTempTable()->updateTypeSize(identifier->value, sizeOfString);
+            }
+
+            bool identifierIsVector = identifier->children.size() > 0;
+
+            if (
+                (identifierEntry->nature != NATUREZA_VECTOR && identifierIsVector) ||
+                (identifierEntry->nature == NATUREZA_VECTOR && !identifierIsVector)
+            ) {
+                exitWithError(ERR_VECTOR);
+            } else {
+                
+            }
+        } else {
+            exitWithError(ERR_UNDECLARED);
         }
     }
 
@@ -739,9 +769,7 @@ public:
         this->commandBlock = commandBlock;
         
         type = getTempTable()->getTypeOfDeclaration(declarationType->value);
-        auto functionParameters = Node::getFunctionParametersList(listOfParametersDeclaration);
 
-        getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
     }
 
 
@@ -901,6 +929,7 @@ public:
         SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier.tokenValue.s);
 
         if (identifierEntry) {
+            type = identifierEntry->type;
             if (identifierEntry->nature != NATUREZA_FUNCTION) {
                 exitWithError(ERR_FUNCTION);
             }

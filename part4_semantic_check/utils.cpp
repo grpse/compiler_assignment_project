@@ -88,7 +88,7 @@ SymbolTable* popAndGetPrevious() {
     
     if (tablesStack.size() > 0) {
         currentTable = tablesStack.top();    
-        // tablesStack.pop();
+        tablesStack.pop();
     }
     
     return currentTable;

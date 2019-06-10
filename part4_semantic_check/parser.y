@@ -205,6 +205,7 @@ function_declaration
             Node* listOfParametersDeclaration = $5;
             int type = getTempTable()->getTypeOfDeclaration(declarationType->value);
             auto functionParameters = Node::getFunctionParametersList(listOfParametersDeclaration);
+            getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
 
             // Insert function activation registry to inner scopes            
             std::shared_ptr<ActivationRegistry> ar = std::make_shared<ActivationRegistry>();
@@ -298,6 +299,7 @@ assignment_command
 
 input_command
     : TK_PR_INPUT expression { $$ = new InputCommandNode($1, $2); }
+    | TK_PR_INPUT TK_LIT_STRING { $$ = new InputCommandNode($1, new LiteralNode($2)); }
 ;
 
 output_command
