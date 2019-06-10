@@ -298,12 +298,12 @@ public:
     }
 
     virtual void adjustTempsCodeStep2() {
-        BaseNode::adjustTempsCodeStep2();
         // TODO: get temp block to adjust the memory location
         adjustedTempValueToMemory = temp();
     }
 
     virtual std::string generateCodeStep2() {
+        adjustTempsCodeStep2();
         this->generatedCode = "load " + adjustedTempValueToMemory + " => " + getRegister() + "\n";
         return this->generatedCode;
     }
@@ -422,6 +422,12 @@ public:
         type = getTempTable()->getTypeOfDeclaration(declarationType->value);
         getTempTable()->insertVariableDeclaration(identifier, type);
         getTempTable()->updateTypeSize(identifier, declarationType->value.literalSize);
+    }
+
+
+    virtual std::string generateCodeStep2() {
+        this->generatedCode = "";
+        return this->generatedCode;
     }
 
     virtual void print() {
@@ -618,6 +624,10 @@ public:
 
 class AssignmentCommandNode: public BaseNode {
 
+private:
+	std::string storedTemp = "";
+	std::string storedRegister = "";
+
 public:
     AssignmentCommandNode(const LexicalValue& value, Node* identifier, Node* rightValue) : BaseNode(value) {
         children = {identifier, rightValue};
@@ -669,6 +679,33 @@ public:
             exitWithError(ERR_UNDECLARED);
         }
     }
+
+	virtual std::string getRegistry() {
+		//TODO: get right registry
+		if (storedRegister == "") {
+			storedRegister = getRegisterName(temp());
+		}
+	
+		return storedRegister;	
+	}
+
+	virtual std::string temp() {
+		// TODO: get check if temp is already declared and use the same for the same identifier previously loaded
+		if (storedTemp == "") storedTemp = generateTemp();
+		return storedTemp;
+	}	
+
+	virtual void adjustGeneratedTempsStep2() {
+		//TODO: generate register for this entry
+		storedRegister = temp();
+	}
+
+	virtual std::string generateCodeStep2() {
+		this->generatedCode = 
+			this->children[1]->generateCodeStep2() +
+			"store " + this->children[1]->getRegister() + " => " + this->children[0]->temp() + "\n";
+		return this->generatedCode;
+	}
 
     virtual void print() {
         children[0]->print();
@@ -1121,7 +1158,7 @@ private:
 
     std::string registerLeftName;
     std::string registerRightName;
-    std::string registerResultName;
+    std::string registerResultName = "";
 
     std::string storedTemp = "";
 
@@ -1177,6 +1214,14 @@ public:
         return storedTemp;
     }
 
+	virtual std::string getRegister() {
+		if (registerResultName == "") {
+			registerResultName = getRegisterName(temp());
+		}
+
+		return registerResultName;
+	}
+
     virtual void prepareCodeStep1() {
         BaseNode::prepareCodeStep1();
         tempLeft = children[0]->temp();
@@ -1186,7 +1231,7 @@ public:
     virtual void adjustTempsCodeStep2() {
         registerLeftName = children[0]->getRegister();
         registerRightName = children[1]->getRegister();
-        registerResultName = getRegisterName(temp());
+        registerResultName = getRegister();
     }
 
     virtual void setupRightLabelsCodeStep2() {
