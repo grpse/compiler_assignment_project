@@ -1,0 +1,2 @@
+make
+ls -l tests/ | awk '{print $9}' | sed -r 's/(.*)\.ptg/\.\/etapa4 < tests\/\1\.ptg > results\/\1\.out1; \.\/etapa4 < results\/\1\.out1 > results\/\1\.out2; echo \1; diff results\/\1\.out1 results\/\1\.out2/' | bash -
