@@ -7,6 +7,7 @@
 #include <string>
 #include <initializer_list>
 #include <memory>
+#include "ILOC.h"
 #include "LexicalValue.h"
 #include "SymbolTable.hh"
 #define TO_STRING(name) #name
@@ -20,6 +21,7 @@ extern void exitWithError(int errorCode);
 extern std::string getRegisterName(std::string tempName);
 extern std::string generateTemp();
 extern std::string generateLabel();
+extern ILOCProgram* getILOCProgram();
 
 class Node {
 
@@ -37,28 +39,9 @@ public:
         freeRecursively();
     }
 
-    void printNodeName() {
-        #ifdef DEBUG
-        std::cout << " (" << nodeName << ") ";
-        #endif
-    }
-
-    virtual std::string temp() = 0;
-
-    virtual void prepareCodeStep1() = 0;
-    virtual void adjustTempsCodeStep2() = 0;
-    virtual void setupRightLabelsCodeStep2() = 0;
-    virtual std::string generateCodeStep2() = 0;
-
-    virtual void printAssembly() {
-        std::cout << generateCodeStep2() << std::endl;
-    }
-
     virtual void print() = 0;
 
-    virtual std::string getRegister() {
-        return getRegisterName(temp());
-    }
+    virtual ILOCInstruction* getInstruction() = 0;
 
     void pushChild(Node* child) {
         children.push_back(child);
@@ -189,36 +172,12 @@ public:
         this->nodeName = TO_STRING(BaseNode);
     }
 
-    virtual std::string temp() { return ""; }
-
-    virtual void prepareCodeStep1() {
-        for (auto child : children) {
-            child->prepareCodeStep1();
-        }
-    }
-
-    virtual void adjustTempsCodeStep2() {
-        for (auto child : children) {
-            child->adjustTempsCodeStep2();
-        }
-    }
-
-    virtual void setupRightLabelsCodeStep2() {
-        for (auto child : children) {
-            child->setupRightLabelsCodeStep2();
-        }
-    }
-
-    virtual std::string generateCodeStep2() {
-        generatedCode = "";
-        for (auto child : children) {
-            generatedCode += child->generateCodeStep2();
-        }
-        return generatedCode;
-    }
-
     virtual void print() {
-        printNodeName();
+
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        return NULL;
     }
     
 };
@@ -281,32 +240,8 @@ public:
             exitWithError(ERR_UNDECLARED);
         }
     }
-    virtual std::string temp() {
-        if (storedTemp == "") {
-            storedTemp = generateTemp();
-        }
 
-        return storedTemp;
-    }
-
-    virtual std::string getRegister() {
-        if (storedRegister == "") {
-            storedRegister = getRegisterName(temp());
-        }
-
-        return storedRegister;
-    }
-
-    virtual void adjustTempsCodeStep2() {
-        // TODO: get temp block to adjust the memory location
-        adjustedTempValueToMemory = temp();
-    }
-
-    virtual std::string generateCodeStep2() {
-        adjustTempsCodeStep2();
-        this->generatedCode = "load " + adjustedTempValueToMemory + " => " + getRegister() + "\n";
-        return this->generatedCode;
-    }
+    
 
     virtual void print() {
         printValue();
@@ -348,14 +283,22 @@ class CommandBlockNode: public BaseNode {
 
 public:
     CommandBlockNode(Node* listOfCommands) : BaseNode() {
-        this->pushChild(listOfCommands);        
+        this->pushChild(listOfCommands);
     }
 
     virtual void print() {
         printf("{");
-        if (children[0])
+        if (children.size() == 1)
             children[0]->print();
         printf("}");
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        ILOCInstruction* listOfInstructions = children[0]->getInstruction();
+        ILOCProgram* program = getILOCProgram();
+        ILOCInstruction* commandBlock = new CommandBlock(program->getOperationsCount());
+        program->addAsFirst(commandBlock);
+        return commandBlock;
     }
 };
 
@@ -369,6 +312,11 @@ public:
         printf("\n");
         children[0]->print();
         printf(";");
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        ILOCInstruction* commandInstruction = children[0]->getInstruction();
+        return commandInstruction;
     }
 };
 
@@ -386,6 +334,17 @@ public:
                 child->print();          
             }
         }
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        // Don't accumulate any instruction here, just children are instructions
+        for (Node* child : children) {
+            if (child) {
+                child->getInstruction();
+            }
+        }
+        ILOCInstruction* commandInstruction = children[0]->getInstruction();
+        return commandInstruction;
     }
 };
 
@@ -405,6 +364,9 @@ public:
 
 class LocalVariableDeclarationNode: public BaseNode {
 
+private:
+    int varSize;
+
 public:
     LocalVariableDeclarationNode(const LexicalValue& identifier, Node* attribute, Node* declarationType, Node* localVarInit) : BaseNode(identifier) {
         if (attribute)
@@ -422,12 +384,7 @@ public:
         type = getTempTable()->getTypeOfDeclaration(declarationType->value);
         getTempTable()->insertVariableDeclaration(identifier, type);
         getTempTable()->updateTypeSize(identifier, declarationType->value.literalSize);
-    }
-
-
-    virtual std::string generateCodeStep2() {
-        this->generatedCode = "";
-        return this->generatedCode;
+        varSize = declarationType->value.literalSize;
     }
 
     virtual void print() {
@@ -444,6 +401,14 @@ public:
         if (localVarInit) {
             localVarInit->print();
         }
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        // Creates a space on stack for one variable
+        ILOCProgram* program = getILOCProgram();
+        ILOCInstruction* localDeclare = new LocalDeclaration(varSize);
+        program->add(localDeclare);
+        return localDeclare;
     }
 
 private:
@@ -476,7 +441,6 @@ class LiteralNode: public LeafNode {
 
 private:
     std::string strValue;
-    std::string storedRegister = "";
 
 public:
     LiteralNode(const LexicalValue& value) : LeafNode(value) {
@@ -522,28 +486,13 @@ public:
                 type = TYPE_ERROR;
                 break;
         }
-
-
     }
 
-    virtual std::string temp() {
-        return strValue;
-    }
-
-    virtual std::string getRegister() {
-        if (storedRegister == "") {
-            storedRegister = getRegisterName(temp());
-        }
-        return storedRegister;
-    }
-
-    virtual void prepareCodeStep1() {
-
-    }
-
-    virtual std::string generateCodeStep2() {
-        this->generatedCode = "loadI " + strValue + " => " + getRegister() + "\n";
-        return this->generatedCode;
+    virtual ILOCInstruction* getOperation() {
+        ILOCProgram* program = getILOCProgram();
+        ILOCInstruction* loadInstruction = new LoadLiteral(strValue);
+        program->add(loadInstruction);
+        return loadInstruction;
     }
 
 };
@@ -677,35 +626,38 @@ public:
             }
         } else {
             exitWithError(ERR_UNDECLARED);
-        }
+        }        
     }
 
-	virtual std::string getRegistry() {
-		//TODO: get right registry
-		if (storedRegister == "") {
-			storedRegister = getRegisterName(temp());
-		}
-	
-		return storedRegister;	
-	}
+    virtual ILOCInstruction* getInstruction() {
+        ILOCProgram* program = getILOCProgram();
 
-	virtual std::string temp() {
-		// TODO: get check if temp is already declared and use the same for the same identifier previously loaded
-		if (storedTemp == "") storedTemp = generateTemp();
-		return storedTemp;
-	}	
+        ILOCInstruction* leftValueInstructions = children[0]->getInstruction();
+        ILOCInstruction* rightValueInstructions = children[1]->getInstruction();
 
-	virtual void adjustGeneratedTempsStep2() {
-		//TODO: generate register for this entry
-		storedRegister = temp();
-	}
+        // get final register or value from right value instructions.
 
-	virtual std::string generateCodeStep2() {
-		this->generatedCode = 
-			this->children[1]->generateCodeStep2() +
-			"store " + this->children[1]->getRegister() + " => " + this->children[0]->temp() + "\n";
-		return this->generatedCode;
-	}
+        // store value from the last resulting register on the right value into 
+        // this refering variable or vector space (vector should have a special
+        // loading expression result)
+
+        // the output parameter should be get from the resulting loaded space
+        // from left value node last register
+
+        //EX: store r1 => r2
+
+        ILOCOperation lastRightOperation = (*rightValueInstructions->operations.rbegin());
+        ILOCOperator rightOper = (*lastRightOperation.outOperators.rbegin());
+
+        ILOCOperation lastLeftOperation = (*leftValueInstructions->operations.rbegin());
+        ILOCOperator leftOper = (*lastLeftOperation.outOperators.rbegin());
+
+        
+        ILOCInstruction* assignmentInstruction = new Assignment(leftOper.name, rightOper.name);
+        program->add(assignmentInstruction);
+
+        return assignmentInstruction;
+    }
 
     virtual void print() {
         children[0]->print();
@@ -801,6 +753,8 @@ public:
     WhileCommandNode(const LexicalValue& value, Node* expression, Node* commandBlock) : BaseNode(value) {
         pushChild(expression);
         pushChild(commandBlock);
+
+
     }
 
     virtual void print() {
@@ -825,6 +779,16 @@ public:
         children[0]->print();
         printf("\n");
         children[1]->print();
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        for (Node* child : children) {
+            if (child) {
+                child->getInstruction();
+            }
+        }
+
+        return children[0]->getInstruction();
     }
 };
 
@@ -939,7 +903,6 @@ public:
 
     }
 
-
     virtual void print() {
         
         if (isStatic) {
@@ -962,6 +925,14 @@ public:
             commandBlock->print();
         else
             printf("{}");        
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        ILOCInstruction* instruction = commandBlock->getInstruction();
+        ILOCProgram* program = getILOCProgram();
+        // TODO: Part 6 should complement this with context switch (push variables content to stack)
+        //       pass parameters by value, etc.
+        return instruction;
     }
 
 private:
@@ -1150,18 +1121,6 @@ public:
 };
 
 class BinaryExpressionNode: public BaseNode {
-
-private:
-    std::string operation;
-    std::string tempLeft;
-    std::string tempRight;
-
-    std::string registerLeftName;
-    std::string registerRightName;
-    std::string registerResultName = "";
-
-    std::string storedTemp = "";
-
 public:
     BinaryExpressionNode(const LexicalValue& value, Node* left, Node* right) : BaseNode(value) {
         pushChild(left);
@@ -1188,13 +1147,13 @@ public:
         std::string operatorSymbol = value.tokenValue.s;
 
         if (operatorSymbol == "+") {
-            operation = std::string("add");// + (isImmediate ? "I" : "");
+            //operation = std::string("add");// + (isImmediate ? "I" : "");
         } else if (operatorSymbol == "-") {
-            operation = std::string("sub");// + (isImmediate ? "I" : "");
+            //operation = std::string("sub");// + (isImmediate ? "I" : "");
         } else if (operatorSymbol == "*") {
-            operation = std::string("mult");// + (isImmediate ? "I" : "");
+            //operation = std::string("mult");// + (isImmediate ? "I" : "");
         } else if (operatorSymbol == "/") {
-            operation = std::string("div");// + (isImmediate ? "I" : "");
+            //operation = std::string("div");// + (isImmediate ? "I" : "");
         }
     }
 
@@ -1204,47 +1163,6 @@ public:
         printValue();
         children[1]->print();
         printf(")");
-    }
-
-    virtual std::string temp() {
-        if (storedTemp == "") {
-            storedTemp = generateTemp();
-        }
-
-        return storedTemp;
-    }
-
-	virtual std::string getRegister() {
-		if (registerResultName == "") {
-			registerResultName = getRegisterName(temp());
-		}
-
-		return registerResultName;
-	}
-
-    virtual void prepareCodeStep1() {
-        BaseNode::prepareCodeStep1();
-        tempLeft = children[0]->temp();
-        tempRight = children[1]->temp();
-    }
-    
-    virtual void adjustTempsCodeStep2() {
-        registerLeftName = children[0]->getRegister();
-        registerRightName = children[1]->getRegister();
-        registerResultName = getRegister();
-    }
-
-    virtual void setupRightLabelsCodeStep2() {
-
-    }
-
-    virtual std::string generateCodeStep2() {
-        this->generatedCode = 
-            children[0]->generateCodeStep2() +
-            children[1]->generateCodeStep2() +
-            operation + " " + registerLeftName + ", " + registerRightName + " => " + registerResultName + "\n";
-
-        return this->generatedCode;
     }
 };
 

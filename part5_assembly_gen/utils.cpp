@@ -4,34 +4,13 @@
 #include <vector>
 #include <stack>
 
+static ILOCProgram* ilocProgram = new ILOCProgram();
+
+ILOCProgram* getILOCProgram() {
+    return ilocProgram;
+}
+
 #define TO_STD_STRING(name) #name
-
-static int registerCount = 1;
-
-std::string getRegisterName(std::string tempName) {
-    // TODO: check if tempName already exists to allocate correctly the register
-    char buff[100];
-    snprintf(buff, sizeof(buff), "r%d", registerCount++);
-    std::string buffAsStdStr = buff;
-    return buffAsStdStr;
-}
-
-static int tempCount = 0;
-static int labelCount = 0;
-
-std::string generateTemp() {
-    char buff[100];
-    snprintf(buff, sizeof(buff), "T%d", tempCount++);
-    std::string buffAsStdStr = buff;
-    return buffAsStdStr;
-}
-
-std::string generateLabel() {
-    char buff[100];
-    snprintf(buff, sizeof(buff), "L%d", labelCount++);
-    std::string buffAsStdStr = buff;
-    return buffAsStdStr;
-}
 
 extern void* arvore;
 extern int get_line_number();
@@ -147,11 +126,11 @@ char* copyStringSliceOnly(char* toCopy) {
 void descompila(void* arvore) {
     if (arvore) {
         Node* root = (Node*) arvore;
-        root->prepareCodeStep1();
-        root->adjustTempsCodeStep2();
-        root->setupRightLabelsCodeStep2();
-        root->printAssembly();
+        // root->print();
+        root->getInstruction();
     }
+
+    getILOCProgram()->printProgram();
 
     printf("\n");
 }

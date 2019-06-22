@@ -3,16 +3,35 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include "ILOCInstruction.h"
 
 class ILOCProgram {
 public:
-    void add() {
+    void addAsFirst(ILOCInstruction* instruction) {
+        instructions.push_front(instruction);
+    }
 
+    void add(ILOCInstruction* instruction) {
+        instructions.push_back(instruction);
+    }
+
+    void printProgram() {
+        for (ILOCInstruction* iloc : instructions) {
+            iloc->printInstruction();
+        }
+    }
+
+    int getOperationsCount() {
+        int operationsCount = 0;
+        for (ILOCInstruction* iloc : instructions) {
+            operationsCount += iloc->operations.size();
+        }
+        return operationsCount;
     }
 
 private:
-    std::vector<ILOCInstruction*> instructions;
+    std::list<ILOCInstruction*> instructions;
 };
 
 #endif /* ILOC_H */
