@@ -1,7 +1,6 @@
 int f() {
-    int x;
-    int y;
     int k;
+    int x;
 
-    x = 5;
+    k = x + 4;
 }

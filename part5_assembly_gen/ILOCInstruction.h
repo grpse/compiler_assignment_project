@@ -138,6 +138,38 @@ struct CommandBlock : public ILOCInstruction {
     }
 };
 
+struct BinaryExpression : public ILOCInstruction {
+
+    BinaryExpression() {}
+    BinaryExpression(std::string operatorSymbol, std::string leftOperatorName, std::string rightOperatorName) {
+
+        ILOCOperation binaryOper;
+        binaryOper.label = "";
+        
+        if (operatorSymbol == "+") {
+            binaryOper.operation = "add";
+        } else if (operatorSymbol == "-") {
+            binaryOper.operation = "sub";
+        } else if (operatorSymbol == "*") {
+            binaryOper.operation = "mult";
+        } else if (operatorSymbol == "/") {
+            binaryOper.operation = "div";
+        }
+
+        binaryOper.operators = {
+            ILOCOperator(leftOperatorName, ILOCOperatorType::REGISTER, true),
+            ILOCOperator(rightOperatorName, ILOCOperatorType::REGISTER, true)
+        };
+
+        binaryOper.outOperators = {
+            ILOCOperator(getRegister(), ILOCOperatorType::REGISTER, true)
+        };
+
+        operations.push_back(binaryOper);
+    }
+
+};
+
 struct LocalDeclaration : public ILOCInstruction {
 
     LocalDeclaration() { }
@@ -148,6 +180,7 @@ struct LocalDeclaration : public ILOCInstruction {
         loadOperation.operation = "addI";
 
         loadOperation.operators = {
+            ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
             ILOCOperator(std::to_string(size), ILOCOperatorType::IMMEDIATE, true)
         };
         
@@ -168,6 +201,8 @@ struct LoadIdentifier : public ILOCInstruction {
     LoadIdentifier(std::string identifierName, int subtractOffset) {
         ILOCOperation loadOperation;
 
+        std::string registerToLoadData = getRegister();
+
         loadOperation.label = "";
         loadOperation.operation = "loadAI";
 
@@ -177,10 +212,10 @@ struct LoadIdentifier : public ILOCInstruction {
         };
         
         loadOperation.outOperators = {
-            ILOCOperator(getRegister(), ILOCOperatorType::REGISTER, true)
+            ILOCOperator(registerToLoadData, ILOCOperatorType::REGISTER, true)
         };
 
-        loadOperation.comment = "load from memory " + identifierName + "Memory(rfp + " + std::to_string(subtractOffset) + ")";
+        loadOperation.comment = "load " + identifierName + " into: " + registerToLoadData + " = Memory(rfp + " + std::to_string(subtractOffset) + ")";
 
         operations.push_back(loadOperation);        
     }
@@ -227,7 +262,7 @@ struct Assignment : public ILOCInstruction {
         operations.push_back(loadOperation);
     }
 
-    Assignment(std::string fromLocation, int immediateOffset) {
+    Assignment(std::string fromLocation, int immediateOffset, std::string identifierName) {
         ILOCOperation loadOperation;
 
         loadOperation.label = "";
@@ -241,7 +276,7 @@ struct Assignment : public ILOCInstruction {
             ILOCOperator(std::to_string(immediateOffset), ILOCOperatorType::IMMEDIATE, true)
         };
 
-        loadOperation.comment = "store at Memory(rfp + " + std::to_string(immediateOffset) + ") = " + fromLocation;
+        loadOperation.comment = "store at Memory(rfp + " + std::to_string(immediateOffset) + ") = " + fromLocation + ": " + identifierName + " = " + fromLocation;
 
         operations.push_back(loadOperation);
     }

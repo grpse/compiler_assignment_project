@@ -221,9 +221,13 @@ public:
 
 class IdentifierNode: public BaseNode {
 
+private:
+    SymbolTable* currentTable;
+
 public:
     IdentifierNode(const LexicalValue& identifier) : BaseNode(identifier) {
         nodeName = "IdentifierNode";
+        currentTable = getTempTable();
         getTempTable()->checkDeclarationRecursivelyInPreviousScopes(identifier.tokenValue.s);
         SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier.tokenValue.s);
 
@@ -245,7 +249,7 @@ public:
     virtual ILOCInstruction* getInstruction() {
         ILOCProgram* program = getILOCProgram();
 
-        int offset = getTempTable()->getEntryOffset(value.tokenValue.s);
+        int offset = currentTable->getEntryOffset(value.tokenValue.s);
 
         ILOCInstruction* identifierLoad = new LoadIdentifier(value.tokenValue.s, offset);
 
@@ -346,12 +350,13 @@ public:
 
     virtual ILOCInstruction* getInstruction() {
         // Don't accumulate any instruction here, just children are instructions
+        ILOCInstruction* commandInstruction;
         for (Node* child : children) {
             if (child) {
-                child->getInstruction();
+                commandInstruction = child->getInstruction();
             }
         }
-        ILOCInstruction* commandInstruction = children[0]->getInstruction();
+        
         return commandInstruction;
     }
 };
@@ -584,7 +589,7 @@ class AssignmentCommandNode: public BaseNode {
 
 private:
 	bool isVector;
-
+    SymbolTable* currentTable;
 public:
     AssignmentCommandNode(const LexicalValue& value, Node* identifier, Node* rightValue) : BaseNode(value) {
         children = {identifier, rightValue};
@@ -635,6 +640,8 @@ public:
         } else {
             exitWithError(ERR_UNDECLARED);
         }        
+
+        currentTable = getTempTable();
     }
 
     virtual ILOCInstruction* getInstruction() {
@@ -667,10 +674,8 @@ public:
 
         std::string identifierName = children[0]->value.tokenValue.s;
 
-        SymbolTable* table = getTempTable();
-
-        int offsetFromStackPointer = table->getEntryOffset(identifierName);        
-        ILOCInstruction* assignmentInstruction = new Assignment(rightOper.name, offsetFromStackPointer);
+        int offsetFromStackPointer = currentTable->getEntryOffset(identifierName);        
+        ILOCInstruction* assignmentInstruction = new Assignment(rightOper.name, offsetFromStackPointer, identifierName);
         program->add(assignmentInstruction);
 
         return assignmentInstruction;
@@ -1138,6 +1143,9 @@ public:
 };
 
 class BinaryExpressionNode: public BaseNode {
+
+private:
+    std::string operatorSymbol = "";
 public:
     BinaryExpressionNode(const LexicalValue& value, Node* left, Node* right) : BaseNode(value) {
         pushChild(left);
@@ -1161,17 +1169,8 @@ public:
 
         bool isImmediate = leftIsImmediate || rightIsImmediate;
             
-        std::string operatorSymbol = value.tokenValue.s;
+        operatorSymbol = value.tokenValue.s;
 
-        if (operatorSymbol == "+") {
-            //operation = std::string("add");// + (isImmediate ? "I" : "");
-        } else if (operatorSymbol == "-") {
-            //operation = std::string("sub");// + (isImmediate ? "I" : "");
-        } else if (operatorSymbol == "*") {
-            //operation = std::string("mult");// + (isImmediate ? "I" : "");
-        } else if (operatorSymbol == "/") {
-            //operation = std::string("div");// + (isImmediate ? "I" : "");
-        }
     }
 
     virtual void print() {
@@ -1180,6 +1179,26 @@ public:
         printValue();
         children[1]->print();
         printf(")");
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+
+        ILOCInstruction* leftValueInstructions = children[0]->getInstruction();
+        ILOCInstruction* rightValueInstructions = children[1]->getInstruction();
+
+        ILOCOperation lastRightOperation = (*rightValueInstructions->operations.rbegin());
+        ILOCOperator rightOper = (*lastRightOperation.outOperators.rbegin());
+
+        ILOCOperation lastLeftOperation = (*leftValueInstructions->operations.rbegin());
+        ILOCOperator leftOper = (*lastLeftOperation.outOperators.rbegin());
+
+        ILOCProgram* program = getILOCProgram();
+
+        ILOCInstruction* binaryExpressionInstruction = new BinaryExpression(operatorSymbol, leftOper.name, rightOper.name);
+
+        program->add(binaryExpressionInstruction);
+
+        return binaryExpressionInstruction;
     }
 };
 
