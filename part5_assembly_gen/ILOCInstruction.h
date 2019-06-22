@@ -30,6 +30,7 @@ struct ILOCOperation {
     std::string operation;
     std::vector<ILOCOperator> operators;
     std::vector<ILOCOperator> outOperators;
+    std::string comment = "";
 
     void printOperation() {
 
@@ -69,6 +70,10 @@ struct ILOCOperation {
             } else {
                 std::cout << " ";
             }
+        }
+
+        if (comment != "") {
+            std::cout << "// " << comment;
         }
     }
 };
@@ -118,6 +123,8 @@ struct CommandBlock : public ILOCInstruction {
 
         loadOperation.label = getLabel();
         loadOperation.operation = "nop";
+
+        loadOperation.comment = std::to_string(blockInstructionsCount) + " instructions";
         
         operations.push_back(loadOperation);       
     }
@@ -126,7 +133,7 @@ struct CommandBlock : public ILOCInstruction {
 struct LocalDeclaration : public ILOCInstruction {
 
     LocalDeclaration() { }
-    LocalDeclaration(int size) {
+    LocalDeclaration(int size, std::string variableName) {
         ILOCOperation loadOperation;
 
         loadOperation.label = "";
@@ -139,6 +146,8 @@ struct LocalDeclaration : public ILOCInstruction {
         loadOperation.outOperators = {
             ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true)
         };
+
+        loadOperation.comment = variableName + ", " + std::to_string(size) + " bytes";
 
         operations.push_back(loadOperation);        
     }

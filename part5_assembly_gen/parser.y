@@ -10,6 +10,7 @@ extern void forcePushTableAsCurrent(SymbolTable* someTable);
 extern void* arvore;
 extern char* yytext;
 extern int get_line_number();
+extern void createAllLocalVariables();
 
 int yylex(void);
 
@@ -235,7 +236,7 @@ parameters_declaration_list
 /* END FUNCTION HEADER */
 
 command_block
-    : '{' { pushTempTableAndClear(); $<node>$ = $<node>1; } list_of_commands '}' { $$ = new CommandBlockNode($3); popAndGetPrevious(); }
+    : '{' { pushTempTableAndClear(); $<node>$ = $<node>1; } list_of_commands '}' { createAllLocalVariables(); $$ = new CommandBlockNode($3); popAndGetPrevious(); }
     | '{' { pushTempTableAndClear(); $<node>$ = $<node>1; } '}' { $$ = new CommandBlockNode(NULL); popAndGetPrevious(); }
 ;
 

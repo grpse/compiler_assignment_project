@@ -261,9 +261,9 @@ public:
         }
     }
 
+    std::map<std::string, SymbolEntry*> table;
 private:
     
-    std::map<std::string, SymbolEntry*> table;
     int tableID = getTableID();
 
     bool isAlreadyDeclared(std::string identifierName) {

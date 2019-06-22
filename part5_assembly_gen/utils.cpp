@@ -100,6 +100,15 @@ SymbolTable* popAndGetPrevious() {
     return currentTable;
 }
 
+void createAllLocalVariables() {
+    SymbolTable* table = getTempTable();
+    ILOCProgram* program = getILOCProgram();
+    for (auto entry : table->table) {
+        ILOCInstruction* declare = new LocalDeclaration(entry.second->size, entry.first);
+        program->addAsFirst(declare);
+    }
+}
+
 int getTableID() {
     return TableID;
 }

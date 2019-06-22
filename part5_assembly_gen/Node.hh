@@ -405,10 +405,11 @@ public:
 
     virtual ILOCInstruction* getInstruction() {
         // Creates a space on stack for one variable
-        ILOCProgram* program = getILOCProgram();
-        ILOCInstruction* localDeclare = new LocalDeclaration(varSize);
-        program->add(localDeclare);
-        return localDeclare;
+        //ILOCProgram* program = getILOCProgram();
+        //ILOCInstruction* localDeclare = new LocalDeclaration(varSize);
+        //program->add(localDeclare);
+        //return localDeclare;
+        return NULL;
     }
 
 private:
