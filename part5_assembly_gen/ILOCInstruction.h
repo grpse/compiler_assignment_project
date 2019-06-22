@@ -124,18 +124,6 @@ struct ILOCInstruction {
 struct CommandBlock : public ILOCInstruction {
 
     CommandBlock() {}
-    CommandBlock(int blockInstructionsCount) {
-        this->blockInstructionsCount = blockInstructionsCount;
-
-        ILOCOperation loadOperation;
-
-        loadOperation.label = getLabel();
-        loadOperation.operation = "nop";
-
-        loadOperation.comment = std::to_string(blockInstructionsCount) + " instructions";
-        
-        operations.push_back(loadOperation);       
-    }
 
     void updateInstructionsCount(int instructionsCount) {
         this->blockInstructionsCount = instructionsCount;
@@ -171,7 +159,7 @@ struct BinaryExpression : public ILOCInstruction {
             binaryOper.operation = "cmp_LT";
         } else if (operatorSymbol == "<=") {
             binaryOper.operation = "cmp_LE";
-        } else if (operatorSymbol == "<") {
+        } else if (operatorSymbol == "==") {
             binaryOper.operation = "cmp_EQ";
         } else if (operatorSymbol == ">=") {
             binaryOper.operation = "cmp_GE";
@@ -309,11 +297,11 @@ struct Assignment : public ILOCInstruction {
     }
 };
 
-struct If : public ILOCInstruction {
+struct IfThen : public ILOCInstruction {
     
-    If() { }
+    IfThen() { }
 
-    If(int jumpInstructionOffset) {
+    IfThen(int jumpInstructionOffset) {
 
     }
 };

@@ -748,12 +748,19 @@ public:
     }
 
     virtual ILOCInstruction* getInstruction() {
-        ILOCInstruction* expressionsInstructions = children[0]->getInstruction();
-        ILOCInstruction* blockCommands = children[1]->getInstruction();
-
         ILOCProgram* program = getILOCProgram();
 
-        ILOCInstruction* ifInstruction = new If();
+        int beforeExpressionsInstructionsCount = program->getOperationsCount();
+        ILOCInstruction* expressionsInstructions = children[0]->getInstruction();
+        int afterExpressionsInstructionsCount = program->getOperationsCount();
+
+        int numberOfInstructionsBackwardForExpressions = afterExpressionsInstructionsCount - beforeExpressionsInstructionsCount;
+
+        // TODO: get a pointer to the first command expression and put betwin 
+        //       each one of then the short circuit jump 
+
+        ILOCInstruction* blockCommands = children[1]->getInstruction();
+        ILOCInstruction* ifInstruction = new IfThen();
 
         program->add(ifInstruction);
 
