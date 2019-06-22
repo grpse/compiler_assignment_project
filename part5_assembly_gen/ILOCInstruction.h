@@ -136,6 +136,19 @@ struct CommandBlock : public ILOCInstruction {
         
         operations.push_back(loadOperation);       
     }
+
+    void updateInstructionsCount(int instructionsCount) {
+        this->blockInstructionsCount = instructionsCount;
+
+        ILOCOperation loadOperation;
+
+        loadOperation.label = getLabel();
+        loadOperation.operation = "nop";
+
+        loadOperation.comment = std::to_string(blockInstructionsCount) + " instructions";
+        
+        operations.push_back(loadOperation);       
+    }
 };
 
 struct BinaryExpression : public ILOCInstruction {
@@ -154,6 +167,18 @@ struct BinaryExpression : public ILOCInstruction {
             binaryOper.operation = "mult";
         } else if (operatorSymbol == "/") {
             binaryOper.operation = "div";
+        } else if (operatorSymbol == "<") {
+            binaryOper.operation = "cmp_LT";
+        } else if (operatorSymbol == "<=") {
+            binaryOper.operation = "cmp_LE";
+        } else if (operatorSymbol == "<") {
+            binaryOper.operation = "cmp_EQ";
+        } else if (operatorSymbol == ">=") {
+            binaryOper.operation = "cmp_GE";
+        } else if (operatorSymbol == ">") {
+            binaryOper.operation = "cmp_GT";
+        } else if (operatorSymbol == "!=") {
+            binaryOper.operation = "cmp_NE";
         }
 
         binaryOper.operators = {
@@ -176,19 +201,21 @@ struct LocalDeclaration : public ILOCInstruction {
     LocalDeclaration(int size, std::string variableName) {
         ILOCOperation loadOperation;
 
+        int minimalSize = size < 4 ? 4 : size;
+
         loadOperation.label = "";
         loadOperation.operation = "addI";
 
         loadOperation.operators = {
             ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
-            ILOCOperator(std::to_string(size), ILOCOperatorType::IMMEDIATE, true)
+            ILOCOperator(std::to_string(minimalSize), ILOCOperatorType::IMMEDIATE, true)
         };
         
         loadOperation.outOperators = {
             ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true)
         };
 
-        loadOperation.comment = variableName + ", " + std::to_string(size) + " bytes";
+        loadOperation.comment = variableName + ", " + std::to_string(minimalSize) + " bytes";
 
         operations.push_back(loadOperation);        
     }
@@ -283,8 +310,12 @@ struct Assignment : public ILOCInstruction {
 };
 
 struct If : public ILOCInstruction {
-    std::vector<ILOCOperation> ifConditions;
-    std::vector<ILOCOperation> instructionList;
+    
+    If() { }
+
+    If(int jumpInstructionOffset) {
+
+    }
 };
 
 struct IfElse : public ILOCInstruction {

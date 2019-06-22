@@ -293,9 +293,12 @@ public:
 };
 class CommandBlockNode: public BaseNode {
 
+private:
+    SymbolTable* currentTable;
 public:
     CommandBlockNode(Node* listOfCommands) : BaseNode() {
         this->pushChild(listOfCommands);
+        currentTable = getTempTable();
     }
 
     virtual void print() {
@@ -306,10 +309,32 @@ public:
     }
 
     virtual ILOCInstruction* getInstruction() {
-        ILOCInstruction* listOfInstructions = children[0]->getInstruction();
         ILOCProgram* program = getILOCProgram();
-        ILOCInstruction* commandBlock = new CommandBlock(program->getOperationsCount());
-        program->addAsFirst(commandBlock);
+
+        int numberOfInstructionsBeforeEnterOnCommandBlock = program->getOperationsCount();
+
+        // Add Command block
+        CommandBlock* commandBlock = new CommandBlock();
+        program->add(commandBlock);
+        
+        // Add variables declarations
+        std::vector<SymbolEntry*> symbols = currentTable->getOrderedSymbols();
+
+        for (auto it = symbols.rbegin(); it != symbols.rend(); it++) {
+            auto entry = *it;
+            ILOCInstruction* declare = new LocalDeclaration(entry->size, entry->name);
+            program->add(declare);
+        }
+        
+        // Add inner instructions
+        ILOCInstruction* listOfInstructions = children[0]->getInstruction();
+
+        int numberOfInstructionsAfterEnterOnCommandBlock = program->getOperationsCount();
+
+        int numberOfInnerInstructionsOfTheBlock = numberOfInstructionsAfterEnterOnCommandBlock - numberOfInstructionsBeforeEnterOnCommandBlock;
+
+        // Update command block operations
+        commandBlock->updateInstructionsCount(numberOfInnerInstructionsOfTheBlock);
         return commandBlock;
     }
 };
@@ -720,6 +745,19 @@ public:
         printf(")");
         printf(" then ");
         children[1]->print();
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        ILOCInstruction* expressionsInstructions = children[0]->getInstruction();
+        ILOCInstruction* blockCommands = children[1]->getInstruction();
+
+        ILOCProgram* program = getILOCProgram();
+
+        ILOCInstruction* ifInstruction = new If();
+
+        program->add(ifInstruction);
+
+        return ifInstruction;
     }
 
 };
@@ -1168,9 +1206,30 @@ public:
             right->value.literalType == LITERAL_BOOL;
 
         bool isImmediate = leftIsImmediate || rightIsImmediate;
-            
+
         operatorSymbol = value.tokenValue.s;
 
+        bool leftAndRightAreCompatibleTypes = 
+            (
+                (left->type == TYPE_INT || left->type == TYPE_FLOAT) &&
+                (right->type == TYPE_INT || right->type == TYPE_FLOAT)
+            ) 
+                ||
+            (left->type == TYPE_BOOL && right->type == TYPE_BOOL);
+
+        if (operatorSymbol == "<") {
+            type = TYPE_BOOL;
+        } else if (operatorSymbol == "<=") {
+            type = TYPE_BOOL;
+        } else if (operatorSymbol == "<") {
+            type = TYPE_BOOL;
+        } else if (operatorSymbol == ">=") {
+            type = TYPE_BOOL;
+        } else if (operatorSymbol == ">") {
+            type = TYPE_BOOL;
+        } else if (operatorSymbol == "!=") {
+            type = TYPE_BOOL;
+        }
     }
 
     virtual void print() {

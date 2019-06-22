@@ -1621,7 +1621,7 @@ yyreduce:
 
   case 18:
 #line 239 "parser.y" /* yacc.c:1648  */
-    { createAllLocalVariables(); (yyval.node) = new CommandBlockNode((yyvsp[-1].node)); popAndGetPrevious(); }
+    { (yyval.node) = new CommandBlockNode((yyvsp[-1].node)); popAndGetPrevious(); }
 #line 1626 "parser.tab.c" /* yacc.c:1648  */
     break;
 

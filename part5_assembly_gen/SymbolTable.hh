@@ -285,7 +285,7 @@ public:
 
             symbolCount++;
 
-            offset += symbol->size;
+            offset += symbol->size < 4 ? 4 : symbol->size;
         }
 
         return offset;
