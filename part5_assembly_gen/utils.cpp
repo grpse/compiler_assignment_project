@@ -103,8 +103,13 @@ SymbolTable* popAndGetPrevious() {
 void createAllLocalVariables() {
     SymbolTable* table = getTempTable();
     ILOCProgram* program = getILOCProgram();
-    for (auto entry : table->table) {
-        ILOCInstruction* declare = new LocalDeclaration(entry.second->size, entry.first);
+    // walk backwards on the list, because declarations are shown on inverse order
+    
+    std::vector<SymbolEntry*> symbols = table->getOrderedSymbols();
+
+    for (auto it = symbols.rbegin(); it != symbols.rend(); it++) {
+        auto entry = *it;
+        ILOCInstruction* declare = new LocalDeclaration(entry->size, entry->name);
         program->addAsFirst(declare);
     }
 }

@@ -69,6 +69,7 @@ struct SymbolEntry {
     int size;
     std::vector<FunctionParameter> parameters = {}; // function exclusive
     LexicalValue lexical = {};
+    std::string name;
 };
 
 struct ActivationRegistry {
@@ -90,13 +91,18 @@ public:
 
     ~SymbolTable() {
 
-        for (auto entry : table) {
-            delete entry.second;         
+        // for (auto entry : table) {
+        //     delete entry.second;         
+        // }
+
+        for (auto entry : seqTable) {
+            delete entry;
         }
     }
 
     void updateTypeSize(const LexicalValue& identifier, int sizeUpdate) {
-        SymbolEntry* entry = table[identifier.tokenValue.s];
+        // SymbolEntry* entry = table[identifier.tokenValue.s];
+        SymbolEntry* entry = retrieveSymbol(identifier.tokenValue.s);
         if (entry) {
             entry->size = sizeUpdate;
         }
@@ -115,7 +121,8 @@ public:
             exitWithError(ERR_DECLARED);
         }
         
-        table[identifier.tokenValue.s] = entry;
+        // table[identifier.tokenValue.s] = entry;
+        setSymbol(identifier.tokenValue.s, entry);
     }
 
     void insertVectorDeclaration(const LexicalValue& identifier, int type) {
@@ -131,7 +138,8 @@ public:
             exitWithError(ERR_DECLARED);
         }
         
-        table[identifier.tokenValue.s] = entry;
+        // table[identifier.tokenValue.s] = entry;
+        setSymbol(identifier.tokenValue.s, entry);
     }
 
     void insertFunctionDeclaration(const LexicalValue& identifier, int type, const std::vector<FunctionParameter>& parameters) {
@@ -148,7 +156,9 @@ public:
             exitWithError(ERR_DECLARED);
         }
         
-        table[identifier.tokenValue.s] = entry;
+        // table[identifier.tokenValue.s] = entry;
+
+        setSymbol(identifier.tokenValue.s, entry);
     }
 
     void checkDeclarationRecursivelyInPreviousScopes(std::string identifierName) {
@@ -162,8 +172,18 @@ public:
     }
 
     SymbolEntry* getEntry(std::string identifierName) {
-        if (table.find(identifierName) != table.end()) {
-            return table[identifierName];
+        
+        // if (table.find(identifierName) != table.end()) {
+        //     return table[identifierName];
+        // } else if (parent != NULL) {
+        //     return parent->getEntry(identifierName);
+        // } else {
+        //     return NULL;
+        // }
+
+        SymbolEntry* symbol = retrieveSymbol(identifierName);
+        if (symbol != NULL) {
+            return symbol;
         } else if (parent != NULL) {
             return parent->getEntry(identifierName);
         } else {
@@ -172,14 +192,20 @@ public:
     }
 
     int getTypeOfIdentifierName(std::string symbol) {
-        return table[symbol]->type;
+        // return table[symbol]->type;
+        return retrieveSymbol(symbol)->type;
     }
 
     void printTable() {
         printf("TableID: %d\n", tableID);
-        for (std::pair<std::string, SymbolEntry*> row : table) {
-            SymbolEntry* e = row.second;
-            std::cout << "|" << row.first << "|" << e->lexical.tokenValue.s << "|" << e->location << "|" << natureString(e->nature) << "|" << typeString(e->type) << "|" << e->size << "|" << parametersString(e) << "|" << std::endl;
+        // for (std::pair<std::string, SymbolEntry*> row : table) {
+        //     SymbolEntry* e = row.second;
+        //     std::cout << "|" << row.first << "|" << e->lexical.tokenValue.s << "|" << e->location << "|" << natureString(e->nature) << "|" << typeString(e->type) << "|" << e->size << "|" << parametersString(e) << "|" << std::endl;
+        // }
+
+        for (SymbolEntry* row : seqTable) {
+            SymbolEntry* e = row;
+            std::cout << "|" << row->name << "|" << e->lexical.tokenValue.s << "|" << e->location << "|" << natureString(e->nature) << "|" << typeString(e->type) << "|" << e->size << "|" << parametersString(e) << "|" << std::endl;
         }
     }
 
@@ -261,13 +287,33 @@ public:
         }
     }
 
-    std::map<std::string, SymbolEntry*> table;
+    SymbolEntry* retrieveSymbol(std::string name) {
+        for (SymbolEntry* entry : seqTable) {
+            if (entry->name == name) return entry;
+        }
+
+        return NULL;
+    }
+
+    SymbolEntry* setSymbol(std::string name, SymbolEntry* entry) {
+        entry->name = name;
+        seqTable.push_back(entry);
+        return entry;
+    }
+
+    std::vector<SymbolEntry*> getOrderedSymbols() {
+        return seqTable;
+    }
+
 private:
+    std::vector<SymbolEntry*> seqTable;
+    // std::map<std::string, SymbolEntry*> table;
     
     int tableID = getTableID();
 
     bool isAlreadyDeclared(std::string identifierName) {
-        return table.find(identifierName) != table.end();
+        // return table.find(identifierName) != table.end();
+        return retrieveSymbol(identifierName) != NULL;
     }
 };
 
