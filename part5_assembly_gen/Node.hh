@@ -221,12 +221,9 @@ public:
 
 class IdentifierNode: public BaseNode {
 
-private:
-    std::string storedTemp = "";
-    std::string storedRegister = "";
-    std::string adjustedTempValueToMemory = "";
 public:
     IdentifierNode(const LexicalValue& identifier) : BaseNode(identifier) {
+        nodeName = "IdentifierNode";
         getTempTable()->checkDeclarationRecursivelyInPreviousScopes(identifier.tokenValue.s);
         SymbolEntry* identifierEntry = getTempTable()->getEntry(identifier.tokenValue.s);
 
@@ -241,10 +238,21 @@ public:
         }
     }
 
-    
-
     virtual void print() {
         printValue();
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        ILOCProgram* program = getILOCProgram();
+
+        int offset = getTempTable()->getEntryOffset(value.tokenValue.s);
+
+        ILOCInstruction* identifierLoad = new LoadIdentifier(value.tokenValue.s, offset);
+
+        program->add(identifierLoad);
+
+        return identifierLoad;
+
     }
 };
 
@@ -445,7 +453,7 @@ private:
 
 public:
     LiteralNode(const LexicalValue& value) : LeafNode(value) {
-
+        nodeName = "LiteralNode";
         switch(value.literalType) {
             case LITERAL_INT: {
                 type = TYPE_INT;
@@ -489,7 +497,7 @@ public:
         }
     }
 
-    virtual ILOCInstruction* getOperation() {
+    virtual ILOCInstruction* getInstruction() {
         ILOCProgram* program = getILOCProgram();
         ILOCInstruction* loadInstruction = new LoadLiteral(strValue);
         program->add(loadInstruction);
@@ -575,8 +583,7 @@ public:
 class AssignmentCommandNode: public BaseNode {
 
 private:
-	std::string storedTemp = "";
-	std::string storedRegister = "";
+	bool isVector;
 
 public:
     AssignmentCommandNode(const LexicalValue& value, Node* identifier, Node* rightValue) : BaseNode(value) {
@@ -615,7 +622,7 @@ public:
                 getTempTable()->updateTypeSize(identifier->value, sizeOfString);
             }
 
-            bool identifierIsVector = identifier->children.size() > 0;
+            bool identifierIsVector = isVector = identifier->children.size() > 0;
 
             if (
                 (identifierEntry->nature != NATUREZA_VECTOR && identifierIsVector) ||
@@ -633,7 +640,10 @@ public:
     virtual ILOCInstruction* getInstruction() {
         ILOCProgram* program = getILOCProgram();
 
-        ILOCInstruction* leftValueInstructions = children[0]->getInstruction();
+        // TODO: Load register from memory has something wrong. The RFP should refer to 
+        //       the begning the stack (offseted from current context)
+
+        // ILOCInstruction* leftValueInstructions = children[0]->getInstruction();
         ILOCInstruction* rightValueInstructions = children[1]->getInstruction();
 
         // get final register or value from right value instructions.
@@ -647,14 +657,20 @@ public:
 
         //EX: store r1 => r2
 
+
+
         ILOCOperation lastRightOperation = (*rightValueInstructions->operations.rbegin());
         ILOCOperator rightOper = (*lastRightOperation.outOperators.rbegin());
 
-        ILOCOperation lastLeftOperation = (*leftValueInstructions->operations.rbegin());
-        ILOCOperator leftOper = (*lastLeftOperation.outOperators.rbegin());
+        // ILOCOperation lastLeftOperation = (*leftValueInstructions->operations.rbegin());
+        // ILOCOperator leftOper = (*lastLeftOperation.outOperators.rbegin());
 
-        
-        ILOCInstruction* assignmentInstruction = new Assignment(leftOper.name, rightOper.name);
+        std::string identifierName = children[0]->value.tokenValue.s;
+
+        SymbolTable* table = getTempTable();
+
+        int offsetFromStackPointer = table->getEntryOffset(identifierName);        
+        ILOCInstruction* assignmentInstruction = new Assignment(rightOper.name, offsetFromStackPointer);
         program->add(assignmentInstruction);
 
         return assignmentInstruction;

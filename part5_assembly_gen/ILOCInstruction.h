@@ -84,6 +84,14 @@ struct ILOCInstruction {
 
     std::vector<ILOCOperation> operations;
 
+    static inline std::string getRegisterRPC() {
+        return "rpc";
+    }
+
+    static inline std::string getRegisterRSP() {
+        return "rsp";
+    }
+
     static inline std::string getRegisterRFP() {
         return "rfp";
     }
@@ -144,10 +152,35 @@ struct LocalDeclaration : public ILOCInstruction {
         };
         
         loadOperation.outOperators = {
-            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true)
+            ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true)
         };
 
         loadOperation.comment = variableName + ", " + std::to_string(size) + " bytes";
+
+        operations.push_back(loadOperation);        
+    }
+};
+
+struct LoadIdentifier : public ILOCInstruction {
+
+    LoadIdentifier() { }
+
+    LoadIdentifier(std::string identifierName, int subtractOffset) {
+        ILOCOperation loadOperation;
+
+        loadOperation.label = "";
+        loadOperation.operation = "loadAI";
+
+        loadOperation.operators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator(std::to_string(subtractOffset), ILOCOperatorType::IMMEDIATE, true),
+        };
+        
+        loadOperation.outOperators = {
+            ILOCOperator(getRegister(), ILOCOperatorType::REGISTER, true)
+        };
+
+        loadOperation.comment = "load from memory " + identifierName + "Memory(rfp + " + std::to_string(subtractOffset) + ")";
 
         operations.push_back(loadOperation);        
     }
@@ -190,9 +223,11 @@ struct Assignment : public ILOCInstruction {
         loadOperation.outOperators = {
             ILOCOperator(whereToStore, ILOCOperatorType::REGISTER, true)
         };
+
+        operations.push_back(loadOperation);
     }
 
-    Assignment(std::string whereToStore, std::string fromLocation, int immediateOffset) {
+    Assignment(std::string fromLocation, int immediateOffset) {
         ILOCOperation loadOperation;
 
         loadOperation.label = "";
@@ -202,9 +237,13 @@ struct Assignment : public ILOCInstruction {
         };
 
         loadOperation.outOperators = {
-            ILOCOperator(whereToStore, ILOCOperatorType::REGISTER, true),
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
             ILOCOperator(std::to_string(immediateOffset), ILOCOperatorType::IMMEDIATE, true)
         };
+
+        loadOperation.comment = "store at Memory(rfp + " + std::to_string(immediateOffset) + ") = " + fromLocation;
+
+        operations.push_back(loadOperation);
     }
 };
 

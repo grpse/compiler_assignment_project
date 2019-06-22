@@ -70,6 +70,7 @@ struct SymbolEntry {
     std::vector<FunctionParameter> parameters = {}; // function exclusive
     LexicalValue lexical = {};
     std::string name;
+    int offset;
 };
 
 struct ActivationRegistry {
@@ -274,6 +275,22 @@ public:
         }
     }
 
+    int getEntryOffset(std::string identifierName) {
+        int offset = 0;
+        int symbolCount = 0;
+        for (SymbolEntry* symbol : seqTable) {
+            if (symbol->name == identifierName) {
+                break;
+            }
+
+            symbolCount++;
+
+            offset += symbol->size;
+        }
+
+        return offset;
+    }
+
     std::string typeString(int type) {
         switch (type)  
         {
@@ -295,12 +312,6 @@ public:
         return NULL;
     }
 
-    SymbolEntry* setSymbol(std::string name, SymbolEntry* entry) {
-        entry->name = name;
-        seqTable.push_back(entry);
-        return entry;
-    }
-
     std::vector<SymbolEntry*> getOrderedSymbols() {
         return seqTable;
     }
@@ -308,8 +319,13 @@ public:
 private:
     std::vector<SymbolEntry*> seqTable;
     // std::map<std::string, SymbolEntry*> table;
-    
     int tableID = getTableID();
+
+    SymbolEntry* setSymbol(std::string name, SymbolEntry* entry) {
+        entry->name = name;
+        seqTable.push_back(entry);
+        return entry;
+    }
 
     bool isAlreadyDeclared(std::string identifierName) {
         // return table.find(identifierName) != table.end();
