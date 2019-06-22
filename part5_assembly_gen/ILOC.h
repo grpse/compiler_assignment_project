@@ -30,6 +30,7 @@ public:
         return operationsCount;
     }
 
+
 private:
     std::list<ILOCInstruction*> instructions;
 };

@@ -320,7 +320,7 @@ public:
         // Add variables declarations
         std::vector<SymbolEntry*> symbols = currentTable->getOrderedSymbols();
 
-        for (auto it = symbols.rbegin(); it != symbols.rend(); it++) {
+        for (auto it = symbols.begin(); it != symbols.end(); it++) {
             auto entry = *it;
             ILOCInstruction* declare = new LocalDeclaration(entry->size, entry->name);
             program->add(declare);
@@ -755,6 +755,14 @@ public:
         int afterExpressionsInstructionsCount = program->getOperationsCount();
 
         int numberOfInstructionsBackwardForExpressions = afterExpressionsInstructionsCount - beforeExpressionsInstructionsCount;
+
+        for (
+            int instIndex = program->getOperationsCount() - numberOfInstructionsBackwardForExpressions;
+            instIndex < (program->getOperationsCount() + (2 * numberOfInstructionsBackwardForExpressions));
+            instIndex += 2) {
+
+            // auto it = 
+        }
 
         // TODO: get a pointer to the first command expression and put betwin 
         //       each one of then the short circuit jump 
