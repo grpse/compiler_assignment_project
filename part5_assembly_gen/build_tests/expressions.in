@@ -1,14 +1,4 @@
-e[10] int;
-d int;
-int f() {
-    e[10] = d;
-    d = e[1];
-}
-
-int g() {
-    d = 10;
-}
-
 int main() {
-    d = 5;
+    int k <= 5;
+    int d <= k;
 }

@@ -283,7 +283,7 @@ local_var_init
 
 local_var_init_valid_values
     : literal_values { $$ = $1; }
-    | TK_IDENTIFICADOR { $$ = new LeafNode($1); }
+    | identifier { $$ = $1; }
 ;
 /* END LOCAL VAR */
 

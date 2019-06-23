@@ -436,9 +436,11 @@ class LocalVariableDeclarationNode: public BaseNode {
 
 private:
     int varSize;
+    SymbolTable* currentTable;
 
 public:
     LocalVariableDeclarationNode(const LexicalValue& identifier, Node* attribute, Node* declarationType, Node* localVarInit) : BaseNode(identifier) {
+        currentTable = getTempTable();
         if (attribute)
             pushChild(attribute);
 
@@ -474,11 +476,26 @@ public:
     }
 
     virtual ILOCInstruction* getInstruction() {
-        // Creates a space on stack for one variable
-        //ILOCProgram* program = getILOCProgram();
-        //ILOCInstruction* localDeclare = new LocalDeclaration(varSize);
-        //program->add(localDeclare);
-        //return localDeclare;
+        // Declarations happens within scope
+
+        if (localVarInit) {
+            ILOCInstruction* loadValueInstruction = localVarInit->getInstruction();
+            bool hasChildren = localVarInit->children.size() > 0;
+
+            if (hasChildren) {
+                ILOCInstruction* lastInstruction = localVarInit->children[0]->getInstruction();
+                ILOCOperation lastOperation = (*lastInstruction->operations.rbegin());
+                int loadOffset = currentTable->getEntryOffset(value.tokenValue.s);
+
+                ILOCOperator lastOper = (*lastOperation.outOperators.rbegin());
+
+                ILOCInstruction* assignInitValue = new Assignment(lastOper.name, loadOffset, value.tokenValue.s, false);
+                getILOCProgram()->add(assignInitValue);                
+                // TODO: load literal value to variable space
+            }
+
+        }
+
         return NULL;
     }
 
