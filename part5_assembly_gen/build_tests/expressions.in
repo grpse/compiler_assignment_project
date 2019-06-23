@@ -1,10 +1,6 @@
+x int;
+k int;
+e static int;
 int f() {
-    int k;
-    int x;
-
-    bool h;
-
-    while(x < k) do {
-        h = x > k;
-    };
+    e = k + x;
 }

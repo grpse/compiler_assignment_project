@@ -299,6 +299,25 @@ public:
         return offset;
     }
 
+    int getEntryOffsetGlobal(std::string identifierName) {
+        int offset = 0;
+        int symbolCount = 0;
+        bool found = false;
+
+        for (SymbolEntry* symbol : seqTable) {
+            if (symbol->name == identifierName) {
+                break;
+                // found = true;
+            }
+
+            symbolCount++;
+
+            offset += symbol->size < 4 ? 4 : symbol->size;
+        }
+
+        return offset;
+    }
+
     std::string typeString(int type) {
         switch (type)  
         {
@@ -324,10 +343,10 @@ public:
         return seqTable;
     }
 
+    const int tableID = getTableID();
 private:
     std::vector<SymbolEntry*> seqTable;
     // std::map<std::string, SymbolEntry*> table;
-    int tableID = getTableID();
 
     SymbolEntry* setSymbol(std::string name, SymbolEntry* entry) {
         entry->name = name;

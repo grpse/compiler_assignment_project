@@ -249,12 +249,21 @@ public:
     virtual ILOCInstruction* getInstruction() {
         ILOCProgram* program = getILOCProgram();
 
-        int offset = currentTable->getEntryOffset(value.tokenValue.s);
+        std::string variableName = value.tokenValue.s;
 
-        ILOCInstruction* identifierLoad = new LoadIdentifier(value.tokenValue.s, offset);
+        ILOCInstruction* identifierLoad = NULL;
+        
+        bool isGlobalVariable = getTempTable()->getEntry(variableName) != NULL && getTempTable()->tableID == 0;
+
+        if (isGlobalVariable) {
+            int offset = getTempTable()->getEntryOffsetGlobal(variableName);
+            identifierLoad = new LoadGlobalVariable(variableName, offset);
+        } else {
+            int offset = currentTable->getEntryOffset(variableName);
+            identifierLoad = new LoadIdentifier(variableName, offset);
+        }
 
         program->add(identifierLoad);
-
         return identifierLoad;
 
     }
@@ -699,8 +708,18 @@ public:
 
         std::string identifierName = children[0]->value.tokenValue.s;
 
-        int offsetFromStackPointer = currentTable->getEntryOffset(identifierName);        
-        ILOCInstruction* assignmentInstruction = new Assignment(rightOper.name, offsetFromStackPointer, identifierName);
+
+        ILOCInstruction* identifierLoad = NULL;
+        
+        bool isGlobalVariable = getTempTable()->getEntry(identifierName) != NULL && getTempTable()->tableID == 0;
+        int offsetFromStackPointer = 0;
+        if (isGlobalVariable) {
+            offsetFromStackPointer = getTempTable()->getEntryOffsetGlobal(identifierName);
+        } else {
+            offsetFromStackPointer = currentTable->getEntryOffset(identifierName);
+        }
+
+        ILOCInstruction* assignmentInstruction = new Assignment(rightOper.name, offsetFromStackPointer, identifierName, isGlobalVariable);
         program->add(assignmentInstruction);
 
         return assignmentInstruction;
