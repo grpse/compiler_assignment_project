@@ -750,6 +750,12 @@ public:
 
 
         ILOCInstruction* identifierLoad = NULL;
+        Node* identifierNode = children[0];
+        bool isVector = identifierNode->children.size() > 0;
+        ILOCInstruction* vectorInstructionLoad = NULL;
+        if (isVector) {
+            vectorInstructionLoad = identifierNode->children[0]->getInstruction();
+        }
         
         bool isGlobalVariable = getTempTable()->getEntry(identifierName) != NULL && getTempTable()->tableID == 0;
         int offsetFromStackPointer = 0;
@@ -759,8 +765,23 @@ public:
             offsetFromStackPointer = currentTable->getEntryOffset(identifierName);
         }
 
-        ILOCInstruction* assignmentInstruction = new Assignment(rightOper.name, offsetFromStackPointer, identifierName, isGlobalVariable);
-        program->add(assignmentInstruction);
+        ILOCInstruction* assignmentInstruction = NULL;
+        if (isVector) {
+            // x[10] int;
+            // x[5] = 1;
+            // loadI 5 => r0 
+            // loadI 1 => r1
+            // storeA0 r1  => rbss, r0
+            ILOCOperation operation = (*vectorInstructionLoad->operations.rbegin());
+            ILOCOperator resultOperator = (*operation.outOperators.rbegin());
+
+
+            assignmentInstruction = new Assignment(resultOperator.name, rightOper.name, offsetFromStackPointer, identifierName, isGlobalVariable);
+            program->add(assignmentInstruction);
+        } else {
+            assignmentInstruction = new Assignment(rightOper.name, offsetFromStackPointer, identifierName, isGlobalVariable);
+            program->add(assignmentInstruction);
+        }
 
         return assignmentInstruction;
     }
@@ -1121,7 +1142,7 @@ public:
         std::string functionName = value.tokenValue.s;
         if (functionName == "main") {
             instruction->operations[0].mainFunction = true;
-            instruction->operations[0].comment = "main(): " + instruction->operations[0].comment;
+            instruction->operations[0].comment = "main: " + instruction->operations[0].comment;
         }
         // TODO: Part 6 should complement this with context switch (push variables content to stack)
         //       pass parameters by value, etc.

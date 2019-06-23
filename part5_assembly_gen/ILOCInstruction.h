@@ -267,7 +267,7 @@ struct LoadIdentifier : public ILOCInstruction {
             ILOCOperator(registerToLoadData, ILOCOperatorType::REGISTER, true)
         };
 
-        loadOperation.comment = "load " + identifierName + " into: " + registerToLoadData + " = Memory(rfp + " + std::to_string(subtractOffset) + ")";
+        loadOperation.comment = "load " + identifierName + " into: " + registerToLoadData + " = Memory[rfp + " + std::to_string(subtractOffset) + "]";
 
         operations.push_back(loadOperation);        
     }
@@ -294,7 +294,7 @@ struct LoadIdentifierVector : public ILOCInstruction {
             ILOCOperator(registerToLoadData, ILOCOperatorType::REGISTER, true)
         };
 
-        loadOperation.comment = "load " + identifierName + " into: " + registerToLoadData + " = Memory(rfp + " + registerOfSum + ")";
+        loadOperation.comment = "load " + identifierName + " into: " + registerToLoadData + " = Memory[rfp + " + registerOfSum + "]";
 
         operations.push_back(loadOperation);        
     }
@@ -309,7 +309,7 @@ struct LoadLiteral : public ILOCInstruction {
         ILOCOperation loadOperation;
 
         loadOperation.label = "";
-        loadOperation.operation = "i2i";
+        loadOperation.operation = "loadI";
 
         loadOperation.operators = {
             ILOCOperator(value, ILOCOperatorType::IMMEDIATE, true)
@@ -341,6 +341,41 @@ struct Assignment : public ILOCInstruction {
         operations.push_back(loadOperation);
     }
 
+    Assignment(std::string displacementRegister, std::string fromLocation, int offsetFromStackPointer, std::string identifierName, bool isGlobal) {
+
+        ILOCOperation addDisplacement;
+
+        addDisplacement.label = "";
+        addDisplacement.operation = "addI";
+        addDisplacement.operators = {
+            ILOCOperator(displacementRegister, ILOCOperatorType::REGISTER, true),
+            ILOCOperator(std::to_string(offsetFromStackPointer), ILOCOperatorType::IMMEDIATE, true)
+        };
+
+        addDisplacement.outOperators = {
+            ILOCOperator(displacementRegister, ILOCOperatorType::REGISTER, true),
+            
+        };
+
+        operations.push_back(addDisplacement);
+
+
+        ILOCOperation loadOperation;
+
+        loadOperation.label = "";
+        loadOperation.operation = "storeAO";
+        loadOperation.operators = {
+            ILOCOperator(fromLocation, ILOCOperatorType::REGISTER, true)
+        };
+
+        loadOperation.outOperators = {
+            ILOCOperator(isGlobal ? getRegisterRBSS() : getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator(displacementRegister, ILOCOperatorType::REGISTER, true),
+        };
+
+        operations.push_back(loadOperation);
+    }
+
     Assignment(std::string fromLocation, int immediateOffset, std::string identifierName, bool isGlobalVariable) {
         ILOCOperation loadOperation;
 
@@ -356,7 +391,7 @@ struct Assignment : public ILOCInstruction {
         };
 
         std::string registerToStore = isGlobalVariable ? "rbss" : "rfp";
-        loadOperation.comment = "store at Memory(" + registerToStore + " + " + std::to_string(immediateOffset) + ") = " + fromLocation + ": " + identifierName + " = " + fromLocation;
+        loadOperation.comment = "store at Memory[" + registerToStore + " + " + std::to_string(immediateOffset) + "] = " + fromLocation + ": " + identifierName + " = " + fromLocation;
 
         operations.push_back(loadOperation);
     }
@@ -420,7 +455,7 @@ struct LoadGlobalVariable : public ILOCInstruction {
             ILOCOperator(registerToLoadData, ILOCOperatorType::REGISTER, true)
         };
 
-        loadOperation.comment = "load GLOBAL " + variableName + " into: " + registerToLoadData + " = Memory(rfp + " + std::to_string(bytesCount) + ")";
+        loadOperation.comment = "load GLOBAL " + variableName + " into: " + registerToLoadData + " = Memory[rfp + " + std::to_string(bytesCount) + "]";
 
         operations.push_back(loadOperation);
     }
@@ -447,7 +482,7 @@ struct LoadGlobalVectorVariable : public ILOCInstruction {
             ILOCOperator(registerToLoadData, ILOCOperatorType::REGISTER, true)
         };
 
-        loadOperation.comment = "load GLOBAL " + variableName + " into: " + registerToLoadData + " = Memory(rfp + " + registerOfSum + ")";
+        loadOperation.comment = "load GLOBAL " + variableName + " into: " + registerToLoadData + " = Memory[rfp + " + registerOfSum + "]";
 
         operations.push_back(loadOperation);
     }
