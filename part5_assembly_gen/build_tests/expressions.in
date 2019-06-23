@@ -4,13 +4,7 @@ int f() {
 
     bool h;
 
-    h = k > x;
-
-    k = 5 + 123;
-
-    if ((x > k) && h) then {
-        x = 2 + 123;
-        int t;
-        t = 2;
+    while(x < k) do {
+        h = x > k;
     };
 }

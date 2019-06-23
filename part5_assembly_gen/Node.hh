@@ -793,6 +793,27 @@ public:
         printf(" else ");
         children[2]->print();
     }
+
+    virtual ILOCInstruction* getInstruction() {
+        ILOCProgram* program = getILOCProgram();
+
+        int expressionsStart = program->getInstructionsCount();
+        ILOCInstruction* expressionsInstructions = children[0]->getInstruction();
+        int expressionsEnd = program->getInstructionsCount();
+
+        ILOCInstruction* ifTrueBlock = children[1]->getInstruction();
+        ILOCInstruction* ifFalseBlock = children[2]->getInstruction();
+
+        std::string trueLabel = ifTrueBlock->operations[0].label;
+        std::string falseLabel = ifFalseBlock->operations[0].label;
+
+        program->adjustAddressJumpTrueAndFalseBetween(trueLabel, falseLabel, expressionsStart, expressionsEnd);
+        ILOCInstruction* ifInstruction = new IfThenElse();
+
+        program->add(ifInstruction);
+
+        return ifInstruction;
+    }
 };
 
 class ForCommandNode: public BaseNode {
@@ -835,6 +856,35 @@ public:
         printf(")");
         printf(" do ");
         children[1]->print();
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+        ILOCProgram* program = getILOCProgram();
+
+        int expressionsStart = program->getInstructionsCount();
+        ILOCInstruction* expressionsInstructions = children[0]->getInstruction();
+        int expressionsEnd = program->getInstructionsCount();
+
+        ILOCInstruction* executionBlock = children[1]->getInstruction();
+        ILOCInstruction* afterExecutionBlock = new Nop();
+
+        std::string trueLabel = executionBlock->operations[0].label;
+        std::string falseLabel = afterExecutionBlock->operations[0].label;
+
+        program->adjustAddressJumpTrueAndFalseBetween(trueLabel, falseLabel, expressionsStart, expressionsEnd);
+        
+        ILOCInstruction* instructionToJumpTo = program->getInstructionsList()[expressionsStart];
+        std::string firstInstructionToJumpTo = instructionToJumpTo->operations[0].label;
+        
+        ILOCInstruction* whileInstruction = new While(firstInstructionToJumpTo);
+
+        executionBlock->blockInstructionsCount += 1; // add jump instruction
+        executionBlock->operations[0].comment = std::to_string(executionBlock->blockInstructionsCount) + " instructions";
+
+        program->add(whileInstruction);
+        program->add(afterExecutionBlock);
+
+        return whileInstruction;
     }
 };
 

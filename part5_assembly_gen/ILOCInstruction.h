@@ -342,10 +342,8 @@ struct IfThen : public ILOCInstruction {
     }
 };
 
-struct IfElse : public ILOCInstruction {
-    std::vector<ILOCOperation> ifCondition;
-    std::vector<ILOCOperation> ifInstructionList;
-    std::vector<ILOCOperation> elseInstructionList;
+struct IfThenElse : public ILOCInstruction {
+    IfThenElse() { }
 };
 
 struct Function : public ILOCInstruction {
@@ -354,8 +352,22 @@ struct Function : public ILOCInstruction {
 };
 
 struct While : public ILOCInstruction {
-    std::vector<ILOCOperation> condition;
-    std::vector<ILOCOperation> instructionsList;
+    While(std::string startOfComparisonLabel) {
+        
+        ILOCOperation jumpOperation;
+
+        jumpOperation.label = "";
+        jumpOperation.operation = "jumpI";
+        jumpOperation.operators = {};
+
+        jumpOperation.outOperators = {
+            ILOCOperator(startOfComparisonLabel, ILOCOperatorType::LABEL, true)
+        };
+
+        jumpOperation.comment = "jump to " + startOfComparisonLabel;
+
+        operations.push_back(jumpOperation);
+    }
 };
 
 #endif /* ILOCINSTRUCTION_H */
