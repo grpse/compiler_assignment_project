@@ -8,7 +8,9 @@ int f() {
 
     k = 5 + 123;
 
-    if (h == true) then {
+    if ((k > x) && h) then {
         x = 2 + 123;
+        int t;
+        t = 2;
     };
 }

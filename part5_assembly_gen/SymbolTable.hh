@@ -81,13 +81,12 @@ struct ActivationRegistry {
 class SymbolTable {
 
 public:
-    std::shared_ptr<ActivationRegistry> activationRegistry;
+    ActivationRegistry* activationRegistry = NULL;
     SymbolTable* parent;
 
     SymbolTable(SymbolTable* parent) {
         this->parent = parent;
-        if (parent)
-            this->activationRegistry = this->parent->activationRegistry;
+        // if (parent) this->activationRegistry = this->parent->activationRegistry;
     }
 
     ~SymbolTable() {
@@ -278,14 +277,23 @@ public:
     int getEntryOffset(std::string identifierName) {
         int offset = 0;
         int symbolCount = 0;
-        for (SymbolEntry* symbol : seqTable) {
-            if (symbol->name == identifierName) {
-                break;
+        bool found = false;
+
+        if (activationRegistry == NULL) {
+            for (SymbolEntry* symbol : seqTable) {
+                if (symbol->name == identifierName) {
+                    break;
+                    // found = true;
+                }
+
+                symbolCount++;
+
+                offset += symbol->size < 4 ? 4 : symbol->size;
             }
+        }
 
-            symbolCount++;
-
-            offset += symbol->size < 4 ? 4 : symbol->size;
+        if (parent != NULL && activationRegistry == NULL) {
+            offset += parent->getEntryOffset(identifierName);
         }
 
         return offset;

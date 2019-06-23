@@ -1571,7 +1571,7 @@ yyreduce:
             getTempTable()->insertFunctionDeclaration(identifier, type, functionParameters);
 
             // Insert function activation registry to inner scopes            
-            std::shared_ptr<ActivationRegistry> ar = std::make_shared<ActivationRegistry>();
+            ActivationRegistry* ar = new ActivationRegistry();
             ar->function = getTempTable()->getEntry(identifier.tokenValue.s);
             ar->shiftAmount = 0;
             tableWithFunctionParametersDeclaration->activationRegistry = ar;

@@ -31,6 +31,7 @@ struct ILOCOperation {
     std::vector<ILOCOperator> operators;
     std::vector<ILOCOperator> outOperators;
     std::string comment = "";
+    bool isBooleanComparison = false;
 
     void printOperation() {
 
@@ -146,7 +147,7 @@ struct BinaryExpression : public ILOCInstruction {
 
         ILOCOperation binaryOper;
         binaryOper.label = "";
-        
+
         if (operatorSymbol == "+") {
             binaryOper.operation = "add";
         } else if (operatorSymbol == "-") {
@@ -157,17 +158,31 @@ struct BinaryExpression : public ILOCInstruction {
             binaryOper.operation = "div";
         } else if (operatorSymbol == "<") {
             binaryOper.operation = "cmp_LT";
+            binaryOper.isBooleanComparison = true;
         } else if (operatorSymbol == "<=") {
             binaryOper.operation = "cmp_LE";
+            binaryOper.isBooleanComparison = true;
         } else if (operatorSymbol == "==") {
             binaryOper.operation = "cmp_EQ";
+            binaryOper.isBooleanComparison = true;
         } else if (operatorSymbol == ">=") {
             binaryOper.operation = "cmp_GE";
+            binaryOper.isBooleanComparison = true;
         } else if (operatorSymbol == ">") {
             binaryOper.operation = "cmp_GT";
+            binaryOper.isBooleanComparison = true;
         } else if (operatorSymbol == "!=") {
             binaryOper.operation = "cmp_NE";
+            binaryOper.isBooleanComparison = true;
+        } else if (operatorSymbol == "&&") {
+            binaryOper.operation = "and";
+            binaryOper.isBooleanComparison = true;
+        } else if (operatorSymbol == "||") {
+            binaryOper.operation = "or";
+            binaryOper.isBooleanComparison = true;
         }
+
+        std::string outOperatorRegister = getRegister();
 
         binaryOper.operators = {
             ILOCOperator(leftOperatorName, ILOCOperatorType::REGISTER, true),
@@ -175,12 +190,33 @@ struct BinaryExpression : public ILOCInstruction {
         };
 
         binaryOper.outOperators = {
-            ILOCOperator(getRegister(), ILOCOperatorType::REGISTER, true)
+            ILOCOperator(outOperatorRegister, ILOCOperatorType::REGISTER, true)
         };
 
         operations.push_back(binaryOper);
+
     }
 
+};
+
+struct Nop : public ILOCInstruction {
+
+    Nop(std::string comment = "") {
+        ILOCOperation loadOperation;
+
+        loadOperation.label = getLabel();
+        loadOperation.operation = "nop";
+
+        loadOperation.operators = {
+        };
+        
+        loadOperation.outOperators = {
+        };
+
+        loadOperation.comment = comment;
+
+        operations.push_back(loadOperation);                
+    }
 };
 
 struct LocalDeclaration : public ILOCInstruction {

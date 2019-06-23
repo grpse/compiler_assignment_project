@@ -1,0 +1,13 @@
+/* arithm. associativity */
+x int;
+y int;
+int main()
+{
+  x = 0+1+2+3;
+  return 0;
+}
+
+//0+1 should be added first
+//then with 2
+//then with 3
+
