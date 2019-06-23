@@ -320,9 +320,9 @@ public:
 
         program->add(identifierLoad);
         return identifierLoad;
-
     }
 };
+
 class CommandBlockNode: public BaseNode {
 
 private:
@@ -932,8 +932,12 @@ public:
 
 class ListOfDeclarations: public BaseNode {
 
+private:
+    bool hasMoreItemsOnList = false;
+
 public:
     ListOfDeclarations(Node* declarationList, Node* declaration) : BaseNode() {
+        hasMoreItemsOnList = declarationList->children.size() > 0;
         pushChild(declarationList);
         pushChild(declaration);
     }
@@ -945,13 +949,17 @@ public:
     }
 
     virtual ILOCInstruction* getInstruction() {
-        for (Node* child : children) {
-            if (child) {
-                child->getInstruction();
-            }
+        // for (Node* child : children) { // TODO: Get instructions without repeating it
+        //     if (child && child->children.size() > 0) {
+        //         child->getInstruction();
+        //     }
+        // }
+        if (hasMoreItemsOnList) {
+            children[0]->getInstruction();
+            return children[1]->getInstruction();
+        } else {
+            return children[0]->getInstruction();
         }
-
-        return children[0]->getInstruction();
     }
 };
 
@@ -1093,6 +1101,11 @@ public:
     virtual ILOCInstruction* getInstruction() {
         ILOCInstruction* instruction = commandBlock->getInstruction();
         ILOCProgram* program = getILOCProgram();
+        std::string functionName = value.tokenValue.s;
+        if (functionName == "main") {
+            instruction->operations[0].mainFunction = true;
+            instruction->operations[0].comment = "main(): " + instruction->operations[0].comment;
+        }
         // TODO: Part 6 should complement this with context switch (push variables content to stack)
         //       pass parameters by value, etc.
         return instruction;

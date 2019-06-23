@@ -217,6 +217,7 @@ function_declaration
             // FORCE INSERT PARAMETERS DECLARATION AS PART OF INNER SCOPE OF THE COMMAND BLOCK
             forcePushTableAsCurrent(tableWithFunctionParametersDeclaration);
             $<node>$ = $5; 
+            
         } command_block
     {  $$ = new FunctionDeclarationNode($3, $1, $2, $5, $7); }
 ;

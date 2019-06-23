@@ -32,6 +32,7 @@ struct ILOCOperation {
     std::vector<ILOCOperator> outOperators;
     std::string comment = "";
     bool isBooleanComparison = false;
+    bool mainFunction = false;
 
     void printOperation() {
 
@@ -403,7 +404,7 @@ struct LoadGlobalVariable : public ILOCInstruction {
     LoadGlobalVariable() { }
 
     LoadGlobalVariable(std::string variableName, int bytesCount) {
-                ILOCOperation loadOperation;
+        ILOCOperation loadOperation;
 
         std::string registerToLoadData = getRegister();
 
@@ -430,7 +431,7 @@ struct LoadGlobalVectorVariable : public ILOCInstruction {
     LoadGlobalVectorVariable() { }
 
     LoadGlobalVectorVariable(std::string variableName, std::string registerOfSum) {
-                ILOCOperation loadOperation;
+        ILOCOperation loadOperation;
 
         std::string registerToLoadData = getRegister();
 

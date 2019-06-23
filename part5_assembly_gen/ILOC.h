@@ -7,16 +7,27 @@
 #include "ILOCInstruction.h"
 
 class ILOCProgram {
+
 public:
-    
     void add(ILOCInstruction* instruction) {
         instructions.push_back(instruction);
     }
 
     void printProgram() {
+        int stackForm = 1024;
+        std::string mainLabel = getMainFunctionLabel();
+
+        std::cout << "\tloadI " << std::to_string(stackForm) << " => rfp\n";
+        std::cout << "\tloadI " << std::to_string(stackForm) << " => rfp\n";
+        std::cout << "\tloadI " << std::to_string(getOperationsCount() + 1)  << " => rbss\n";
+        std::cout << "\tjumpI " << " => " << mainLabel << "\n"; // TODO: go to main function
+
+        
         for (ILOCInstruction* iloc : instructions) {
             iloc->printInstruction();
         }
+
+        std::cout << "\thalt\n";
     }
 
     int getOperationsCount() {
@@ -157,6 +168,22 @@ public:
 
 private:
     std::vector<ILOCInstruction*> instructions;
+
+    std::string getMainFunctionLabel() {
+        bool found = false;
+        ILOCOperation operationFound = instructions[0]->operations[0];
+        for (ILOCInstruction* inst : instructions) {
+            for (const ILOCOperation& operation : inst->operations) {
+                if (operation.mainFunction) {
+                    found = true;
+                    operationFound = operation;
+                    break;
+                }
+            }
+        }
+
+        return operationFound.label;
+    }
 };
 
 #endif /* ILOC_H */
