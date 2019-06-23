@@ -43,12 +43,13 @@ public:
         bool jumpToTrueLabel = true;
 
         if (instructions[endInstructionPos]->operations[0].label == "") {
-            instructions[endInstructionPos]->operations[0].label = ILOCInstruction::getLabel();
+            // instructions[endInstructionPos]->operations[0].label = ILOCInstruction::getLabel();
         }
 
         std::string nextOperationJumpLabel = falseLabel;//instructions[endInstructionPos]->operations[0].label;
 
         bool isOnlyOneInstruction = endInstructionPos - startInstructionPos == 1;
+        bool firstBackInstruction = true;
 
         for (int i = endInstructionPos; i >= startInstructionPos; i--) {
             ILOCInstruction* iloc = instructions[i];
@@ -61,6 +62,8 @@ public:
                 }
             }
 
+            
+
             bool isConditionalComparison = false;
             for (int j = 0; j < iloc->operations.size(); j++) {
                 isConditionalComparison = isConditionalComparison || iloc->operations[j].isBooleanComparison;
@@ -71,6 +74,15 @@ public:
 
                 bool isCommandBlockEntryInstruction = lastOperation.outOperators.size() == 0;
                 if (!isCommandBlockEntryInstruction) {
+            
+                    if (jumpToTrueLabel && firstBackInstruction) {
+                        nextOperationJumpLabel = falseLabel;
+                        firstBackInstruction = false;
+                    } else if (firstBackInstruction) {
+                        nextOperationJumpLabel = trueLabel;
+                        firstBackInstruction = false;
+                    }
+
                     ILOCOperator lastOperatorResult = (*lastOperation.outOperators.rbegin());
 
                     ILOCOperation cbrJump;
@@ -98,15 +110,22 @@ public:
                     
                 }            
             }
-
-            nextOperationJumpLabel = iloc->operations[0].label = ILOCInstruction::getLabel();
-
+            
             ILOCOperation lastOperation = (*iloc->operations.rbegin());
-
             bool isCommandBlockEntryInstruction = lastOperation.outOperators.size() == 0;
+
+            if (!isCommandBlockEntryInstruction) {
+                nextOperationJumpLabel = iloc->operations[0].label = ILOCInstruction::getLabel();
+            }
+
             if (isOnlyOneInstruction && !isCommandBlockEntryInstruction) {
                 ILOCOperator lastOperatorResult = (*lastOperation.outOperators.rbegin());
                 ILOCOperation cbrJump;
+
+                if (jumpToTrueLabel && firstBackInstruction) {
+                    nextOperationJumpLabel = falseLabel;
+                    firstBackInstruction = false;
+                }
 
                 cbrJump.label = "";
                 cbrJump.operation = "cbr";
