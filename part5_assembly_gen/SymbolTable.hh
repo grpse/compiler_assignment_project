@@ -100,6 +100,16 @@ public:
         }
     }
 
+    ActivationRegistry* getActivationRegistryRecursively() {
+        if (activationRegistry != NULL) {
+            return activationRegistry;
+        } else if (parent != NULL) {
+            return parent->getActivationRegistryRecursively();
+        } else {
+            return NULL;
+        }
+    }
+
     void updateTypeSize(const LexicalValue& identifier, int sizeUpdate) {
         // SymbolEntry* entry = table[identifier.tokenValue.s];
         SymbolEntry* entry = retrieveSymbol(identifier.tokenValue.s);

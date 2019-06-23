@@ -641,10 +641,10 @@ public:
             }
         }
         SymbolTable* table = getTempTable();
-        bool returnExpressionTypeIsDifferentFromFunctionReturnType = table->activationRegistry->function->type != type;
-        bool hasInferedType = table->activationRegistry->function->type == TYPE_FLOAT ||
-            table->activationRegistry->function->type == TYPE_INT ||
-            table->activationRegistry->function->type == TYPE_BOOL;
+        bool returnExpressionTypeIsDifferentFromFunctionReturnType = table->getActivationRegistryRecursively()->function->type != type;
+        bool hasInferedType = table->getActivationRegistryRecursively()->function->type == TYPE_FLOAT ||
+            table->getActivationRegistryRecursively()->function->type == TYPE_INT ||
+            table->getActivationRegistryRecursively()->function->type == TYPE_BOOL;
         
         hasInferedType = hasInferedType && (type == TYPE_INT || type == TYPE_FLOAT || type == TYPE_BOOL);
         if (returnExpressionTypeIsDifferentFromFunctionReturnType && !hasInferedType) {
