@@ -272,6 +272,33 @@ struct LoadIdentifier : public ILOCInstruction {
     }
 };
 
+struct LoadIdentifierVector : public ILOCInstruction {
+
+    LoadIdentifierVector() { }
+
+    LoadIdentifierVector(std::string identifierName, std::string registerOfSum) {
+        ILOCOperation loadOperation;
+
+        std::string registerToLoadData = getRegister();
+
+        loadOperation.label = "";
+        loadOperation.operation = "loadA0";
+
+        loadOperation.operators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator(registerOfSum, ILOCOperatorType::REGISTER, true),
+        };
+        
+        loadOperation.outOperators = {
+            ILOCOperator(registerToLoadData, ILOCOperatorType::REGISTER, true)
+        };
+
+        loadOperation.comment = "load " + identifierName + " into: " + registerToLoadData + " = Memory(rfp + " + registerOfSum + ")";
+
+        operations.push_back(loadOperation);        
+    }
+};
+
 struct LoadLiteral : public ILOCInstruction {
     
     LoadLiteral() { }
@@ -393,6 +420,33 @@ struct LoadGlobalVariable : public ILOCInstruction {
         };
 
         loadOperation.comment = "load GLOBAL " + variableName + " into: " + registerToLoadData + " = Memory(rfp + " + std::to_string(bytesCount) + ")";
+
+        operations.push_back(loadOperation);
+    }
+};
+
+struct LoadGlobalVectorVariable : public ILOCInstruction {
+
+    LoadGlobalVectorVariable() { }
+
+    LoadGlobalVectorVariable(std::string variableName, std::string registerOfSum) {
+                ILOCOperation loadOperation;
+
+        std::string registerToLoadData = getRegister();
+
+        loadOperation.label = "";
+        loadOperation.operation = "loadA0";
+
+        loadOperation.operators = {
+            ILOCOperator(getRegisterRBSS(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator(registerOfSum, ILOCOperatorType::REGISTER, true),
+        };
+        
+        loadOperation.outOperators = {
+            ILOCOperator(registerToLoadData, ILOCOperatorType::REGISTER, true)
+        };
+
+        loadOperation.comment = "load GLOBAL " + variableName + " into: " + registerToLoadData + " = Memory(rfp + " + registerOfSum + ")";
 
         operations.push_back(loadOperation);
     }

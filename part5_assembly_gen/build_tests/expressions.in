@@ -1,6 +1,6 @@
-x int;
-k int;
-e static int;
+e[10] int;
+d int;
 int f() {
-    e = k + x;
+    e[10] = d;
+    d = e[1];
 }

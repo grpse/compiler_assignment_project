@@ -299,6 +299,29 @@ public:
             printf("]");
         }
     }
+
+    virtual ILOCInstruction* getInstruction() {
+        ILOCProgram* program = getILOCProgram();
+
+        std::string variableName = value.tokenValue.s;
+
+        ILOCInstruction* identifierLoad = NULL;
+        
+        bool isGlobalVariable = getTempTable()->getEntry(variableName) != NULL && getTempTable()->tableID == 0;
+        ILOCInstruction* expressionInstruction = children[0]->getInstruction();
+        ILOCOperation operation = (*expressionInstruction->operations.rbegin());
+        ILOCOperator oper = (*operation.outOperators.rbegin());
+        
+        if (isGlobalVariable) {
+            identifierLoad = new LoadGlobalVectorVariable(variableName, oper.name);
+        } else {
+            identifierLoad = new LoadIdentifierVector(variableName, oper.name);
+        }
+
+        program->add(identifierLoad);
+        return identifierLoad;
+
+    }
 };
 class CommandBlockNode: public BaseNode {
 
@@ -650,7 +673,7 @@ public:
 
             if (typeCharDoesntMatch) {
                 exitWithError(ERR_CHAR_TO_X);
-            } else if (typeStringDoesntMatch) { 
+            } else if (typeStringDoesntMatch) {
                 exitWithError(ERR_STRING_TO_X);
             } else if (identifierEntry->type != rightValue->type) {
                 exitWithError(ERR_WRONG_TYPE);
