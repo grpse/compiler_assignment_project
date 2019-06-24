@@ -71,6 +71,7 @@ struct SymbolEntry {
     LexicalValue lexical = {};
     std::string name;
     int offset;
+    std::string calculatedLabel;
 };
 
 struct ActivationRegistry {

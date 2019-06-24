@@ -435,6 +435,23 @@ struct FunctionDeclaration : public ILOCInstruction {
         
         operations.push_back(loadReturnAddress);
 
+
+        std::string registerThatContainsTheFunctionsReturnInstructionAddress = getRegister();
+
+        ILOCOperation loadAddressOfReturnFunction;
+        loadAddressOfReturnFunction.operation = "load";
+
+        loadAddressOfReturnFunction.operators = {
+            ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true),
+        };
+
+        loadAddressOfReturnFunction.outOperators = {
+            ILOCOperator(registerThatContainsTheFunctionsReturnInstructionAddress, ILOCOperatorType::REGISTER, true),
+        };
+
+        operations.push_back(loadAddressOfReturnFunction);
+
+
         ILOCOperation jumpBackOperation;
 
         jumpBackOperation.label = "";
@@ -442,7 +459,7 @@ struct FunctionDeclaration : public ILOCInstruction {
         jumpBackOperation.operation = "jump";
 
         jumpBackOperation.outOperators = {
-            ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true)
+            ILOCOperator(registerThatContainsTheFunctionsReturnInstructionAddress, ILOCOperatorType::REGISTER, true)
         };
 
         operations.push_back(jumpBackOperation);
@@ -568,6 +585,220 @@ struct LoadGlobalVectorVariable : public ILOCInstruction {
     }
 };
 
-//struct FunctionCall
+struct FunctionCall : public ILOCInstruction {
+
+    FunctionCall(std::string functionName, std::string calculatedLabel) {
+
+        std::string rfpSaveRegister = getRegister();
+        
+
+        {
+            ILOCOperation saveRFP;
+
+            saveRFP.operation = "addI";
+
+            saveRFP.operators = {
+                ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+                ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
+            };
+
+            saveRFP.outOperators = {
+                ILOCOperator(rfpSaveRegister, ILOCOperatorType::REGISTER, true),
+            };
+
+            saveRFP.comment = "save RFP value: " + rfpSaveRegister + " = rfp";
+
+            operations.push_back(saveRFP);
+        }
+
+        std::string rspSaveRegister = getRegister();
+        {
+
+            ILOCOperation saveRSP;
+
+            saveRSP.operation = "addI";
+
+            saveRSP.operators = {
+                ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
+                ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
+            };
+
+            saveRSP.outOperators = {
+                ILOCOperator(rspSaveRegister, ILOCOperatorType::REGISTER, true),
+            };
+
+            saveRSP.comment = "save RSP value: " + rspSaveRegister + " = rsp";
+
+            operations.push_back(saveRSP);
+        }
+
+        {
+            ILOCOperation RFP_equal_RSP;
+
+            RFP_equal_RSP.operation = "addI";
+
+
+            RFP_equal_RSP.operators = {
+                ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
+                ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
+            };
+
+            RFP_equal_RSP.outOperators = {
+                ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            };
+
+            RFP_equal_RSP.comment = "rfp = rsp";
+
+            operations.push_back(RFP_equal_RSP);
+        }
+
+        std::string returnAddressRegister = getRegister();
+
+        ILOCOperation setReturnAddress;
+
+        setReturnAddress.operation = "addI";
+
+        setReturnAddress.operators = {
+            ILOCOperator(getRegisterRPC(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator("0", ILOCOperatorType::IMMEDIATE, false),
+        };
+
+        setReturnAddress.outOperators = {
+            ILOCOperator(returnAddressRegister, ILOCOperatorType::REGISTER, true),
+        };
+
+        setReturnAddress.comment = "save return address in " + returnAddressRegister;
+
+
+        ILOCOperation storeReturnAddressAtActivationRegistry;
+
+        storeReturnAddressAtActivationRegistry.operation = "storeAI";
+
+        storeReturnAddressAtActivationRegistry.operators = {
+            ILOCOperator(returnAddressRegister, ILOCOperatorType::REGISTER, true),
+        };
+
+        storeReturnAddressAtActivationRegistry.outOperators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator("4", ILOCOperatorType::IMMEDIATE, false),
+        };
+
+        storeReturnAddressAtActivationRegistry.comment = "load return address to activation registry";
+
+
+        ILOCOperation allocateSpaceToReturnValueAndAddressRFP;
+
+        allocateSpaceToReturnValueAndAddressRFP.operation = "addI";
+        allocateSpaceToReturnValueAndAddressRFP.operators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator("8", ILOCOperatorType::IMMEDIATE, false),
+        };
+
+        allocateSpaceToReturnValueAndAddressRFP.outOperators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+        };
+
+        allocateSpaceToReturnValueAndAddressRFP.comment = "allocateSpaceToReturnValueAndAddressRFP";
+
+
+
+        ILOCOperation allocateSpaceToReturnValueAndAddressRSP;
+
+        allocateSpaceToReturnValueAndAddressRSP.operation = "addI";
+        allocateSpaceToReturnValueAndAddressRSP.operators = {
+            ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator("8", ILOCOperatorType::IMMEDIATE, false),
+        };
+
+        allocateSpaceToReturnValueAndAddressRSP.outOperators = {
+            ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
+        };
+
+        allocateSpaceToReturnValueAndAddressRSP.comment = "allocateSpaceToReturnValueAndAddressRSP";
+
+        int instructionsToAddOnReturn = 5;
+        // TODO: FOR EACH FUNCTION PARAMETERS LOAD IN 
+        //       INVERSE ORDER f(int x, int y) , store Y, store X, ...
+        //       and instructionsToAddOnReturn++ for each one
+
+        ILOCOperation jumpToFunction;
+
+        jumpToFunction.operation = "jumpI";
+
+        jumpToFunction.outOperators = {
+            ILOCOperator(calculatedLabel, ILOCOperatorType::LABEL, true),
+        };
+
+        jumpToFunction.comment = "jump to function: " + functionName;
+
+        std::string registerWhereReturnValueAddressRemais = getRegister();
+
+        ILOCOperation getAddressOfReturnValue;
+
+        getAddressOfReturnValue.operation = "subI";
+        getAddressOfReturnValue.operators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator("8", ILOCOperatorType::IMMEDIATE, true),
+        };
+
+        getAddressOfReturnValue.outOperators = {
+            ILOCOperator(registerWhereReturnValueAddressRemais, ILOCOperatorType::REGISTER, true),
+        };
+
+        
+        ILOCOperation restoreRFP;
+
+        restoreRFP.operation = "addI";
+
+        restoreRFP.operators = {
+            ILOCOperator(rfpSaveRegister, ILOCOperatorType::REGISTER, true),
+            ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
+        };
+
+        restoreRFP.outOperators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+        };
+
+
+        ILOCOperation restoreRSP;
+
+        restoreRSP.operation = "addI";
+
+        restoreRSP.operators = {
+            ILOCOperator(rspSaveRegister, ILOCOperatorType::REGISTER, true),
+            ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
+        };
+
+        restoreRSP.outOperators = {
+            ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
+        };
+
+        ILOCOperation returnValueLoadFromActivationRegister;
+
+        returnValueLoadFromActivationRegister.operation = "load";
+
+        returnValueLoadFromActivationRegister.operators = {
+            ILOCOperator(registerWhereReturnValueAddressRemais, ILOCOperatorType::REGISTER, true),
+        };
+
+        returnValueLoadFromActivationRegister.outOperators = {  
+            ILOCOperator(getRegister(), ILOCOperatorType::REGISTER, true),
+        };
+
+        setReturnAddress.operators[1].name = std::to_string(instructionsToAddOnReturn);
+        // NOW AND ON OPERATIONS SHOULD BE PUSHED TO THE END
+
+
+        operations.push_back(setReturnAddress);
+        operations.push_back(storeReturnAddressAtActivationRegistry);
+        operations.push_back(allocateSpaceToReturnValueAndAddressRFP);
+        operations.push_back(allocateSpaceToReturnValueAndAddressRSP);
+        operations.push_back(jumpToFunction);
+        operations.push_back(getAddressOfReturnValue);
+        operations.push_back(restoreRFP);
+        operations.push_back(restoreRSP);
+        operations.push_back(returnValueLoadFromActivationRegister);
+    }
+};
 
 #endif /* ILOCINSTRUCTION_H */

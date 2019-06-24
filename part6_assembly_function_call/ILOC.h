@@ -18,7 +18,7 @@ public:
         std::string mainLabel = getMainFunctionLabel();
 
         std::cout << "\tloadI " << std::to_string(stackForm) << " => rfp\n";
-        std::cout << "\tloadI " << std::to_string(stackForm) << " => rfp\n";
+        std::cout << "\tloadI " << std::to_string(stackForm) << " => rsp\n";
         std::cout << "\tloadI " << std::to_string(getOperationsCount() + 1)  << " => rbss\n";
         std::cout << "\tjumpI " << " => " << mainLabel << "\n"; // TODO: go to main function
 

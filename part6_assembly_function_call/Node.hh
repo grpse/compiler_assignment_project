@@ -1154,15 +1154,19 @@ public:
         ILOCInstruction* instruction = commandBlock->getInstruction();
         ILOCProgram* program = getILOCProgram();
         std::string functionName = value.tokenValue.s;
+
+        SymbolEntry* entry = getTempTable()->getEntry(functionName);
+
         if (functionName == "main") {
             instruction->operations[0].mainFunction = true;
             instruction->operations[0].comment = "main: " + instruction->operations[0].comment;
+            entry->calculatedLabel = instruction->operations[0].label;
         } else {
             instruction->blockInstructionsCount += 3;
             int returnAddressLentgh = 4;
 
-            instruction->operations[0].comment = " return address on rfp -4, " + std::to_string(returnAddressLentgh) + " bytes: " + std::to_string(instruction->blockInstructionsCount) + " instructions";
-
+            instruction->operations[0].comment = functionName +": return address on rfp -4, " + std::to_string(returnAddressLentgh) + " bytes: " + std::to_string(instruction->blockInstructionsCount) + " instructions";
+            entry->calculatedLabel = instruction->operations[0].label;
             program->add(new FunctionDeclaration());
         }
         // TODO: Part 6 should complement this with context switch (push variables content to stack)
@@ -1293,6 +1297,10 @@ public:
 };
 
 class FunctionCallCommandNode: public BaseNode {
+
+private:
+    std::vector<FunctionParameter> functionParameters;
+
 public:
     FunctionCallCommandNode(const LexicalValue& identifier, Node* parametersList) : BaseNode(identifier) {
         if (parametersList) {
@@ -1307,7 +1315,7 @@ public:
                 exitWithError(ERR_FUNCTION);
             }
 
-            auto functionParameters = Node::getFunctionRealParametersList(parametersList);
+            functionParameters = Node::getFunctionRealParametersList(parametersList);
 
             if (functionParameters.size() < identifierEntry->parameters.size()) {
                 exitWithError(ERR_MISSING_ARGS);
@@ -1339,8 +1347,16 @@ public:
     }
 
     virtual ILOCInstruction* getInstruction() {
+        
+        ILOCProgram* program = getILOCProgram();
 
-        return NULL;
+        std::string calculatedLabel = getTempTable()->getEntry(value.tokenValue.s)->calculatedLabel;
+
+        ILOCInstruction* functionCall = new FunctionCall(value.tokenValue.s, calculatedLabel);
+
+        program->add(functionCall);
+
+        return functionCall;
     }
 };
 
