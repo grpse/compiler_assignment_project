@@ -449,6 +449,52 @@ struct FunctionDeclaration : public ILOCInstruction {
     }
 };
 
+struct Return : public ILOCInstruction {
+    Return(std::string registerWithReturnValue) {
+
+        int returnAddressLentgh = 8;
+        ILOCOperation loadReturnAddress;
+
+        std::string registerWithAddressOfReturnValue = ILOCInstruction::getRegister();
+
+        loadReturnAddress.label = "";
+
+        loadReturnAddress.operation = "subI";
+
+        loadReturnAddress.operators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator(std::to_string(returnAddressLentgh), ILOCOperatorType::IMMEDIATE, true),
+        };
+
+        loadReturnAddress.outOperators = {
+            ILOCOperator(registerWithAddressOfReturnValue, ILOCOperatorType::REGISTER, true)
+        };
+        
+        loadReturnAddress.comment = "load of register with return value: " + registerWithAddressOfReturnValue;
+        
+        operations.push_back(loadReturnAddress);
+
+
+
+        ILOCOperation loadBackOperation;
+
+        loadBackOperation.label = "";
+
+        loadBackOperation.operation = "store";
+        loadBackOperation.operators = {
+            ILOCOperator(registerWithReturnValue, ILOCOperatorType::REGISTER, true),
+        };
+
+        loadBackOperation.outOperators = {
+            ILOCOperator(registerWithAddressOfReturnValue, ILOCOperatorType::REGISTER, true)
+        };
+
+        loadBackOperation.comment = "save return value on Memory(rfp - 8) = " + registerWithReturnValue;
+        
+        operations.push_back(loadBackOperation);
+    }
+};
+
 struct While : public ILOCInstruction {
     While(std::string startOfComparisonLabel) {
         

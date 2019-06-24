@@ -657,6 +657,20 @@ public:
         printf(" ");
         children[0]->print();
     }
+
+    virtual ILOCInstruction* getInstruction() {
+        ILOCInstruction* expressionInstructions = children[0]->getInstruction();
+
+        ILOCOperation lastOperation = (*expressionInstructions->operations.rbegin());
+        ILOCOperator lastOperator = (*lastOperation.outOperators.rbegin());
+
+        ILOCProgram* program = getILOCProgram();
+
+        ILOCInstruction* returnInstruction = new Return(lastOperator.name);
+        program->add(returnInstruction);
+
+        return returnInstruction;
+    }
 };
 
 class AssignmentCommandNode: public BaseNode {
@@ -1146,15 +1160,6 @@ public:
         } else {
             instruction->blockInstructionsCount += 3;
             int returnAddressLentgh = 4;
-            // instruction->operations[0].operation = "addI";
-            // instruction->operations[0].operators = {
-            //     ILOCOperator("rsp", ILOCOperatorType::REGISTER, true),
-            //     ILOCOperator(std::to_string(returnAddressLentgh), ILOCOperatorType::IMMEDIATE, true)
-            // };
-            
-            // instruction->operations[0].outOperators = {
-            //     ILOCOperator("rsp", ILOCOperatorType::REGISTER, true)
-            // };
 
             instruction->operations[0].comment = " return address on rfp -4, " + std::to_string(returnAddressLentgh) + " bytes: " + std::to_string(instruction->blockInstructionsCount) + " instructions";
 
