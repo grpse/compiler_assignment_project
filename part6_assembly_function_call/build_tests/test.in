@@ -1,0 +1,24 @@
+o int;
+int mult (int z, int w)
+{
+  z = 0;
+  w = 0;
+  int x;
+
+  if ((x > 0) && false) then {
+    int y;
+  } else {
+    int h;
+    h = 4;
+  };
+
+  return x;
+}
+
+int main()
+{
+  int x;
+  int y;
+  x = 2;
+  //y = mult(x, x);
+}
