@@ -1143,6 +1143,22 @@ public:
         if (functionName == "main") {
             instruction->operations[0].mainFunction = true;
             instruction->operations[0].comment = "main: " + instruction->operations[0].comment;
+        } else {
+            instruction->blockInstructionsCount += 3;
+            int returnAddressLentgh = 4;
+            // instruction->operations[0].operation = "addI";
+            // instruction->operations[0].operators = {
+            //     ILOCOperator("rsp", ILOCOperatorType::REGISTER, true),
+            //     ILOCOperator(std::to_string(returnAddressLentgh), ILOCOperatorType::IMMEDIATE, true)
+            // };
+            
+            // instruction->operations[0].outOperators = {
+            //     ILOCOperator("rsp", ILOCOperatorType::REGISTER, true)
+            // };
+
+            instruction->operations[0].comment = " return address on rfp -4, " + std::to_string(returnAddressLentgh) + " bytes: " + std::to_string(instruction->blockInstructionsCount) + " instructions";
+
+            program->add(new FunctionDeclaration());
         }
         // TODO: Part 6 should complement this with context switch (push variables content to stack)
         //       pass parameters by value, etc.
@@ -1315,6 +1331,11 @@ public:
             child->print();
         }
         printf(")");
+    }
+
+    virtual ILOCInstruction* getInstruction() {
+
+        return NULL;
     }
 };
 

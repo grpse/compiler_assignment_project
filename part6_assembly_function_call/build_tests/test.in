@@ -1,17 +1,7 @@
-o int;
-int mult (int z, int w)
+int mult ()
 {
-  z = 0;
-  w = 0;
   int x;
-
-  if ((x > 0) && false) then {
-    int y;
-  } else {
-    int h;
-    h = 4;
-  };
-
+  x = 0;
   return x;
 }
 

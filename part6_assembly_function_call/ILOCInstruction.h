@@ -410,9 +410,43 @@ struct IfThenElse : public ILOCInstruction {
     IfThenElse() { }
 };
 
-struct Function : public ILOCInstruction {
-    std::vector<ILOCOperation> paramsPassing;
-    std::vector<ILOCOperation> instructionsList;
+struct FunctionDeclaration : public ILOCInstruction {
+
+    FunctionDeclaration() {
+        int returnAddressLentgh = 4;
+        ILOCOperation loadReturnAddress;
+
+        std::string registerWithAddressToReturnTo = ILOCInstruction::getRegister();
+
+        loadReturnAddress.label = "";
+
+        loadReturnAddress.operation = "subI";
+
+        loadReturnAddress.operators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator(std::to_string(returnAddressLentgh), ILOCOperatorType::IMMEDIATE, true),
+        };
+
+        loadReturnAddress.outOperators = {
+            ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true)
+        };
+        
+        loadReturnAddress.comment = "load return address to register " + registerWithAddressToReturnTo;
+        
+        operations.push_back(loadReturnAddress);
+
+        ILOCOperation jumpBackOperation;
+
+        jumpBackOperation.label = "";
+
+        jumpBackOperation.operation = "jump";
+
+        jumpBackOperation.outOperators = {
+            ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true)
+        };
+
+        operations.push_back(jumpBackOperation);
+    }
 };
 
 struct While : public ILOCInstruction {
@@ -487,5 +521,7 @@ struct LoadGlobalVectorVariable : public ILOCInstruction {
         operations.push_back(loadOperation);
     }
 };
+
+//struct FunctionCall
 
 #endif /* ILOCINSTRUCTION_H */
