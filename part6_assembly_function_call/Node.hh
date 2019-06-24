@@ -741,6 +741,28 @@ public:
         // ILOCInstruction* leftValueInstructions = children[0]->getInstruction();
         ILOCInstruction* rightValueInstructions = children[1]->getInstruction();
 
+        if (rightValueInstructions == NULL) {
+            rightValueInstructions = children[1]->children[0]->getInstruction();
+
+            if (std::string(children[1]->value.tokenValue.s) == "-") {
+                ILOCOperation lastRightOperation = (*rightValueInstructions->operations.rbegin());
+                ILOCOperator rightOper = (*lastRightOperation.outOperators.rbegin());                
+                
+                ILOCOperation invertOperation;
+                invertOperation.operation = "multI";
+                invertOperation.operators = {
+                    ILOCOperator(rightOper.name, ILOCOperatorType::REGISTER, true),
+                    ILOCOperator("-1", ILOCOperatorType::IMMEDIATE, true),
+                };
+
+                invertOperation.outOperators = {
+                    ILOCOperator(ILOCInstruction::getRegister(), ILOCOperatorType::REGISTER, true),
+                };
+
+                rightValueInstructions->operations.push_back(invertOperation);
+            }
+        }
+
         // get final register or value from right value instructions.
 
         // store value from the last resulting register on the right value into 

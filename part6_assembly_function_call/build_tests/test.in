@@ -1,13 +1,15 @@
-o int;
-
 int mult (int u, int k)
 {
-  return k + o;
+  return k + u;
 }
 
 int main()
 {
-  o = 6;
   int x;
-  x = mult(10, 9);
+  int y;
+  int z;
+
+  y = 666;
+  x = 333;  
+  z = -1 * mult(y,x);
 }
