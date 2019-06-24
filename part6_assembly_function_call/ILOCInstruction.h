@@ -587,7 +587,7 @@ struct LoadGlobalVectorVariable : public ILOCInstruction {
 
 struct FunctionCall : public ILOCInstruction {
 
-    FunctionCall(std::string functionName, std::string calculatedLabel) {
+    FunctionCall(std::string functionName, std::string calculatedLabel, int numberOfInstructionsToJump, std::vector<ILOCInstruction*>& parametersLoadPearInstructions) {
 
         std::string rfpSaveRegister = getRegister();
         
@@ -716,10 +716,8 @@ struct FunctionCall : public ILOCInstruction {
 
         allocateSpaceToReturnValueAndAddressRSP.comment = "allocateSpaceToReturnValueAndAddressRSP";
 
-        int instructionsToAddOnReturn = 5;
-        // TODO: FOR EACH FUNCTION PARAMETERS LOAD IN 
-        //       INVERSE ORDER f(int x, int y) , store Y, store X, ...
-        //       and instructionsToAddOnReturn++ for each one
+        int instructionsToAddOnReturn = 5 + numberOfInstructionsToJump;
+        
 
         ILOCOperation jumpToFunction;
 
@@ -793,6 +791,33 @@ struct FunctionCall : public ILOCInstruction {
         operations.push_back(storeReturnAddressAtActivationRegistry);
         operations.push_back(allocateSpaceToReturnValueAndAddressRFP);
         operations.push_back(allocateSpaceToReturnValueAndAddressRSP);
+
+        // TODO: FOR EACH FUNCTION PARAMETERS LOAD IN 
+        //       INVERSE ORDER f(int x, int y) , store Y, store X, ...
+        //       and instructionsToAddOnReturn++ for each one
+        int startMaxNumberOfParameters = parametersLoadPearInstructions.size() * 4 - 4; // FIXED SIZE FOR ONLY INT VALUE PASSING
+        for (auto it = parametersLoadPearInstructions.begin(); it != parametersLoadPearInstructions.end(); it++) {
+            ILOCOperation parameterOperation;
+
+            ILOCOperation pearOperation = (*(*it)->operations.rbegin());
+            ILOCOperator lastOutOperator = (*pearOperation.outOperators.rbegin());
+
+            std::string registerWithValueToBePassed = lastOutOperator.name;
+
+            parameterOperation.operation = "storeAI";
+            parameterOperation.operators = {
+                ILOCOperator(registerWithValueToBePassed, ILOCOperatorType::REGISTER, true),
+            };
+            parameterOperation.outOperators = {
+                ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+                ILOCOperator(std::to_string(startMaxNumberOfParameters), ILOCOperatorType::IMMEDIATE, true),
+            };
+
+            operations.push_back(parameterOperation);
+
+            startMaxNumberOfParameters -= 4;
+        }
+
         operations.push_back(jumpToFunction);
         operations.push_back(getAddressOfReturnValue);
         operations.push_back(restoreRFP);

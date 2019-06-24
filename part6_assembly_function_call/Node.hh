@@ -1300,10 +1300,12 @@ class FunctionCallCommandNode: public BaseNode {
 
 private:
     std::vector<FunctionParameter> functionParameters;
+    Node* parameters = NULL;
 
 public:
     FunctionCallCommandNode(const LexicalValue& identifier, Node* parametersList) : BaseNode(identifier) {
         if (parametersList) {
+            parameters = parametersList;
             pushChild(parametersList);
         }
 
@@ -1352,11 +1354,48 @@ public:
 
         std::string calculatedLabel = getTempTable()->getEntry(value.tokenValue.s)->calculatedLabel;
 
-        ILOCInstruction* functionCall = new FunctionCall(value.tokenValue.s, calculatedLabel);
+
+        std::vector<ILOCInstruction*> peerInstructions;
+        int numberOffInstructionsToLoadParameters = getParametersInstructions(peerInstructions, parameters);        
+        ILOCInstruction* functionCall = new FunctionCall(value.tokenValue.s, calculatedLabel, numberOffInstructionsToLoadParameters, peerInstructions);
 
         program->add(functionCall);
 
         return functionCall;
+    }
+
+    int getParametersInstructions(std::vector<ILOCInstruction*>& parametersInstructions, Node* params) {
+        ILOCProgram* program = getILOCProgram();
+        int countingInstructions = 0;
+        if (params) {
+            if (params->children.size() > 0) {
+                int startOperationsCount = program->getOperationsCount();
+                ILOCInstruction* instruction = params->children[0]->getInstruction();
+                countingInstructions += program->getOperationsCount() - startOperationsCount;
+                parametersInstructions.push_back(instruction);
+
+                if (params->children.size() > 1 && params->children[1] != NULL && params->children[1]->children.size() > 0) {
+                    // this is another subtree
+                    countingInstructions += getParametersInstructions(parametersInstructions, params->children[1]);
+                }
+
+                // right most parameter
+                if (params->children.size() > 1 && params->children[1] != NULL && params->children[1]->children.size() == 0) {
+                    int startOperationsCountInner = program->getOperationsCount();
+                    ILOCInstruction* instruction = params->children[1]->getInstruction();
+                    countingInstructions += program->getOperationsCount() - startOperationsCountInner;
+                    parametersInstructions.push_back(instruction);
+                }
+            } else {
+                // Only one parameter
+                int startOperationsCount = program->getOperationsCount();
+                ILOCInstruction* instruction = params->getInstruction();
+                countingInstructions += program->getOperationsCount() - startOperationsCount;
+                parametersInstructions.push_back(instruction);
+            }
+        }
+
+        return countingInstructions;
     }
 };
 
