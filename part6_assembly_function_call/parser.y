@@ -401,7 +401,7 @@ while_command
 
 parameters_list
     : parameter ',' parameters_list { $$ = new ParametersListNode($1, $3); }
-    | parameter { $$ = $1; }
+    | parameter { $1->isParam = true; $$ = $1; }
 ;
 
 parameter

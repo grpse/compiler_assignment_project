@@ -1951,7 +1951,7 @@ yyreduce:
 
   case 73:
 #line 404 "parser.y" /* yacc.c:1648  */
-    { (yyval.node) = (yyvsp[0].node); }
+    { (yyvsp[0].node)->isParam = true; (yyval.node) = (yyvsp[0].node); }
 #line 1956 "parser.tab.c" /* yacc.c:1648  */
     break;
 

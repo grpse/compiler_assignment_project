@@ -33,7 +33,7 @@ public:
     int type;
     Node* restOfTheList = NULL;
     std::string generatedCode;
-    
+    bool isParam = false;
 
     virtual ~Node() {
         freeRecursively();
@@ -1390,42 +1390,18 @@ public:
         ILOCProgram* program = getILOCProgram();
         int countingInstructions = 0;
         if (params) {
-            if (params->children.size() == 2) {
+
+            if (params->isParam) {
                 int startOperationsCount = program->getOperationsCount();
                 ILOCInstruction* instruction = params->getInstruction();
-                if (instruction != NULL) {
-                    countingInstructions += program->getOperationsCount() - startOperationsCount;
-                    parametersInstructions.push_back(instruction);
-                } else {
-                    instruction = params->children[0]->getInstruction();
-                    countingInstructions += program->getOperationsCount() - startOperationsCount;
-                    parametersInstructions.push_back(instruction);
-                    countingInstructions += getParametersInstructions(parametersInstructions, params->children[1]);
-                }
-            } else if (params->children.size() > 0) {
+                countingInstructions += program->getOperationsCount() - startOperationsCount;
+                parametersInstructions.push_back(instruction);
+            } else {
                 int startOperationsCount = program->getOperationsCount();
                 ILOCInstruction* instruction = params->children[0]->getInstruction();
                 countingInstructions += program->getOperationsCount() - startOperationsCount;
                 parametersInstructions.push_back(instruction);
-
-                if (params->children.size() > 1 && params->children[1] != NULL && params->children[1]->children.size() > 0) {
-                    // this is another subtree
-                    countingInstructions += getParametersInstructions(parametersInstructions, params->children[1]);
-                }
-
-                // right most parameter
-                if (params->children.size() > 1 && params->children[1] != NULL && params->children[1]->children.size() == 0) {
-                    int startOperationsCountInner = program->getOperationsCount();
-                    ILOCInstruction* instruction = params->children[1]->getInstruction();
-                    countingInstructions += program->getOperationsCount() - startOperationsCountInner;
-                    parametersInstructions.push_back(instruction);
-                }
-            } else {
-                // Only one parameter
-                int startOperationsCount = program->getOperationsCount();
-                ILOCInstruction* instruction = params->getInstruction();
-                countingInstructions += program->getOperationsCount() - startOperationsCount;
-                parametersInstructions.push_back(instruction);
+                countingInstructions += getParametersInstructions(parametersInstructions, params->children[1]);
             }
         }
 

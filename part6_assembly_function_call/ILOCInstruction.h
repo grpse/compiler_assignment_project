@@ -649,7 +649,7 @@ struct FunctionCall : public ILOCInstruction {
 
             ILOCOperation storeRFPValueOnStack;
 
-            storeRFPValueOnStack.operation = "storeAI";
+            storeRFPValueOnStack.operation = "store";
 
             storeRFPValueOnStack.operators = {
                 ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
@@ -657,7 +657,7 @@ struct FunctionCall : public ILOCInstruction {
 
             storeRFPValueOnStack.outOperators = {
                 ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
-                ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
+                // ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
             };
 
             storeRFPValueOnStack.comment = "save RFP value to stack at: Memory[rsp + 0] = rfp";
@@ -768,7 +768,7 @@ struct FunctionCall : public ILOCInstruction {
 
         allocateSpaceToReturnValueAndAddressRSP.comment = "allocate space for [RFP, RSP, Return Value, Return Address]";
 
-        int instructionsToAddOnReturn = 5 + numberOfInstructionsToJump;
+        
         
 
         ILOCOperation jumpToFunction;
@@ -856,20 +856,22 @@ struct FunctionCall : public ILOCInstruction {
             ILOCOperator(getRegister(), ILOCOperatorType::REGISTER, true),
         };
 
-        setReturnAddress.operators[1].name = std::to_string(instructionsToAddOnReturn);
+        
         // NOW AND ON OPERATIONS SHOULD BE PUSHED TO THE END
 
 
         operations.push_back(setReturnAddress);
+        int indexOfSetReturnAddress = operations.size() - 1;
         operations.push_back(storeReturnAddressAtActivationRegistry);
         operations.push_back(allocateSpaceToReturnValueAndAddressRFP);
         operations.push_back(allocateSpaceToReturnValueAndAddressRSP);
 
+        int instructionsToAddOnReturn = 5;
         // TODO: FOR EACH FUNCTION PARAMETERS LOAD IN 
         //       INVERSE ORDER f(int x, int y) , store Y, store X, ...
         //       and instructionsToAddOnReturn++ for each one
         int startMaxNumberOfParameters = parametersLoadPearInstructions.size() * 4 - 4; // FIXED SIZE FOR ONLY INT VALUE PASSING
-        if (startMaxNumberOfParameters > 0) {
+        if (parametersLoadPearInstructions.size() > 0) {
             for (auto it = parametersLoadPearInstructions.begin(); it != parametersLoadPearInstructions.end(); it++) {
                 ILOCOperation parameterOperation;
 
@@ -890,10 +892,14 @@ struct FunctionCall : public ILOCInstruction {
                 operations.push_back(parameterOperation);
 
                 startMaxNumberOfParameters -= 4;
+                instructionsToAddOnReturn += 1;
             }
         }
 
         operations.push_back(jumpToFunction);
+        
+        // setReturnAddress.operators[1].name = std::to_string(instructionsToAddOnReturn);
+        operations[indexOfSetReturnAddress].operators[1].name = std::to_string(instructionsToAddOnReturn);
         operations.push_back(getAddressOfReturnValue);
         operations.push_back(unrollARvalues);
         operations.push_back(restoreRSP);
