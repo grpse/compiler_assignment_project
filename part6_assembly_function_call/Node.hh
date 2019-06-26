@@ -111,20 +111,22 @@ public:
     }
 
     static void getFunctionRealParametersListRecursively(Node* listOfParameters, std::vector<FunctionParameter>& theList) {
-        bool hasParameterToLookAt = listOfParameters && listOfParameters->restOfTheList;
 
         if (listOfParameters) {
             FunctionParameter parameter;
-            if (listOfParameters->children.size() > 0) {
-                parameter.type = listOfParameters->children[0]->type;
-            } else {
+            if (listOfParameters->isParam) {
+                if (listOfParameters->children.size() == 2 && listOfParameters->type == 0)
+                    listOfParameters->applyTypeInferenceRule(listOfParameters->children[0], listOfParameters->children[1]);
                 parameter.type = listOfParameters->type;
+                theList.push_back(parameter);
+            } else {
+                if (listOfParameters->children[0]->children.size() == 2 && listOfParameters->children[0]->type == 0)
+                    listOfParameters->children[0]->applyTypeInferenceRule(listOfParameters->children[0]->children[0], listOfParameters->children[0]->children[1]);
+                parameter.type = listOfParameters->children[0]->type;
+                theList.push_back(parameter);
+                getFunctionRealParametersListRecursively(listOfParameters->restOfTheList, theList);
             }
-            theList.push_back(parameter);
-        }
-
-        if (hasParameterToLookAt) {
-            getFunctionRealParametersListRecursively(listOfParameters->restOfTheList, theList);
+            
         }
     }
 
