@@ -34,7 +34,7 @@ public:
     Node* restOfTheList = NULL;
     std::string generatedCode;
     bool isParam = false;
-
+    bool isFunctionCall = false;
     virtual ~Node() {
         freeRecursively();
     }
@@ -1488,6 +1488,12 @@ public:
     }
 
     virtual ILOCInstruction* getInstruction() {
+
+        if (children[1]->isFunctionCall) {
+            Node* temp = children[0];
+            children[0] = children[1];
+            children[1] = temp;
+        }
 
         ILOCInstruction* leftValueInstructions = children[0]->getInstruction();
         ILOCInstruction* rightValueInstructions = children[1]->getInstruction();

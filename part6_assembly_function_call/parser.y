@@ -320,7 +320,7 @@ output_command
 /* BEGIN FUNCTION CALL COMMAND */
 
 function_call_command
-    : TK_IDENTIFICADOR function_call_parameters_command { $$ = new FunctionCallCommandNode($1, $2); }
+    : TK_IDENTIFICADOR function_call_parameters_command { $$ = new FunctionCallCommandNode($1, $2); $$->isFunctionCall = true; }
 ;
 
 function_call_parameters_command

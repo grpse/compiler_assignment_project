@@ -1807,7 +1807,7 @@ yyreduce:
 
   case 49:
 #line 323 "parser.y" /* yacc.c:1648  */
-    { (yyval.node) = new FunctionCallCommandNode((yyvsp[-1].lexicalValue), (yyvsp[0].node)); }
+    { (yyval.node) = new FunctionCallCommandNode((yyvsp[-1].lexicalValue), (yyvsp[0].node)); (yyval.node)->isFunctionCall = true; }
 #line 1812 "parser.tab.c" /* yacc.c:1648  */
     break;
 
