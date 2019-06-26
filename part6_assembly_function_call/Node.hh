@@ -1390,7 +1390,19 @@ public:
         ILOCProgram* program = getILOCProgram();
         int countingInstructions = 0;
         if (params) {
-            if (params->children.size() > 0) {
+            if (params->children.size() == 2) {
+                int startOperationsCount = program->getOperationsCount();
+                ILOCInstruction* instruction = params->getInstruction();
+                if (instruction != NULL) {
+                    countingInstructions += program->getOperationsCount() - startOperationsCount;
+                    parametersInstructions.push_back(instruction);
+                } else {
+                    instruction = params->children[0]->getInstruction();
+                    countingInstructions += program->getOperationsCount() - startOperationsCount;
+                    parametersInstructions.push_back(instruction);
+                    countingInstructions += getParametersInstructions(parametersInstructions, params->children[1]);
+                }
+            } else if (params->children.size() > 0) {
                 int startOperationsCount = program->getOperationsCount();
                 ILOCInstruction* instruction = params->children[0]->getInstruction();
                 countingInstructions += program->getOperationsCount() - startOperationsCount;

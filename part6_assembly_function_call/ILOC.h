@@ -5,6 +5,8 @@
 #include <vector>
 #include <list>
 #include "ILOCInstruction.h"
+#include "SymbolTable.hh"
+extern SymbolTable*  getTempTable();
 
 class ILOCProgram {
 
@@ -19,7 +21,7 @@ public:
 
         std::cout << "\tloadI " << std::to_string(stackForm) << " => rfp\n";
         std::cout << "\tloadI " << std::to_string(stackForm) << " => rsp\n";
-        std::cout << "\tloadI " << std::to_string(getOperationsCount() + 1)  << " => rbss\n";
+        std::cout << "\tloadI " << std::to_string(getOperationsCount() + 5)  << " => rbss\n";
         std::cout << "\tjumpI " << " => " << mainLabel << "\n"; // TODO: go to main function
 
         
@@ -36,6 +38,22 @@ public:
             operationsCount += iloc->operations.size();
         }
         return operationsCount;
+    }
+
+    void resolveLabels() {
+        for (auto instruction : instructions) {
+            for (int i = 0; i < instruction->operations.size(); i++) {
+                for (int j = 0; j < instruction->operations[i].outOperators.size(); j++) {
+                    if (!instruction->operations[i].outOperators[j].resolvedOperator) {
+                        std::string functionName = instruction->operations[i].outOperators[j].name;
+                        SymbolEntry* entry = getTempTable()->getEntry(functionName);
+                        std::string rightLabel = entry->calculatedLabel;
+                        instruction->operations[i].outOperators[j].resolvedOperator = true;
+                        instruction->operations[i].outOperators[j].name = rightLabel;
+                    }
+                }
+            }
+        }
     }
 
     int getInstructionsCount() {

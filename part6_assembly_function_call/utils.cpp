@@ -149,8 +149,10 @@ void descompila(void* arvore) {
         Node* root = (Node*) arvore;
         // root->print();
         root->getInstruction();
+        
     }
 
+    getILOCProgram()->resolveLabels();
     getILOCProgram()->printProgram();
 
     printf("\n");

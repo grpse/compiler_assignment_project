@@ -237,6 +237,16 @@ class Sim:
    def step(self):
       if self.trace:
          eprint('%d %s'%(self.ip, self.code[self.ip]))
+         # eprint('\n%10s %8s'%('register','value'))
+         # l = [x for x in self.reg]
+         # l.sort()
+         # for x in l:
+         #    eprint('%10s %8d'%(x,self.reg.get(x)))
+         # eprint('\n%10s %8s'%('memory','value'))
+         # l = [x for x in self.mem]
+         # l.sort()
+         # for x in l:
+         #    eprint('%.8d %8d'%(x,self.mem.get(x)))
 #         eprint(self.reg['r0'],self.reg['r1'],self.reg['r2'],self.reg['r3'],self.reg['r4'])
       self.stats['instructions'] += 1
       op = self.code[self.ip]

@@ -413,56 +413,56 @@ struct IfThenElse : public ILOCInstruction {
 struct FunctionDeclaration : public ILOCInstruction {
 
     FunctionDeclaration() {
-        int returnAddressLentgh = 4;
-        ILOCOperation loadReturnAddress;
+        // int returnAddressLentgh = 4;
+        // ILOCOperation loadReturnAddress;
 
-        std::string registerWithAddressToReturnTo = ILOCInstruction::getRegister();
+        // std::string registerWithAddressToReturnTo = ILOCInstruction::getRegister();
 
-        loadReturnAddress.label = "";
+        // loadReturnAddress.label = "";
 
-        loadReturnAddress.operation = "subI";
+        // loadReturnAddress.operation = "subI";
 
-        loadReturnAddress.operators = {
-            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
-            ILOCOperator(std::to_string(returnAddressLentgh), ILOCOperatorType::IMMEDIATE, true),
-        };
+        // loadReturnAddress.operators = {
+        //     ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+        //     ILOCOperator(std::to_string(returnAddressLentgh), ILOCOperatorType::IMMEDIATE, true),
+        // };
 
-        loadReturnAddress.outOperators = {
-            ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true)
-        };
+        // loadReturnAddress.outOperators = {
+        //     ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true)
+        // };
         
-        loadReturnAddress.comment = "load return address to register " + registerWithAddressToReturnTo;
+        // loadReturnAddress.comment = "load return address to register " + registerWithAddressToReturnTo;
         
-        operations.push_back(loadReturnAddress);
+        // operations.push_back(loadReturnAddress);
 
 
-        std::string registerThatContainsTheFunctionsReturnInstructionAddress = getRegister();
+        // std::string registerThatContainsTheFunctionsReturnInstructionAddress = getRegister();
 
-        ILOCOperation loadAddressOfReturnFunction;
-        loadAddressOfReturnFunction.operation = "load";
+        // ILOCOperation loadAddressOfReturnFunction;
+        // loadAddressOfReturnFunction.operation = "load";
 
-        loadAddressOfReturnFunction.operators = {
-            ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true),
-        };
+        // loadAddressOfReturnFunction.operators = {
+        //     ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true),
+        // };
 
-        loadAddressOfReturnFunction.outOperators = {
-            ILOCOperator(registerThatContainsTheFunctionsReturnInstructionAddress, ILOCOperatorType::REGISTER, true),
-        };
+        // loadAddressOfReturnFunction.outOperators = {
+        //     ILOCOperator(registerThatContainsTheFunctionsReturnInstructionAddress, ILOCOperatorType::REGISTER, true),
+        // };
 
-        operations.push_back(loadAddressOfReturnFunction);
+        // operations.push_back(loadAddressOfReturnFunction);
 
 
-        ILOCOperation jumpBackOperation;
+        // ILOCOperation jumpBackOperation;
 
-        jumpBackOperation.label = "";
+        // jumpBackOperation.label = "";
 
-        jumpBackOperation.operation = "jump";
+        // jumpBackOperation.operation = "jump";
 
-        jumpBackOperation.outOperators = {
-            ILOCOperator(registerThatContainsTheFunctionsReturnInstructionAddress, ILOCOperatorType::REGISTER, true)
-        };
+        // jumpBackOperation.outOperators = {
+        //     ILOCOperator(registerThatContainsTheFunctionsReturnInstructionAddress, ILOCOperatorType::REGISTER, true)
+        // };
 
-        operations.push_back(jumpBackOperation);
+        // operations.push_back(jumpBackOperation);
     }
 };
 
@@ -509,6 +509,60 @@ struct Return : public ILOCInstruction {
         loadBackOperation.comment = "save return value on Memory(rfp - 8) = " + registerWithReturnValue;
         
         operations.push_back(loadBackOperation);
+
+        {
+
+            int returnAddressLentgh = 4;
+            ILOCOperation loadReturnAddress;
+
+            std::string registerWithAddressToReturnTo = ILOCInstruction::getRegister();
+
+            loadReturnAddress.label = "";
+
+            loadReturnAddress.operation = "subI";
+
+            loadReturnAddress.operators = {
+                ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+                ILOCOperator(std::to_string(returnAddressLentgh), ILOCOperatorType::IMMEDIATE, true),
+            };
+
+            loadReturnAddress.outOperators = {
+                ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true)
+            };
+            
+            loadReturnAddress.comment = "load return address to register " + registerWithAddressToReturnTo;
+            
+            operations.push_back(loadReturnAddress);
+
+
+            std::string registerThatContainsTheFunctionsReturnInstructionAddress = getRegister();
+
+            ILOCOperation loadAddressOfReturnFunction;
+            loadAddressOfReturnFunction.operation = "load";
+
+            loadAddressOfReturnFunction.operators = {
+                ILOCOperator(registerWithAddressToReturnTo, ILOCOperatorType::REGISTER, true),
+            };
+
+            loadAddressOfReturnFunction.outOperators = {
+                ILOCOperator(registerThatContainsTheFunctionsReturnInstructionAddress, ILOCOperatorType::REGISTER, true),
+            };
+
+            operations.push_back(loadAddressOfReturnFunction);
+
+
+            ILOCOperation jumpBackOperation;
+
+            jumpBackOperation.label = "";
+
+            jumpBackOperation.operation = "jump";
+
+            jumpBackOperation.outOperators = {
+                ILOCOperator(registerThatContainsTheFunctionsReturnInstructionAddress, ILOCOperatorType::REGISTER, true)
+            };
+
+            operations.push_back(jumpBackOperation);
+        }
     }
 };
 
@@ -589,45 +643,43 @@ struct FunctionCall : public ILOCInstruction {
 
     FunctionCall(std::string functionName, std::string calculatedLabel, int numberOfInstructionsToJump, std::vector<ILOCInstruction*>& parametersLoadPearInstructions) {
 
-        std::string rfpSaveRegister = getRegister();
         
 
         {
-            ILOCOperation saveRFP;
 
-            saveRFP.operation = "addI";
+            ILOCOperation storeRFPValueOnStack;
 
-            saveRFP.operators = {
+            storeRFPValueOnStack.operation = "storeAI";
+
+            storeRFPValueOnStack.operators = {
                 ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
-                ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
             };
 
-            saveRFP.outOperators = {
-                ILOCOperator(rfpSaveRegister, ILOCOperatorType::REGISTER, true),
-            };
-
-            saveRFP.comment = "save RFP value: " + rfpSaveRegister + " = rfp";
-
-            operations.push_back(saveRFP);
-        }
-
-        std::string rspSaveRegister = getRegister();
-        {
-
-            ILOCOperation saveRSP;
-
-            saveRSP.operation = "addI";
-
-            saveRSP.operators = {
+            storeRFPValueOnStack.outOperators = {
                 ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
                 ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
             };
 
-            saveRSP.outOperators = {
-                ILOCOperator(rspSaveRegister, ILOCOperatorType::REGISTER, true),
+            storeRFPValueOnStack.comment = "save RFP value to stack at: Memory[rsp + 0] = rfp";
+
+            operations.push_back(storeRFPValueOnStack);
+        }
+
+        {
+            ILOCOperation saveRSP;
+
+            saveRSP.operation = "storeAI";
+
+            saveRSP.operators = {
+                ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
             };
 
-            saveRSP.comment = "save RSP value: " + rspSaveRegister + " = rsp";
+            saveRSP.outOperators = {
+                ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
+                ILOCOperator("4", ILOCOperatorType::IMMEDIATE, true),
+            };
+
+            saveRSP.comment = "save RSP value to stack at: Memory[rsp + 4] = rsp";
 
             operations.push_back(saveRSP);
         }
@@ -660,7 +712,7 @@ struct FunctionCall : public ILOCInstruction {
 
         setReturnAddress.operators = {
             ILOCOperator(getRegisterRPC(), ILOCOperatorType::REGISTER, true),
-            ILOCOperator("0", ILOCOperatorType::IMMEDIATE, false),
+            ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
         };
 
         setReturnAddress.outOperators = {
@@ -680,10 +732,10 @@ struct FunctionCall : public ILOCInstruction {
 
         storeReturnAddressAtActivationRegistry.outOperators = {
             ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
-            ILOCOperator("4", ILOCOperatorType::IMMEDIATE, false),
+            ILOCOperator("12", ILOCOperatorType::IMMEDIATE, true),
         };
 
-        storeReturnAddressAtActivationRegistry.comment = "load return address to activation registry";
+        storeReturnAddressAtActivationRegistry.comment = "load return address to activation registry on stack: Memory[rfp + 12]";
 
 
         ILOCOperation allocateSpaceToReturnValueAndAddressRFP;
@@ -691,14 +743,14 @@ struct FunctionCall : public ILOCInstruction {
         allocateSpaceToReturnValueAndAddressRFP.operation = "addI";
         allocateSpaceToReturnValueAndAddressRFP.operators = {
             ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
-            ILOCOperator("8", ILOCOperatorType::IMMEDIATE, false),
+            ILOCOperator("16", ILOCOperatorType::IMMEDIATE, true),
         };
 
         allocateSpaceToReturnValueAndAddressRFP.outOperators = {
             ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
         };
 
-        allocateSpaceToReturnValueAndAddressRFP.comment = "allocateSpaceToReturnValueAndAddressRFP";
+        allocateSpaceToReturnValueAndAddressRFP.comment = "allocate space for [RFP, RSP, Return Value, Return Address]";
 
 
 
@@ -707,14 +759,14 @@ struct FunctionCall : public ILOCInstruction {
         allocateSpaceToReturnValueAndAddressRSP.operation = "addI";
         allocateSpaceToReturnValueAndAddressRSP.operators = {
             ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
-            ILOCOperator("8", ILOCOperatorType::IMMEDIATE, false),
+            ILOCOperator("16", ILOCOperatorType::IMMEDIATE, true),
         };
 
         allocateSpaceToReturnValueAndAddressRSP.outOperators = {
             ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
         };
 
-        allocateSpaceToReturnValueAndAddressRSP.comment = "allocateSpaceToReturnValueAndAddressRSP";
+        allocateSpaceToReturnValueAndAddressRSP.comment = "allocate space for [RFP, RSP, Return Value, Return Address]";
 
         int instructionsToAddOnReturn = 5 + numberOfInstructionsToJump;
         
@@ -723,8 +775,9 @@ struct FunctionCall : public ILOCInstruction {
 
         jumpToFunction.operation = "jumpI";
 
+        bool isResolved = calculatedLabel != "";
         jumpToFunction.outOperators = {
-            ILOCOperator(calculatedLabel, ILOCOperatorType::LABEL, true),
+            ILOCOperator(isResolved ? calculatedLabel : functionName, ILOCOperatorType::LABEL, isResolved),
         };
 
         jumpToFunction.comment = "jump to function: " + functionName;
@@ -743,13 +796,45 @@ struct FunctionCall : public ILOCInstruction {
             ILOCOperator(registerWhereReturnValueAddressRemais, ILOCOperatorType::REGISTER, true),
         };
 
+        getAddressOfReturnValue.comment = "load return value address on " + registerWhereReturnValueAddressRemais;
         
+        ILOCOperation unrollARvalues;
+
+        unrollARvalues.operation = "subI";
+
+        unrollARvalues.operators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator("16", ILOCOperatorType::IMMEDIATE, true),
+        };
+
+        unrollARvalues.outOperators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+        };
+
+        unrollARvalues.comment = "unroll activation registry from rfp";
+
+
+        ILOCOperation restoreRSP;
+
+        restoreRSP.operation = "loadAI";
+
+        restoreRSP.operators = {
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+            ILOCOperator("4", ILOCOperatorType::IMMEDIATE, true),
+        };
+
+        restoreRSP.outOperators = {
+            ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
+        };
+
+        restoreRSP.comment = "restore rsp first to avoid losing addresses";
+
         ILOCOperation restoreRFP;
 
-        restoreRFP.operation = "addI";
+        restoreRFP.operation = "loadAI";
 
         restoreRFP.operators = {
-            ILOCOperator(rfpSaveRegister, ILOCOperatorType::REGISTER, true),
+            ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
             ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
         };
 
@@ -757,19 +842,7 @@ struct FunctionCall : public ILOCInstruction {
             ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
         };
 
-
-        ILOCOperation restoreRSP;
-
-        restoreRSP.operation = "addI";
-
-        restoreRSP.operators = {
-            ILOCOperator(rspSaveRegister, ILOCOperatorType::REGISTER, true),
-            ILOCOperator("0", ILOCOperatorType::IMMEDIATE, true),
-        };
-
-        restoreRSP.outOperators = {
-            ILOCOperator(getRegisterRSP(), ILOCOperatorType::REGISTER, true),
-        };
+        restoreRFP.comment = "and then restore rfp overriding its current value";
 
         ILOCOperation returnValueLoadFromActivationRegister;
 
@@ -796,32 +869,35 @@ struct FunctionCall : public ILOCInstruction {
         //       INVERSE ORDER f(int x, int y) , store Y, store X, ...
         //       and instructionsToAddOnReturn++ for each one
         int startMaxNumberOfParameters = parametersLoadPearInstructions.size() * 4 - 4; // FIXED SIZE FOR ONLY INT VALUE PASSING
-        for (auto it = parametersLoadPearInstructions.begin(); it != parametersLoadPearInstructions.end(); it++) {
-            ILOCOperation parameterOperation;
+        if (startMaxNumberOfParameters > 0) {
+            for (auto it = parametersLoadPearInstructions.begin(); it != parametersLoadPearInstructions.end(); it++) {
+                ILOCOperation parameterOperation;
 
-            ILOCOperation pearOperation = (*(*it)->operations.rbegin());
-            ILOCOperator lastOutOperator = (*pearOperation.outOperators.rbegin());
+                ILOCOperation pearOperation = (*(*it)->operations.rbegin());
+                ILOCOperator lastOutOperator = (*pearOperation.outOperators.rbegin());
 
-            std::string registerWithValueToBePassed = lastOutOperator.name;
+                std::string registerWithValueToBePassed = lastOutOperator.name;
 
-            parameterOperation.operation = "storeAI";
-            parameterOperation.operators = {
-                ILOCOperator(registerWithValueToBePassed, ILOCOperatorType::REGISTER, true),
-            };
-            parameterOperation.outOperators = {
-                ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
-                ILOCOperator(std::to_string(startMaxNumberOfParameters), ILOCOperatorType::IMMEDIATE, true),
-            };
+                parameterOperation.operation = "storeAI";
+                parameterOperation.operators = {
+                    ILOCOperator(registerWithValueToBePassed, ILOCOperatorType::REGISTER, true),
+                };
+                parameterOperation.outOperators = {
+                    ILOCOperator(getRegisterRFP(), ILOCOperatorType::REGISTER, true),
+                    ILOCOperator(std::to_string(startMaxNumberOfParameters), ILOCOperatorType::IMMEDIATE, true),
+                };
 
-            operations.push_back(parameterOperation);
+                operations.push_back(parameterOperation);
 
-            startMaxNumberOfParameters -= 4;
+                startMaxNumberOfParameters -= 4;
+            }
         }
 
         operations.push_back(jumpToFunction);
         operations.push_back(getAddressOfReturnValue);
-        operations.push_back(restoreRFP);
+        operations.push_back(unrollARvalues);
         operations.push_back(restoreRSP);
+        operations.push_back(restoreRFP);
         operations.push_back(returnValueLoadFromActivationRegister);
     }
 };
